@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- The main blue link title people will click on Google -->
+  <!-- The main blue link title people will click on Google -->
   <title>Karnel Homes | Custom Home Builders & Renovations</title>
 
   <!-- The summary text shown directly under the title on Google -->
@@ -247,7 +247,7 @@
         
         .hero-ctas { display: flex; gap: 20px; justify-content: center; }
         .hero-ctas .btn-secondary { border-color: var(--text-main); color: var(--text-main); background-color: rgba(255,255,255,0.35); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
-        .hero-ctas .btn-secondary:hover { background-color: var(--text-main); color: var(--white); }
+        .hero-ctas .btn-secondary:hover { background-color: var(--text-main); color: var(--white); transform: translate3d(0, -4px, 0); }
         
         .scroll-indicator { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 3; animation: bounce 2s infinite; background: transparent; border: none; cursor: pointer; }
         .scroll-indicator svg { fill: var(--text-main); width: 30px; height: 30px; }
@@ -255,7 +255,7 @@
         /* --- ABOUT US SECTION --- */
         #about { background-color: var(--bg-secondary); }
         .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; max-width: 1600px; margin: 0 auto; }
-        .about-image { position: relative; overflow: hidden; height: 600px; border-radius: 4px; box-shadow: 0 30px 60px rgba(0,0,0,0.04); }
+        .about-image { position: relative; overflow: hidden; height: 600px; border-radius: 4px; box-shadow: 0 30px 60px rgba(0,0,0,0.044); }
         .about-image img { width: 100%; height: 100%; object-fit: cover; }
         .about-content h2 { font-size: clamp(2.2rem, 3.5vw, 3.2rem); margin-bottom: 25px; }
         .about-content .founder-title { font-family: var(--font-body); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent); font-weight: 600; display: block; margin-bottom: 20px; }
@@ -298,7 +298,7 @@
         .slider-arrow svg { width: 20px; height: 20px; fill: var(--text-main); transition: var(--transition-fast); }
         
         .project-slider-viewport { width: 100%; overflow: hidden; padding: 20px 0 40px 0; }
-        .project-slider-track { display: flex; gap: 40px; transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); will-change: transform; padding-left: 8%; }
+        .project-slider-track { display: flex; gap: 40px; transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); will-change: transform; padding-left: 8%; padding-right: 8%; }
         
         .project-slide-card { flex: 0 0 480px; background: var(--white); border-radius: 0; overflow: hidden; box-shadow: 0 15px 45px rgba(0,0,0,0.03); display: flex; flex-direction: column; transition: var(--transition-smooth); border: 1px solid #ECEEEF; }
         .project-slide-card:hover { transform: translate3d(0, -10px, 0); box-shadow: 0 30px 60px rgba(0,0,0,0.08); }
@@ -316,11 +316,65 @@
         .proj-card-tags svg { width: 16px; height: 16px; fill: #9BA4A8; }
         
         .proj-card-desc { font-size: 0.98rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 30px; font-weight: 300; }
-        .proj-card-link { font-family: var(--font-body); font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-main); text-decoration: none; margin-top: auto; display: inline-flex; align-items: center; transition: var(--transition-fast); width: fit-content; }
+        .proj-card-link { font-family: var(--font-body); font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-main); text-decoration: none; margin-top: auto; display: inline-flex; align-items: center; transition: var(--transition-fast); width: fit-content; cursor: pointer; }
         .proj-card-link:hover { color: var(--accent); }
         
         .gallery-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #ECEEEF; color: var(--text-muted); text-align: center; font-family: var(--font-display); font-size: 1.3rem; padding: 20px; }
         .gallery-placeholder svg { width: 40px; height: 40px; fill: var(--accent); margin-bottom: 10px; }
+
+        /* --- IMMERSIVE CUSTOM LIGHTBOX MODAL --- */
+        .karnel-lightbox {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(28, 32, 34, 0.8); 
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 30px;
+        }
+        .karnel-lightbox.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 85vh;
+            box-shadow: 0 30px 90px rgba(0,0,0,0.3);
+            transform: scale(0.95) translate3d(0, 20px, 0);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .karnel-lightbox.open .lightbox-content {
+            transform: scale(1) translate3d(0, 0, 0);
+        }
+        .lightbox-content img {
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 85vh;
+            object-fit: contain;
+            border: 4px solid var(--white);
+        }
+        .lightbox-close {
+            position: absolute;
+            top: -50px;
+            right: 0;
+            background: transparent;
+            border: none;
+            color: var(--white);
+            font-size: 2.5rem;
+            cursor: pointer;
+            line-height: 1;
+            transition: var(--transition-fast);
+        }
+        .lightbox-close:hover {
+            color: var(--accent);
+        }
 
         /* --- WHY CHOOSE US SECTION --- */
         #why-choose-us { background-color: var(--bg-secondary); }
@@ -332,12 +386,12 @@
 
         /* --- INTERACTIVE MAP --- */
         .map-interactive-wrapper { width: 100%; height: 100%; min-height: 480px; border-radius: 4px; overflow: hidden; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.06); }
-        .map-iframe-cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(28,32,34,0.92) 0%, rgba(45,52,56,0.88) 100%); z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--white); padding: 40px; transition: var(--transition-smooth); cursor: pointer; }
+        .map-iframe-cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(28, 32, 34, 0.92) 0%, rgba(45, 52, 56, 0.88) 100%); z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--white); padding: 40px; transition: var(--transition-smooth); cursor: pointer; }
         .map-iframe-cover svg { width: 64px; height: 64px; fill: var(--accent); margin-bottom: 20px; transform: scale(1); transition: var(--transition-smooth); }
         .map-iframe-cover h4 { color: var(--white); font-size: 1.8rem; margin-bottom: 10px; letter-spacing: 0.05em; }
         .map-iframe-cover p { color: rgba(255,255,255,0.7); font-size: 1rem; margin-bottom: 25px; max-width: 320px; }
         .map-interactive-wrapper:hover .map-iframe-cover svg { transform: scale(1.1) translateY(-5px); }
-        .map-interactive-wrapper:hover .map-iframe-cover { background: linear-gradient(135deg, rgba(197,168,128,0.95) 0%, rgba(28,32,34,0.9) 100%); }
+        .map-interactive-wrapper:hover .map-iframe-cover { background: linear-gradient(135deg, rgba(197, 168, 128, 0.95) 0%, rgba(28, 32, 34, 0.9) 100%); }
         
         .map-action-pulse-btn { padding: 14px 28px; background: var(--white); color: var(--text-main); font-family: var(--font-body); font-weight: 500; font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transition: var(--transition-fast); }
         .map-interactive-wrapper:hover .map-action-pulse-btn { background: var(--text-main); color: var(--white); }
@@ -366,6 +420,15 @@
             overflow: hidden;
         }
         #cta-bleed h2 { color: var(--white); font-size: clamp(2.5rem, 4vw, 3.8rem); margin-bottom: 35px; position: relative; z-index: 5; }
+        
+        /* Force explicit visibility on top of the backdrop canvas elements */
+        #cta-bleed .cta-content-wrapper {
+            position: relative;
+            z-index: 10;
+            opacity: 1 !important;
+            transform: none !important;
+        }
+        
         #cta-bleed .hero-ctas { position: relative; z-index: 5; }
         #cta-bleed .hero-ctas .btn-primary { background-color: var(--white); color: var(--text-main); }
         #cta-bleed .hero-ctas .btn-primary:hover { background-color: var(--accent); color: var(--white); }
@@ -378,33 +441,41 @@
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: 1;
             pointer-events: none;
+            background-color: #171a1c;
         }
         .sand-base-image {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('images/harbour image.png') no-repeat center center;
             background-size: cover;
-            animation: sandMeltLoop 16s ease-in-out infinite alternate;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            
+            /* Extremely calm loop that stays responsive and never falls into complete blackout */
+            animation: elegantSandMelt 18s ease-in-out infinite alternate;
             will-change: transform, filter, opacity;
         }
-        .sand-noise-overlay {
+        
+        /* Ambient dynamic texture overlay */
+        .sand-noise-overlay { 
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0.18;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3联%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-            animation: sandStormMotion 0.8s steps(4) infinite;
+            opacity: 0.12;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            animation: sandStormMotion 0.9s steps(4) infinite;
+            z-index: 2;
         }
 
-        @keyframes sandMeltLoop {
-            0% { transform: scale(1); filter: blur(0px) contrast(1) brightness(1); opacity: 1; }
-            35% { transform: scale(1.02); filter: blur(2px) contrast(1.1) brightness(1.05); opacity: 0.95; }
-            55% { transform: scale(1.12) translate3d(20px, -10px, 0); filter: blur(25px) contrast(1.5) brightness(1.3); opacity: 0.25; }
-            75% { transform: scale(1.25) translate3d(-30px, 15px, 0); filter: blur(40px) contrast(1.8) brightness(0.7); opacity: 0.08; }
-            100% { transform: scale(1.35) translate3d(40px, -20px, 0); filter: blur(65px) contrast(2) brightness(0.3); opacity: 0; }
+        @keyframes elegantSandMelt {
+            0% { transform: scale(1); filter: blur(0px) brightness(1); opacity: 1; }
+            40% { transform: scale(1.02); filter: blur(1.5px) brightness(1.02); opacity: 0.95; }
+            70% { transform: scale(1.07); filter: blur(6px) brightness(0.9); opacity: 0.55; }
+            100% { transform: scale(1.12); filter: blur(14px) brightness(0.85); opacity: 0.25; }
         }
         @keyframes sandStormMotion {
             0% { transform: translate3d(0, 0, 0); }
-            100% { transform: translate3d(15px, -15px, 0); }
+            100% { transform: translate3d(10px, -10px, 0); }
         }
         
         /* --- CONTACT INTERFACE --- */
@@ -428,7 +499,7 @@
         .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 15px; }
         .footer-col ul a { color: rgba(255,255,255,0.5); text-decoration: none; transition: var(--transition-fast); }
         .footer-col ul a:hover { color: var(--accent); padding-left: 5px; }
-        .social-links { display: flex; gap: 15px; margin-top: 20px; }
+        .social-links { display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap; }
         .social-links a { width: 40px; height: 40px; border-radius: 50%; background-color: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; transition: var(--transition-fast); }
         .social-links a svg { width: 18px; height: 18px; fill: var(--white); }
         .social-links a:hover { background-color: var(--accent); }
@@ -471,6 +542,31 @@
             .hero-ctas { flex-direction: column; align-items: center; width: 100%; }
             .hero-ctas .btn { width: 100%; }
             .mobile-sticky-cta { display: block; }
+            
+            /* MOBILE OBJECT COVER IMAGE OPTIMIZATION */
+            .service-card-bg {
+                width: 100% !important;
+                height: 100% !important;
+            }
+            .project-slide-card {
+                flex: 0 0 290px; 
+            }
+            .proj-card-img-wrap {
+                height: 200px;
+            }
+            .proj-card-details {
+                padding: 25px 20px;
+            }
+            .proj-card-title {
+                font-size: 1.6rem;
+            }
+            .lightbox-content {
+                max-width: 95%;
+            }
+            .lightbox-close {
+                top: -45px;
+                right: 5px;
+            }
         }
     </style>
 </head>
@@ -581,15 +677,7 @@
                     <p>Sophisticated structural self-contained units maximizing land yields.</p>
                 </div>
                 <div class="service-card reveal reveal-delay-1">
-                    <div class="service-card-bg" style="
-    background-image: url('images/single-storey.jpg'); 
-    width: 600px; 
-    height: 400px; 
-    background-size: cover; 
-    background-position: center; 
-    background-repeat: no-repeat;
-"></div>
-
+                    <div class="service-card-bg" style="background-image: url('images/single-storey.jpg');"></div>
                     <svg class="service-icon" viewBox="0 0 24 24"><path d="M12 5.5l6 4.5v9H6v-9l6-4.5M12 3L4 9v12h16V9l-8-6z"/></svg>
                     <h3>Single Storey Homes</h3>
                     <p>Timeless linear floor plans accentuating organic seamless movement.</p>
@@ -626,6 +714,14 @@
                 </div>
             </div>
         </section>
+
+        <!-- DYNAMIC LIGHTBOX OVERLAY WINDOW -->
+        <div class="karnel-lightbox" id="karnelLightbox" role="dialog" aria-hidden="true">
+            <div class="lightbox-content">
+                <button class="lightbox-close" id="lightboxCloseBtn" aria-label="Close image overlay">&times;</button>
+                <img id="lightboxTargetImg" src="" alt="Expanded Architectural Layout Frame View">
+            </div>
+        </div>
 
         <!-- WHY CHOOSE US -->
         <section id="why-choose-us" class="section-padding">
@@ -695,7 +791,7 @@
                     <div class="timeline-panel"> <span class="step-num">Step 07</span> <h3>Council Approvals</h3> <p>Managing DA submissions through local Sydney councils or CDC pathways seamlessly.</p> </div>
                 </div>
                 <div class="timeline-item reveal">
-                    <div class="timeline-badge"><svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73A1.69 1.69 0 0 1 14 19.43l-.38 2.65c-.03.24-.24.42-.49.42h-4c-.25 0-.46-.18-.49-.42l-.38-2.65c-.61-.25-1.17-.59-1.69-.98l-2.49 1c-.23.09-.49 0-.61-.22l-2-3.46c-.12-.22-.07-.49.12-.64l2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg></div>
+                    <div class="timeline-badge"><svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4(1.08.73A1.69 1.69 0 0 1 14 19.43l-.38 2.65c-.03.24-.24.42-.49.42h-4c-.25 0-.46-.18-.49-.42l-.38-2.65c-.61-.25-1.17-.59-1.69-.98l-2.49 1c-.23.09-.49 0-.61-.22l-2-3.46c-.12-.22-.07-.49.12-.64l2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg></div>
                     <div class="timeline-panel"> <span class="step-num">Step 08</span> <h3>Material Selection</h3> <p>Guided internal styling curation mapping high-end finishes, stone, and architectural details.</p> </div>
                 </div>
                 <div class="timeline-item reveal">
@@ -715,7 +811,8 @@
                 <div class="sand-base-image"></div>
                 <div class="sand-noise-overlay"></div>
             </div>
-            <div class="reveal">
+            <!-- FIXED: Grouped elements under an static layout shield layer wrapper to avoid script conflict invisibility -->
+            <div class="cta-content-wrapper">
                 <h2>Ready to build your dream home?</h2>
                 <div class="hero-ctas">
                     <a href="#contact" class="btn btn-primary">Book Consultation</a>
@@ -796,11 +893,14 @@
                 <h4>Connect</h4>
                 <p style="font-size: 0.85rem; margin-bottom: 15px; color:rgba(255,255,255,0.4);">Stay updated with our latest architectural works.</p>
                 <div class="social-links">
-                    <a href="#" aria-label="Follow Karnel Homes on Instagram">
+                    <a href="https://www.instagram.com/YOUR_ACCOUNT/" target="_blank" rel="noopener" aria-label="Follow Karnel Homes on Instagram">
                         <svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8A3.6 3.6 0 0 0 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6A3.6 3.6 0 0 0 16.4 4H7.6m6.4 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0m1.4-4.25a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5z"/></svg>
                     </a>
-                    <a href="#" aria-label="Follow Karnel Homes on Facebook">
+                    <a href="https://www.facebook.com/YOUR_ACCOUNT/" target="_blank" rel="noopener" aria-label="Follow Karnel Homes on Facebook">
                         <svg viewBox="0 0 24 24"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2m13 2h-2.5A3.5 3.5 0 0 0 12 8.5V11h-2v3h2v7h3v-7h3v-3h-3V9a1 1 0 0 1 1-1h2V5z"/></svg>
+                    </a>
+                    <a href="https://www.linkedin.com/company/YOUR_ACCOUNT/" target="_blank" rel="noopener" aria-label="Follow Karnel Homes on LinkedIn">
+                        <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.8v8.37h2.8v-4.67c0-.25.02-.5.1-.68a1.14 1.14 0 0 1 1-.77c.76 0 1 .58 1 1.42v4.7h2.8M6.5 8.37a1.37 1.37 0 1 0 0-2.75 1.37 1.37 0 0 0 0 2.75M8 18.5V10.13H5.2v8.37H8z"/></svg>
                     </a>
                 </div>
             </div>
@@ -863,12 +963,38 @@
                                 </span>
                             </div>
                             <p class="proj-card-desc">${proj.desc}</p>
-                            <a href="#contact" class="proj-card-link">View Project &nbsp;&rarr;</a>
+                            <a onclick="openKarnelLightbox('/images/project${proj.id}.jpg')" class="proj-card-link">View Project &nbsp;&rarr;</a>
                         </div>
                     </div>
                 `;
             });
             sliderTrack.innerHTML = trackHTML;
+
+            // --- LIGHTBOX INTERACTIVE ENGINE ---
+            const lightbox = document.getElementById("karnelLightbox");
+            const lightboxImg = document.getElementById("lightboxTargetImg");
+            const lightboxClose = document.getElementById("lightboxCloseBtn");
+
+            window.openKarnelLightbox = (imgSrc) => {
+                lightboxImg.src = imgSrc;
+                lightbox.classList.add("open");
+                lightbox.setAttribute("aria-hidden", "false");
+                document.body.style.overflow = "hidden"; 
+            };
+
+            const closeKarnelLightbox = () => {
+                lightbox.classList.remove("open");
+                lightbox.setAttribute("aria-hidden", "true");
+                document.body.style.overflow = "";
+            };
+
+            lightboxClose.addEventListener("click", closeKarnelLightbox);
+            lightbox.addEventListener("click", (e) => {
+                if (e.target === lightbox) closeKarnelLightbox();
+            });
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Escape" && lightbox.classList.contains("open")) closeKarnelLightbox();
+            });
 
             // --- GRACEFUL ERROR HANDLING FOR CAROUSEL SLIDES ---
             window.handleMissingSlide = (img, title) => {
@@ -887,11 +1013,11 @@
             let currentScrollOffset = 0;
 
             const getMaxScrollOffset = () => {
-                return sliderTrack.scrollWidth - window.innerWidth + (window.innerWidth * 0.08);
+                return sliderTrack.scrollWidth - window.innerWidth + (window.innerWidth * 0.16);
             };
 
             const slideTrack = (direction) => {
-                const cardWidth = 520; 
+                const cardWidth = window.innerWidth < 768 ? 330 : 520; 
                 currentScrollOffset += (direction * cardWidth);
                 
                 const maxScroll = getMaxScrollOffset();
