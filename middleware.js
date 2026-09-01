@@ -1,32 +1,27 @@
-import { NextResponse } from 'next/server';
-
 export const config = {
-  // This ensures the password only applies to the /portal page
-  matcher: ['/portal/:path*'],
+  // This tells Vercel to only run this script when someone visits /portal
+  matcher: ['/portal/:path*', '/portal'],
 };
 
-export function middleware(req) {
-  const basicAuth = req.headers.get('authorization');
-  const url = req.nextUrl;
+export default function middleware(request) {
+  const basicAuth = request.headers.get('authorization');
 
-  // The password logic
   if (basicAuth) {
     const authValue = basicAuth.split(' ')[1];
     const [user, pwd] = atob(authValue).split(':');
 
-    // Change "karnel" and "build2026" to whatever username and password you want
+    // Change "karnel" and "build2026" to your desired username and password
     if (user === 'karnel' && pwd === 'build2026') {
-      return NextResponse.next();
+      // Password is correct, allow them to see the page
+      return; 
     }
   }
 
-  url.pathname = '/api/auth';
-
-  // Force the browser to show a native Username/Password login box
-  return new NextResponse('Auth required', {
+  // If password is wrong or not entered, block them and show the login prompt
+  return new Response('Unauthorized: Access Denied', {
     status: 401,
     headers: {
-      'WWW-Authenticate': 'Basic realm="Secure Portal"',
+      'WWW-Authenticate': 'Basic realm="Karnel Homes Secure Portal"',
     },
   });
 }
