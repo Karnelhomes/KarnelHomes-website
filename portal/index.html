@@ -13,20 +13,18 @@
     --bg-light: #f8fafc;
     --glass-border: rgba(203, 213, 225, 0.5);
     --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    
     --color-ready: #f59e0b;
     --color-progress: #0ea5e9;
     --color-complete: #10b981;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-  
-  body { background: var(--bg-light); color: var(--text-main); padding: 20px; }
+  body { background: var(--bg-light); color: var(--text-main); padding: 20px; padding-bottom: 80px; }
 
   /* 3-Column Layout */
   .app-layout { display: flex; gap: 24px; max-width: 1600px; margin: 0 auto; align-items: flex-start; }
-  .left-sidebar { flex: 0 0 250px; position: sticky; top: 20px; display: flex; flex-direction: column; gap: 15px; }
-  .right-sidebar { flex: 0 0 250px; position: sticky; top: 20px; display: flex; flex-direction: column; gap: 15px; }
+  .left-sidebar { flex: 0 0 240px; position: sticky; top: 20px; display: flex; flex-direction: column; gap: 15px; }
+  .right-sidebar { flex: 0 0 280px; position: sticky; top: 20px; display: flex; flex-direction: column; gap: 15px; }
   .main-content { flex: 1; min-width: 0; }
 
   @media (max-width: 1100px) {
@@ -47,6 +45,11 @@
   .view-btn { padding: 8px 16px; border: none; background: transparent; font-weight: 600; font-size: 13px; border-radius: 6px; cursor: pointer; color: var(--text-muted); }
   .view-btn.active { background: #ffffff; color: var(--text-main); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
+  /* Project List Sidebar */
+  .project-list-item { padding: 10px 14px; font-size: 13px; font-weight: 600; color: var(--text-muted); border-radius: 8px; cursor: pointer; transition: 0.2s; word-break: break-word; }
+  .project-list-item:hover { background: #f1f5f9; color: var(--text-main); }
+  .project-list-item.active { background: var(--text-main); color: #fff; }
+
   /* Controls */
   input, select, textarea { font-size: 13px; padding: 10px 14px; border: 1px solid #cbd5e1; background: #fff; border-radius: 8px; outline: none; width: 100%; transition: 0.2s; }
   input:focus, textarea:focus { border-color: #94a3b8; }
@@ -56,22 +59,27 @@
   .btn-action-bar:hover { background: #cbd5e1; }
   .btn-delete { background: #fee2e2; color: #ef4444; padding: 8px 14px; font-size: 12px; }
   .btn-delete:hover { background: #fecaca; }
-
   .btn-primary { background: #0f172a; color: #fff; }
   .btn-primary:hover { background: #334155; }
-  .btn-success { background: var(--color-complete); color: #fff; }
+
+  /* Collapsible Directory & Progress Bar */
+  details > summary { list-style: none; cursor: pointer; user-select: none; }
+  details > summary::-webkit-details-marker { display: none; }
   
   .section-title { font-size: 14px; font-weight: 700; margin: 30px 0 15px 0; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; display: flex; align-items: center; }
   .btn-add-small { padding: 4px 10px; font-size: 11px; margin-left: 12px; background: #e2e8f0; color: #0f172a; border-radius: 6px; border: none; cursor: pointer; font-weight: 700; }
-  .btn-add-small:hover { background: #cbd5e1; }
+  
+  .progress-wrapper { width: 100%; background: #e2e8f0; border-radius: 10px; height: 10px; margin-bottom: 20px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--color-complete); transition: width 0.4s ease; }
+  .progress-text { font-size: 11px; font-weight: 800; color: var(--text-muted); text-align: right; margin-bottom: 5px; }
 
   /* Contractors */
-  .contractors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+  .contractors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; margin-top: 15px; }
   .contractor-card input { margin-bottom: 8px; padding: 8px; font-size: 12px; }
   .contractor-card .trade-title { font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; display: flex; justify-content: space-between; }
   .del-btn-icon { cursor: pointer; color: #ef4444; font-size: 14px; font-weight: bold; }
 
-  /* Tiles Grid & Drag-Drop */
+  /* Tiles Grid */
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
   .tile { display: flex; flex-direction: column; gap: 12px; position: relative; transition: 0.2s; cursor: grab; }
   .tile:active { cursor: grabbing; opacity: 0.9; transform: scale(0.98); }
@@ -96,17 +104,11 @@
   
   .doc-link-input { display: flex; gap: 5px; }
   .doc-btn { background: #e2e8f0; color: #0f172a; padding: 6px 10px; border-radius: 6px; text-decoration: none; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
-  
   .tile textarea { height: 50px; font-size: 12px; resize: none; padding: 8px; }
   
   .smart-btn { width: 100%; padding: 12px; margin-top: auto; font-size: 14px; font-weight: 700; border-radius: 8px; text-align: center; border: none; cursor: pointer; transition: 0.2s; }
   .btn-locked { background: transparent; color: var(--text-muted); border: 1px dashed #cbd5e1; cursor: not-allowed; }
 
-  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); font-weight: 600; }
-
-  .fab-container { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 10px; z-index: 100; }
-  .fab { background: #0f172a; color: white; border: none; border-radius: 50px; padding: 12px 20px; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; font-size: 13px; }
-  
   /* Checkbox Styles */
   .check-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f1f5f9; gap: 8px; transition: 0.2s; }
   .check-item:hover .chk-del { opacity: 1; }
@@ -119,16 +121,28 @@
   .modal-content { background: #fff; width: 100%; max-width: 400px; padding: 24px; border-radius: 12px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
   .modal-title { font-weight: 800; font-size: 16px; margin-bottom: 5px; text-transform: uppercase; }
   .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
+
 </style>
 </head>
 <body>
 
 <datalist id="rolodex-companies"></datalist>
 
-<!-- Add Job Modal -->
+<!-- Modals -->
+<div class="modal-overlay" id="modal-project">
+  <div class="modal-content">
+    <div class="modal-title" id="modal-project-title">Add New Project</div>
+    <input type="text" id="project-address-input" placeholder="Enter Project Address (e.g. 12 Smith St)">
+    <div class="modal-actions">
+      <button class="btn-delete" onclick="closeModals()">Cancel</button>
+      <button class="btn-primary" onclick="submitProjectModal()">Save Project</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal-job">
   <div class="modal-content">
-    <div class="modal-title">Add New Job Tile</div>
+    <div class="modal-title">Add Custom Job Tile</div>
     <input type="text" id="new-job-name" placeholder="Job Title (e.g. Pool Excavation)">
     <select id="new-job-owner">
       <option value="Site">Owner: Site</option>
@@ -143,7 +157,6 @@
   </div>
 </div>
 
-<!-- Add Trade Modal -->
 <div class="modal-overlay" id="modal-trade">
   <div class="modal-content">
     <div class="modal-title">Add New Trade</div>
@@ -158,14 +171,10 @@
   </div>
 </div>
 
-<div class="fab-container">
-  <button class="fab" onclick="createNewProject()">+ New Project</button>
-</div>
-
+<!-- Main App -->
 <div class="app-layout">
-  
-  <!-- LEFT COLUMN: Checklist -->
-  <aside class="left-sidebar card" id="sidebar-content"></aside>
+  <!-- LEFT COLUMN: Project Directory -->
+  <aside class="left-sidebar card" id="left-sidebar-content"></aside>
 
   <!-- CENTER COLUMN: Trades & Tiles -->
   <main class="main-content">
@@ -182,31 +191,34 @@
 
       <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;" id="project-controls">
         <select id="project-selector" onchange="switchProject(this.value)" style="width: auto; padding: 8px;"></select>
-        <button class="btn-action-bar" onclick="createNewProject()">+ New Project</button>
-        <button class="btn-action-bar" onclick="duplicateCurrentProject()">📋 Copy</button>
+        <button class="btn-action-bar" onclick="editProjectName()">✏️ Edit Name</button>
+        <button class="btn-action-bar" onclick="openProjectModal('NEW')">+ New Project</button>
+        <button class="btn-action-bar" onclick="openProjectModal('COPY')">📋 Copy</button>
         <button class="btn-action-bar" onclick="exportBackupData()">💾 Backup</button>
         <button class="btn-delete" onclick="deleteCurrentProject()">🗑️ Delete</button>
       </div>
     </div>
-
     <div id="portal-content"></div>
   </main>
 
-  <!-- RIGHT COLUMN: Location Details -->
+  <!-- RIGHT COLUMN: Location Details & Checklist -->
   <aside class="right-sidebar card" id="right-sidebar-content"></aside>
-
 </div>
 
 <script>
   // ==========================================
   // 1. SUPABASE CONNECTION DETAILS
   // ==========================================
-  // Replace these with your actual Supabase URL and Anon Key
   const SUPABASE_URL = 'https://giovxsxgkdilawyxuiqb.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_k9sU8tyILCmQTxAI36ufWQ__JsPNSRY';
   
-  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  let supabaseClient = null;
 
+  try {
+    if (SUPABASE_URL.startsWith('http')) {
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
+  } catch(e) { console.error("Supabase error:", e); }
 
   // ==========================================
   // 2. STATE & DEFAULT TEMPLATES
@@ -214,74 +226,55 @@
   const DEFAULT_CONTRACTORS = [
     { trade: "Certifier", company: "", contact: "", email: "" },
     { trade: "Architect", company: "", contact: "", email: "" },
-    { trade: "Plumber", company: "", contact: "", email: "" }
+    { trade: "Plumber", company: "", contact: "", email: "" },
+    { trade: "Electrician", company: "", contact: "", email: "" }
   ];
 
+  // Simplified to 1 Tile
   const MASTER_TEMPLATE = [
-    { id: 1, name: "CC / CDC Approval Received", owner: "Office", prereqs: [], status: "READY TO START", notes: "", date: "" },
-    { id: 2, name: "Send Arch Plans to Sandeep", owner: "Office", prereqs: [1], status: "LOCKED", notes: "", date: "" },
-    { id: 3, name: "Site Setup & Temp Fencing", owner: "Site", prereqs: [1], status: "LOCKED", notes: "", date: "" }
+    { id: 1, name: "CC / CDC Approval Received", owner: "Office", prereqs: [], status: "READY TO START", notes: "", date: "" }
   ];
 
-  let projects = JSON.parse(localStorage.getItem('karnel_data_live')) || {};
-  let currentProjectId = localStorage.getItem('karnel_active_live') || null;
+  let projects = JSON.parse(localStorage.getItem('karnel_data_final8')) || {};
+  let currentProjectId = localStorage.getItem('karnel_active_final8') || null;
   let rolodex = JSON.parse(localStorage.getItem('karnel_rolodex')) || [];
   let currentView = 'PROJECT'; 
   let draggedStepId = null;
-
+  let projectModalMode = 'NEW';
 
   // ==========================================
   // 3. CLOUD SYNC & LOCAL STORAGE LOGIC
   // ==========================================
   function saveState() {
-    localStorage.setItem('karnel_data_live', JSON.stringify(projects));
-    localStorage.setItem('karnel_active_live', currentProjectId);
+    localStorage.setItem('karnel_data_final8', JSON.stringify(projects));
+    localStorage.setItem('karnel_active_final8', currentProjectId);
     localStorage.setItem('karnel_rolodex', JSON.stringify([...new Set(rolodex)])); 
     updateRolodexDatalist();
-    
-    // Automatically push updates to Supabase
     syncToSupabase();
   }
 
   async function syncToSupabase() {
-    if (!currentProjectId || !projects[currentProjectId]) return;
+    if (!supabaseClient || !currentProjectId || !projects[currentProjectId]) return;
     try {
-      await supabaseClient.from('karnel_projects').upsert({ 
-        id: currentProjectId, 
-        name: projects[currentProjectId].name, 
-        data: projects[currentProjectId] 
-      });
-    } catch (e) {
-      console.error("Cloud Sync Failed", e);
-    }
+      await supabaseClient.from('karnel_projects').upsert({ id: currentProjectId, name: projects[currentProjectId].name, data: projects[currentProjectId] });
+    } catch (e) {}
   }
 
   async function loadFromCloud() {
+    if (!supabaseClient) return;
     try {
       const { data } = await supabaseClient.from('karnel_projects').select('*');
       if (data && data.length > 0) {
         data.forEach(row => { projects[row.id] = row.data; });
         updateRolodexDatalist();
-        
-        // Ensure a current project is selected if none exists locally
-        if (!currentProjectId || !projects[currentProjectId]) {
-          currentProjectId = data[0].id;
-        }
+        if (!currentProjectId || !projects[currentProjectId]) currentProjectId = data[0].id;
         render();
       }
-      
-      // Listen for live Realtime updates from other devices
-      supabaseClient.channel('karnel-live')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'karnel_projects' }, payload => {
+      supabaseClient.channel('karnel-live').on('postgres_changes', { event: '*', schema: 'public', table: 'karnel_projects' }, payload => {
           projects[payload.new.id] = payload.new.data;
-          if (payload.new.id === currentProjectId || currentView === 'DAY') {
-            render();
-          }
-        }).subscribe();
-        
-    } catch (e) {
-      console.error("Error loading from cloud", e);
-    }
+          if (payload.new.id === currentProjectId || currentView === 'DAY') render();
+      }).subscribe();
+    } catch (e) {}
   }
 
   // ==========================================
@@ -306,55 +299,53 @@
     dlAnchorElem.remove();
   }
 
-  function createNewProject() {
-    const name = prompt("Enter New Project Address (e.g. 12 Smith St):");
-    if (!name) return;
-    const id = 'proj_' + Date.now();
-    projects[id] = { 
-      id: id, name: name, 
-      contractors: JSON.parse(JSON.stringify(DEFAULT_CONTRACTORS)), 
-      steps: JSON.parse(JSON.stringify(MASTER_TEMPLATE)),
-      checklist: [],
-      projectLocationLink: "" 
-    };
-    currentProjectId = id;
-    setView('PROJECT');
-    saveState();
-    render();
+  /* EDIT PROJECT NAME */
+  function editProjectName() {
+    if (!currentProjectId || !projects[currentProjectId]) return alert("No active project to edit.");
+    const currentName = projects[currentProjectId].name;
+    const newName = prompt("Edit Project Address:", currentName);
+    if (newName && newName.trim() !== "") {
+      projects[currentProjectId].name = newName.trim();
+      saveState();
+      render();
+    }
   }
 
-  function duplicateCurrentProject() {
-    if (!currentProjectId || !projects[currentProjectId]) return alert("No active project to copy.");
-    const name = prompt("Enter Address for the Copied Project:");
-    if (!name) return;
-    
-    const original = projects[currentProjectId];
-    const newId = 'proj_' + Date.now();
-    
-    const copiedSteps = original.steps.map(step => ({
-      ...step, status: step.prereqs.length === 0 ? "READY TO START" : "LOCKED", notes: "", date: ""
-    }));
+  /* PROJECT MODALS */
+  function openProjectModal(mode) {
+    if (mode === 'COPY' && (!currentProjectId || !projects[currentProjectId])) return alert("No active project to copy.");
+    projectModalMode = mode;
+    document.getElementById('modal-project-title').innerText = mode === 'NEW' ? 'Create New Project' : 'Copy Current Project';
+    document.getElementById('project-address-input').value = '';
+    document.getElementById('modal-project').style.display = 'flex';
+    document.getElementById('project-address-input').focus();
+  }
 
-    projects[newId] = {
-      id: newId, name: name,
-      contractors: JSON.parse(JSON.stringify(original.contractors)),
-      steps: copiedSteps,
-      checklist: [],
-      projectLocationLink: ""
-    };
+  function submitProjectModal() {
+    const name = document.getElementById('project-address-input').value.trim();
+    if (!name) return alert("Please enter an address.");
     
-    currentProjectId = newId;
+    if (projectModalMode === 'NEW') {
+      const id = 'proj_' + Date.now();
+      projects[id] = { id: id, name: name, contractors: JSON.parse(JSON.stringify(DEFAULT_CONTRACTORS)), steps: JSON.parse(JSON.stringify(MASTER_TEMPLATE)), checklist: [], projectLocationLink: "" };
+      currentProjectId = id;
+    } else if (projectModalMode === 'COPY') {
+      const original = projects[currentProjectId];
+      const newId = 'proj_' + Date.now();
+      const copiedSteps = original.steps.map(step => ({ ...step, status: step.prereqs.length === 0 ? "READY TO START" : "LOCKED", notes: "", date: "", docLink: "" }));
+      projects[newId] = { id: newId, name: name, contractors: JSON.parse(JSON.stringify(original.contractors)), steps: copiedSteps, checklist: [], projectLocationLink: "" };
+      currentProjectId = newId;
+    }
     setView('PROJECT');
     saveState();
+    closeModals();
     render();
   }
 
   function deleteCurrentProject() {
     if (!currentProjectId) return;
     if (confirm("Are you sure you want to delete this project permanently?")) {
-      // Also delete from Supabase
-      supabaseClient.from('karnel_projects').delete().eq('id', currentProjectId).then();
-      
+      if(supabaseClient) supabaseClient.from('karnel_projects').delete().eq('id', currentProjectId).then();
       delete projects[currentProjectId];
       currentProjectId = Object.keys(projects)[0] || null;
       saveState();
@@ -362,8 +353,7 @@
     }
   }
 
-  function switchProject(id) { currentProjectId = id; saveState(); render(); }
-
+  function switchProject(id) { currentProjectId = id; currentView = 'PROJECT'; saveState(); render(); }
   function setView(viewMode) {
     currentView = viewMode;
     document.getElementById('view-project-btn').className = `view-btn ${viewMode === 'PROJECT' ? 'active' : ''}`;
@@ -373,17 +363,17 @@
   }
 
   function closeModals() {
+    document.getElementById('modal-project').style.display = 'none';
     document.getElementById('modal-job').style.display = 'none';
     document.getElementById('modal-trade').style.display = 'none';
   }
 
+  /* MODALS FOR JOBS & TRADES */
   function openJobModal() {
     if (!currentProjectId) return alert("Create a project first!");
     const prereqSelect = document.getElementById('new-job-prereq');
     prereqSelect.innerHTML = '<option value="0">None (Start Immediately)</option>';
-    projects[currentProjectId].steps.forEach(s => {
-      prereqSelect.innerHTML += `<option value="${s.id}">Wait for: ${s.name}</option>`;
-    });
+    projects[currentProjectId].steps.forEach(s => { prereqSelect.innerHTML += `<option value="${s.id}">Wait for: ${s.name}</option>`; });
     document.getElementById('new-job-name').value = '';
     document.getElementById('modal-job').style.display = 'flex';
   }
@@ -392,13 +382,10 @@
     const name = document.getElementById('new-job-name').value;
     const owner = document.getElementById('new-job-owner').value;
     const prereqId = parseInt(document.getElementById('new-job-prereq').value);
-    
     if (!name) return alert("Please enter a job title");
-
     const project = projects[currentProjectId];
     const newId = project.steps.length > 0 ? Math.max(...project.steps.map(s => s.id)) + 1 : 1;
     const prereqs = prereqId === 0 ? [] : [prereqId];
-
     project.steps.push({ id: newId, name: name, owner: owner, prereqs: prereqs, status: "LOCKED", notes: "", date: "" });
     evaluateDependencies(project.steps);
     saveState();
@@ -425,12 +412,7 @@
   function addTrade() {
     const trade = document.getElementById('new-trade-role').value;
     if (!trade) return alert("Please enter a Trade / Role");
-    projects[currentProjectId].contractors.push({
-      trade: trade,
-      company: document.getElementById('new-trade-company').value,
-      contact: document.getElementById('new-trade-contact').value,
-      email: document.getElementById('new-trade-email').value
-    });
+    projects[currentProjectId].contractors.push({ trade: trade, company: document.getElementById('new-trade-company').value, contact: document.getElementById('new-trade-contact').value, email: document.getElementById('new-trade-email').value });
     saveState();
     closeModals();
     render();
@@ -447,7 +429,6 @@
   function updateField(projectId, type, id, field, value) {
     const project = projects[projectId];
     if (!project) return;
-    
     if (type === 'contractor') {
       project.contractors[id][field] = value;
       if (field === 'company' && value.trim()) rolodex.push(value.trim());
@@ -461,39 +442,27 @@
       project.projectLocationLink = value;
     }
     saveState();
-    render();
+    render(); 
   }
 
-  /* DRAG AND DROP LOGIC */
-  function dragStart(event, stepId) {
-    draggedStepId = stepId;
-    event.dataTransfer.effectAllowed = 'move';
-  }
-  function dragOver(event, el) {
-    event.preventDefault();
-    el.classList.add('drag-over');
-  }
-  function dragLeave(event, el) {
-    el.classList.remove('drag-over');
-  }
+  /* DRAG AND DROP */
+  function dragStart(event, stepId) { draggedStepId = stepId; event.dataTransfer.effectAllowed = 'move'; }
+  function dragOver(event, el) { event.preventDefault(); el.classList.add('drag-over'); }
+  function dragLeave(event, el) { el.classList.remove('drag-over'); }
   function drop(event, targetId, el) {
     event.preventDefault();
     el.classList.remove('drag-over');
-    
     if (draggedStepId === targetId) return;
-
     const project = projects[currentProjectId];
     const fromIndex = project.steps.findIndex(s => s.id === draggedStepId);
     const toIndex = project.steps.findIndex(s => s.id === targetId);
-
     const movedStep = project.steps.splice(fromIndex, 1)[0];
     project.steps.splice(toIndex, 0, movedStep);
-
     saveState();
     render();
   }
 
-  /* CHECKLIST LOGIC */
+  /* CHECKLIST */
   function addChecklistItem() {
     const input = document.getElementById('new-check-text');
     if(!input.value || !currentProjectId) return;
@@ -538,9 +507,7 @@
       <div class="tile card ${statusClass}" draggable="true" ondragstart="dragStart(event, ${step.id})" ondragover="dragOver(event, this)" ondragleave="dragLeave(event, this)" ondrop="drop(event, ${step.id}, this)">
         ${projectTagHtml}
         <div class="tile-header">
-          <span class="step-badge ${badgeClass}">
-            ${step.status}
-          </span>
+          <span class="step-badge ${badgeClass}">${step.status}</span>
           <div style="display:flex; gap:8px; align-items:center;">
             <span style="font-size:11px; font-weight:700; color:#94a3b8;">${step.owner}</span>
             <span class="del-btn-icon" onclick="removeJob('${projectId}', ${step.id})" title="Delete Job">×</span>
@@ -553,6 +520,10 @@
         <div class="tile-meta">
           <input type="date" value="${step.date}" onchange="updateField('${projectId}', 'step', ${step.id}, 'date', this.value)">
         </div>
+        <div class="doc-link-input">
+          <input type="url" placeholder="Paste doc/invoice link..." value="${step.docLink || ''}" onchange="updateField('${projectId}', 'step', ${step.id}, 'docLink', this.value)">
+          ${step.docLink ? `<a href="${step.docLink}" target="_blank" class="doc-btn">📂 View</a>` : ''}
+        </div>
         <textarea placeholder="Quick notes..." onchange="updateField('${projectId}', 'step', ${step.id}, 'notes', this.value)">${step.notes}</textarea>
         ${smartButton}
       </div>
@@ -560,11 +531,12 @@
   }
 
   function render() {
-    const selector = document.getElementById("project-selector");
-    const sidebar = document.getElementById("sidebar-content");
+    const leftSidebar = document.getElementById("left-sidebar-content");
     const rightSidebar = document.getElementById("right-sidebar-content");
     const content = document.getElementById("portal-content");
+    const selector = document.getElementById("project-selector");
 
+    // Populate Selector Dropdown
     selector.innerHTML = "";
     Object.keys(projects).forEach(id => {
       const opt = document.createElement("option");
@@ -573,17 +545,28 @@
       selector.appendChild(opt);
     });
 
+    // --- RENDER LEFT SIDEBAR (Project List) ---
+    let leftHtml = `<div class="section-title" style="margin-top:0;">📂 Projects</div><div style="display:flex; flex-direction:column; gap:8px;">`;
+    if (Object.keys(projects).length === 0) {
+      leftHtml += `<div style="font-size:12px; color:var(--text-muted);">No projects yet.</div>`;
+    } else {
+      Object.values(projects).forEach(p => {
+        const isActive = p.id === currentProjectId && currentView === 'PROJECT';
+        leftHtml += `<div class="project-list-item ${isActive ? 'active' : ''}" onclick="switchProject('${p.id}')">${p.name}</div>`;
+      });
+    }
+    leftHtml += `</div>`;
+    leftSidebar.innerHTML = leftHtml;
+
     if (Object.keys(projects).length === 0) {
       content.innerHTML = `<div class="empty-state">No Active Projects. Click + New Project to begin.</div>`;
-      sidebar.style.display = "none";
       rightSidebar.style.display = "none";
       return;
     }
 
-    // --- MY DAY VIEW ---
+    // --- RENDER MY DAY VIEW ---
     if (currentView === 'DAY') {
-      sidebar.style.display = "flex";
-      rightSidebar.style.display = "none"; 
+      rightSidebar.style.display = "flex";
       
       let sideHtml = `<div style="font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; color: var(--text-muted);">📋 Global Minor Tasks</div>`;
       let pendingCount = 0;
@@ -603,7 +586,7 @@
         }
       });
       if(pendingCount === 0) sideHtml += `<div style="font-size: 12px; color: var(--text-muted); margin-top: 10px;">All minor tasks are clear!</div>`;
-      sidebar.innerHTML = sideHtml;
+      rightSidebar.innerHTML = sideHtml;
 
       let html = `<div class="section-title" style="margin-top:0;">☀️ Today's Active Tasks</div><div class="grid">`;
       let activeTaskCount = 0;
@@ -622,38 +605,16 @@
       return;
     }
 
-    // --- PROJECT VIEW ---
+    // --- RENDER PROJECT VIEW ---
     if (!currentProjectId || !projects[currentProjectId]) return;
     const project = projects[currentProjectId];
     
     evaluateDependencies(project.steps);
 
-    // Left Sidebar (Checklist)
-    sidebar.style.display = "flex";
-    let sideHtml = `
-      <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px;">📋 Minor Tasks</div>
-      <input type="text" id="new-check-text" placeholder="Add task & press Enter..." onkeypress="if(event.key==='Enter') addChecklistItem()" style="padding: 8px; font-size: 12px; margin-bottom: 10px;">
-      <div style="display: flex; flex-direction: column;">
-    `;
-    (project.checklist || []).forEach(item => {
-      const isDone = item.status === 'COMPLETED';
-      sideHtml += `
-        <div class="check-item" style="${isDone ? 'opacity: 0.5;' : ''}">
-           <input type="checkbox" ${isDone ? 'checked' : ''} onchange="updateChecklistStatus('${project.id}', ${item.id}, this.checked ? 'COMPLETED' : 'PENDING')">
-           <div class="check-text" style="${isDone ? 'text-decoration: line-through;' : ''}">${item.text}</div>
-           <button class="chk-del" onclick="deleteChecklistItem('${project.id}', ${item.id})">×</button>
-        </div>
-      `;
-    });
-    sideHtml += `</div>`;
-    sidebar.innerHTML = sideHtml;
-
-    // Right Sidebar (Project Location)
+    // Right Sidebar (Location Link + Checklist)
     rightSidebar.style.display = "flex";
     let rightHtml = `
-      <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 15px;">
-        📍 Project Details
-      </div>
+      <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 15px;">📍 Project Details</div>
       <div style="display: flex; flex-direction: column; gap: 8px;">
         <div style="font-size: 13px; font-weight: 700;">Location Link</div>
     `;
@@ -666,21 +627,47 @@
         </div>
       `;
     } else {
-      rightHtml += `
-        <input type="url" placeholder="Paste map or folder link..." onchange="updateField('${project.id}', 'locationLink', null, null, this.value)">
-      `;
+      rightHtml += `<input type="url" placeholder="Paste map or folder link..." onchange="updateField('${project.id}', 'locationLink', null, null, this.value)">`;
     }
     
+    rightHtml += `
+      </div>
+      <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-top: 30px; margin-bottom: 5px;">📋 Minor Tasks</div>
+      <input type="text" id="new-check-text" placeholder="Add task & press Enter..." onkeypress="if(event.key==='Enter') addChecklistItem()" style="padding: 8px; font-size: 12px; margin-bottom: 10px;">
+      <div style="display: flex; flex-direction: column;">
+    `;
+    (project.checklist || []).forEach(item => {
+      const isDone = item.status === 'COMPLETED';
+      rightHtml += `
+        <div class="check-item" style="${isDone ? 'opacity: 0.5;' : ''}">
+           <input type="checkbox" ${isDone ? 'checked' : ''} onchange="updateChecklistStatus('${project.id}', ${item.id}, this.checked ? 'COMPLETED' : 'PENDING')">
+           <div class="check-text" style="${isDone ? 'text-decoration: line-through;' : ''}">${item.text}</div>
+           <button class="chk-del" onclick="deleteChecklistItem('${project.id}', ${item.id})">×</button>
+        </div>
+      `;
+    });
     rightHtml += `</div>`;
     rightSidebar.innerHTML = rightHtml;
 
+    // Calculate Progress
+    const totalSteps = project.steps.length;
+    const completedSteps = project.steps.filter(s => s.status === 'COMPLETE').length;
+    const progressPercent = totalSteps === 0 ? 0 : Math.round((completedSteps / totalSteps) * 100);
+
     // Center Content (Trades & Tiles)
     let html = `
-      <div class="section-title" style="margin-top: 0;">
-        PROJECT DIRECTORY
-        <button class="btn-add-small" onclick="openTradeModal()">+ Add Trade</button>
+      <div class="progress-text">${progressPercent}% COMPLETE</div>
+      <div class="progress-wrapper">
+        <div class="progress-fill" style="width: ${progressPercent}%;"></div>
       </div>
-      <div class="contractors-grid">`;
+
+      <details class="contractors-collapse">
+        <summary class="section-title" style="margin-top: 0; outline: none;">
+          ▶ PROJECT DIRECTORY (Click to Expand)
+          <button class="btn-add-small" onclick="openTradeModal(); event.preventDefault();">+ Add Trade</button>
+        </summary>
+        <div class="contractors-grid">`;
+    
     project.contractors.forEach((c, i) => {
       html += `
         <div class="card contractor-card">
@@ -696,7 +683,8 @@
         </div>
       `;
     });
-    html += `</div>
+    
+    html += `</div></details>
       <div class="section-title">
         WORKFLOW TILES
         <button class="btn-add-small" onclick="openJobModal()">+ Add Job</button>
@@ -710,7 +698,7 @@
   // --- INITIALIZE APP ---
   updateRolodexDatalist();
   render();
-  loadFromCloud(); // Triggers the live database connection and Realtime listeners
+  loadFromCloud();
 
 </script>
 </body>
