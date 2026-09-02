@@ -23,7 +23,7 @@
   
   body { background: var(--bg-light); color: var(--text-main); padding: 20px; }
 
-  /* New 3-Column Layout */
+  /* 3-Column Layout */
   .app-layout { display: flex; gap: 24px; max-width: 1600px; margin: 0 auto; align-items: flex-start; }
   .left-sidebar { flex: 0 0 250px; position: sticky; top: 20px; display: flex; flex-direction: column; gap: 15px; }
   .right-sidebar { flex: 0 0 250px; position: sticky; top: 20px; display: flex; flex-direction: column; gap: 15px; }
@@ -94,7 +94,6 @@
   .tile-meta { display: flex; gap: 8px; }
   .tile-meta input[type="date"] { padding: 6px 10px; font-size: 11px; }
   
-  /* Link Inputs inside tiles */
   .doc-link-input { display: flex; gap: 5px; }
   .doc-btn { background: #e2e8f0; color: #0f172a; padding: 6px 10px; border-radius: 6px; text-decoration: none; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
   
@@ -104,6 +103,9 @@
   .btn-locked { background: transparent; color: var(--text-muted); border: 1px dashed #cbd5e1; cursor: not-allowed; }
 
   .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); font-weight: 600; }
+
+  .fab-container { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 10px; z-index: 100; }
+  .fab { background: #0f172a; color: white; border: none; border-radius: 50px; padding: 12px 20px; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; font-size: 13px; }
   
   /* Checkbox Styles */
   .check-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f1f5f9; gap: 8px; transition: 0.2s; }
@@ -117,7 +119,6 @@
   .modal-content { background: #fff; width: 100%; max-width: 400px; padding: 24px; border-radius: 12px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
   .modal-title { font-weight: 800; font-size: 16px; margin-bottom: 5px; text-transform: uppercase; }
   .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
-
 </style>
 </head>
 <body>
@@ -157,12 +158,14 @@
   </div>
 </div>
 
+<div class="fab-container">
+  <button class="fab" onclick="createNewProject()">+ New Project</button>
+</div>
+
 <div class="app-layout">
   
   <!-- LEFT COLUMN: Checklist -->
-  <aside class="left-sidebar card" id="sidebar-content">
-    <!-- Checklist renders here -->
-  </aside>
+  <aside class="left-sidebar card" id="sidebar-content"></aside>
 
   <!-- CENTER COLUMN: Trades & Tiles -->
   <main class="main-content">
@@ -190,13 +193,24 @@
   </main>
 
   <!-- RIGHT COLUMN: Location Details -->
-  <aside class="right-sidebar card" id="right-sidebar-content">
-    <!-- Links render here -->
-  </aside>
+  <aside class="right-sidebar card" id="right-sidebar-content"></aside>
 
 </div>
 
 <script>
+  // ==========================================
+  // 1. SUPABASE CONNECTION DETAILS
+  // ==========================================
+  // Replace these with your actual Supabase URL and Anon Key
+  const SUPABASE_URL = 'https://giovxsxgkdilawyxuiqb.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_k9sU8tyILCmQTxAI36ufWQ__JsPNSRY';
+  
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+
+  // ==========================================
+  // 2. STATE & DEFAULT TEMPLATES
+  // ==========================================
   const DEFAULT_CONTRACTORS = [
     { trade: "Certifier", company: "", contact: "", email: "" },
     { trade: "Architect", company: "", contact: "", email: "" },
@@ -209,22 +223,70 @@
     { id: 3, name: "Site Setup & Temp Fencing", owner: "Site", prereqs: [1], status: "LOCKED", notes: "", date: "" }
   ];
 
-  // Upgraded the local storage key so you get a fresh slate without the old documents cluttering it
-  let projects = JSON.parse(localStorage.getItem('karnel_data_final6')) || {};
-  let currentProjectId = localStorage.getItem('karnel_active_final6') || null;
+  let projects = JSON.parse(localStorage.getItem('karnel_data_live')) || {};
+  let currentProjectId = localStorage.getItem('karnel_active_live') || null;
   let rolodex = JSON.parse(localStorage.getItem('karnel_rolodex')) || [];
   let currentView = 'PROJECT'; 
-
-  // --- DRAG & DROP STATE ---
   let draggedStepId = null;
 
+
+  // ==========================================
+  // 3. CLOUD SYNC & LOCAL STORAGE LOGIC
+  // ==========================================
   function saveState() {
-    localStorage.setItem('karnel_data_final6', JSON.stringify(projects));
-    localStorage.setItem('karnel_active_final6', currentProjectId);
+    localStorage.setItem('karnel_data_live', JSON.stringify(projects));
+    localStorage.setItem('karnel_active_live', currentProjectId);
     localStorage.setItem('karnel_rolodex', JSON.stringify([...new Set(rolodex)])); 
     updateRolodexDatalist();
+    
+    // Automatically push updates to Supabase
+    syncToSupabase();
   }
 
+  async function syncToSupabase() {
+    if (!currentProjectId || !projects[currentProjectId]) return;
+    try {
+      await supabaseClient.from('karnel_projects').upsert({ 
+        id: currentProjectId, 
+        name: projects[currentProjectId].name, 
+        data: projects[currentProjectId] 
+      });
+    } catch (e) {
+      console.error("Cloud Sync Failed", e);
+    }
+  }
+
+  async function loadFromCloud() {
+    try {
+      const { data } = await supabaseClient.from('karnel_projects').select('*');
+      if (data && data.length > 0) {
+        data.forEach(row => { projects[row.id] = row.data; });
+        updateRolodexDatalist();
+        
+        // Ensure a current project is selected if none exists locally
+        if (!currentProjectId || !projects[currentProjectId]) {
+          currentProjectId = data[0].id;
+        }
+        render();
+      }
+      
+      // Listen for live Realtime updates from other devices
+      supabaseClient.channel('karnel-live')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'karnel_projects' }, payload => {
+          projects[payload.new.id] = payload.new.data;
+          if (payload.new.id === currentProjectId || currentView === 'DAY') {
+            render();
+          }
+        }).subscribe();
+        
+    } catch (e) {
+      console.error("Error loading from cloud", e);
+    }
+  }
+
+  // ==========================================
+  // 4. CORE APP FUNCTIONS
+  // ==========================================
   function updateRolodexDatalist() {
     const list = document.getElementById('rolodex-companies');
     list.innerHTML = '';
@@ -253,7 +315,7 @@
       contractors: JSON.parse(JSON.stringify(DEFAULT_CONTRACTORS)), 
       steps: JSON.parse(JSON.stringify(MASTER_TEMPLATE)),
       checklist: [],
-      projectLocationLink: "" // Clean, singular link property
+      projectLocationLink: "" 
     };
     currentProjectId = id;
     setView('PROJECT');
@@ -278,7 +340,7 @@
       contractors: JSON.parse(JSON.stringify(original.contractors)),
       steps: copiedSteps,
       checklist: [],
-      projectLocationLink: "" // Blank slate for the new project
+      projectLocationLink: ""
     };
     
     currentProjectId = newId;
@@ -290,6 +352,9 @@
   function deleteCurrentProject() {
     if (!currentProjectId) return;
     if (confirm("Are you sure you want to delete this project permanently?")) {
+      // Also delete from Supabase
+      supabaseClient.from('karnel_projects').delete().eq('id', currentProjectId).then();
+      
       delete projects[currentProjectId];
       currentProjectId = Object.keys(projects)[0] || null;
       saveState();
@@ -393,7 +458,6 @@
         if (field === 'status') evaluateDependencies(project.steps);
       }
     } else if (type === 'locationLink') {
-      // Direct update to the project location property
       project.projectLocationLink = value;
     }
     saveState();
@@ -474,7 +538,9 @@
       <div class="tile card ${statusClass}" draggable="true" ondragstart="dragStart(event, ${step.id})" ondragover="dragOver(event, this)" ondragleave="dragLeave(event, this)" ondrop="drop(event, ${step.id}, this)">
         ${projectTagHtml}
         <div class="tile-header">
-          <span class="step-badge ${badgeClass}">${step.status}</span>
+          <span class="step-badge ${badgeClass}">
+            ${step.status}
+          </span>
           <div style="display:flex; gap:8px; align-items:center;">
             <span style="font-size:11px; font-weight:700; color:#94a3b8;">${step.owner}</span>
             <span class="del-btn-icon" onclick="removeJob('${projectId}', ${step.id})" title="Delete Job">×</span>
@@ -487,10 +553,6 @@
         <div class="tile-meta">
           <input type="date" value="${step.date}" onchange="updateField('${projectId}', 'step', ${step.id}, 'date', this.value)">
         </div>
-        <div class="doc-link-input">
-          <input type="url" placeholder="Paste doc/invoice link..." value="${step.docLink || ''}" onchange="updateField('${projectId}', 'step', ${step.id}, 'docLink', this.value)">
-          ${step.docLink ? `<a href="${step.docLink}" target="_blank" class="doc-btn">📂 View</a>` : ''}
-        </div>
         <textarea placeholder="Quick notes..." onchange="updateField('${projectId}', 'step', ${step.id}, 'notes', this.value)">${step.notes}</textarea>
         ${smartButton}
       </div>
@@ -498,7 +560,6 @@
   }
 
   function render() {
-    updateRolodexDatalist();
     const selector = document.getElementById("project-selector");
     const sidebar = document.getElementById("sidebar-content");
     const rightSidebar = document.getElementById("right-sidebar-content");
@@ -597,7 +658,6 @@
         <div style="font-size: 13px; font-weight: 700;">Location Link</div>
     `;
 
-    // Smart link button logic
     if (project.projectLocationLink) {
       rightHtml += `
         <div style="display: flex; gap: 8px; align-items: center;">
@@ -647,8 +707,11 @@
     content.innerHTML = html;
   }
 
+  // --- INITIALIZE APP ---
   updateRolodexDatalist();
   render();
+  loadFromCloud(); // Triggers the live database connection and Realtime listeners
+
 </script>
 </body>
 </html>
