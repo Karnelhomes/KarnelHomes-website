@@ -85,6 +85,12 @@
 
   .card { background: var(--bg-card); border-radius: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-soft); padding: 20px; }
   
+  /* Collapsible Sections */
+  details > summary { list-style: none; cursor: pointer; user-select: none; }
+  details > summary::-webkit-details-marker { display: none; }
+  .chevron { display: inline-block; transition: transform 0.2s; font-size: 10px; color: var(--text-muted); }
+  details:not([open]) .chevron { transform: rotate(-90deg); }
+  
   .section-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between; }
   
   /* Progress Bar */
@@ -93,7 +99,7 @@
   .progress-text { font-size: 12px; font-weight: 700; color: var(--text-muted); }
 
   /* Workflow Tiles (Clearer Hierarchy) */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; margin-top: 16px; }
   .tile { display: flex; flex-direction: column; gap: 12px; position: relative; transition: 0.2s; cursor: grab; background: #fff; border-radius: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-soft); padding: 16px; }
   
   /* Tile States - Making them instantly recognizable */
@@ -123,7 +129,7 @@
   .btn-success { background: var(--color-complete); color: #fff; }
 
   /* Contractors & Checklists */
-  .contractors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; margin-bottom: 32px; }
+  .contractors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; margin-bottom: 16px; margin-top: 16px; }
   .trade-title { font-weight: 800; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; display: flex; justify-content: space-between; }
   
   .check-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9; gap: 12px; }
@@ -776,7 +782,9 @@
         </div>
       </div>
       <div>
-        <div class="progress-text">${progressPercent}% Workflow Completed</div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+          <div class="progress-text">${progressPercent}% Workflow Completed</div>
+        </div>
         <div class="progress-wrapper"><div class="progress-fill" style="width: ${progressPercent}%;"></div></div>
       </div>
     `;
@@ -820,11 +828,15 @@
 
     // Center Content (Trades & Tiles)
     let html = `
-      <div class="section-title" style="margin-top: 0;">
-        PROJECT DIRECTORY / TRADES
-        <button class="btn-add-small" onclick="openTradeModal();">+ Add Trade</button>
-      </div>
-      <div class="contractors-grid">`;
+      <details open>
+        <summary class="section-title" style="margin-top: 0;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="chevron">▼</span> PROJECT DIRECTORY / TRADES
+          </div>
+          <button class="btn-add-small" onclick="event.preventDefault(); openTradeModal();">+ Add Trade</button>
+        </summary>
+        <div class="contractors-grid">`;
+        
     project.contractors.forEach((c, i) => {
       html += `
         <div class="card" style="padding: 16px;">
@@ -838,14 +850,19 @@
       `;
     });
     
-    html += `</div>
-      <div class="section-title" style="margin-top: 32px; border-top: 1px solid var(--border-soft); padding-top: 32px;">
-        WORKFLOW SEQUENCE
-        <button class="btn-add-small" onclick="openJobModal()">+ Add Job</button>
-      </div>
-      <div class="grid">`;
+    html += `</div></details>
+      <details open>
+        <summary class="section-title" style="margin-top: 16px; border-top: 1px solid var(--border-soft); padding-top: 24px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="chevron">▼</span> WORKFLOW SEQUENCE
+          </div>
+          <button class="btn-add-small" onclick="event.preventDefault(); openJobModal();">+ Add Job</button>
+        </summary>
+        <div class="grid">`;
+        
     project.steps.forEach(step => { html += generateTileHTML(step, project.id); });
-    html += `</div>`;
+    html += `</div></details>`;
+    
     content.innerHTML = html;
   }
 
