@@ -7,157 +7,155 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-  /* MODERN SAAS COLOR PALETTE & VARIABLES */
+  /* MODERN, HIGH-CONTRAST SAAS PALETTE */
   :root {
-    --text-main: #111827;
-    --text-muted: #6b7280;
-    --bg-page: #f3f4f6;
+    --nav-bg: #0f172a;        /* Deep Slate for Sidebar */
+    --nav-text: #94a3b8;
+    --nav-active: #ffffff;
+    --nav-hover: #1e293b;
+    
+    --bg-page: #f8fafc;       /* Light gray workspace */
     --bg-card: #ffffff;
+    
+    --text-main: #0f172a;
+    --text-muted: #64748b;
     
     --primary: #4f46e5;
     --primary-hover: #4338ca;
-    --primary-light: #e0e7ff;
     
-    --border-soft: #e5e7eb;
+    --border-soft: #e2e8f0;
     
-    /* Modern diffused shadows */
-    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
-    
+    --color-locked-bg: #f1f5f9;
     --color-ready: #f59e0b;
-    --color-progress: #0ea5e9;
+    --color-progress: #3b82f6;
     --color-complete: #10b981;
+
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif; }
-  body { background: var(--bg-page); color: var(--text-main); padding: 20px; padding-bottom: 80px; -webkit-font-smoothing: antialiased; }
-
-  /* 3-Column Layout */
-  .app-layout { display: flex; gap: 24px; max-width: 1600px; margin: 0 auto; align-items: flex-start; }
-  .left-sidebar { flex: 0 0 260px; position: sticky; top: 20px; display: flex; flex-direction: column; gap: 16px; }
-  .right-sidebar { flex: 0 0 300px; position: sticky; top: 20px; display: flex; flex-direction: column; gap: 16px; }
-  .main-content { flex: 1; min-width: 0; }
-
-  @media (max-width: 1100px) {
-    .app-layout { flex-wrap: wrap; }
-    .right-sidebar { flex: 1 1 100%; position: static; }
-  }
-  @media (max-width: 900px) {
-    .app-layout { flex-direction: column; }
-    .left-sidebar { position: static; width: 100%; }
-  }
-
-  /* Clean, Borderless Cards */
-  .card { background: var(--bg-card); border-radius: 16px; box-shadow: var(--shadow-card); padding: 20px; transition: box-shadow 0.2s ease; border: 1px solid rgba(255,255,255,0.1); }
-  .card:hover { box-shadow: var(--shadow-hover); }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
   
-  /* Top Navigation */
-  .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 20px; background: var(--bg-card); padding: 16px 24px; border-radius: 16px; box-shadow: var(--shadow-card); }
-  .logo { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; color: var(--text-main); }
+  /* App Shell */
+  body { background: var(--bg-page); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
   
-  /* Pill-shaped View Toggles */
-  .view-toggle { display: flex; background: #f3f4f6; border-radius: 999px; padding: 4px; gap: 4px; }
-  .view-btn { padding: 8px 16px; border: none; background: transparent; font-weight: 600; font-size: 13px; border-radius: 999px; cursor: pointer; color: var(--text-muted); transition: all 0.2s; }
-  .view-btn:hover { color: var(--text-main); }
-  .view-btn.active { background: #ffffff; color: var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+  .app-layout { display: flex; flex: 1; overflow: hidden; }
+  
+  /* LEFT SIDEBAR (Dark Navigation) */
+  .left-sidebar { width: 260px; background: var(--nav-bg); color: var(--nav-text); display: flex; flex-direction: column; border-right: 1px solid #1e293b; z-index: 10; }
+  .sidebar-header { padding: 24px 20px; font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.5px; border-bottom: 1px solid #1e293b; }
+  .sidebar-section { padding: 20px; flex: 1; overflow-y: auto; }
+  .sidebar-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; color: #64748b; display: flex; justify-content: space-between; align-items: center;}
+  
+  .nav-item { padding: 10px 14px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; margin-bottom: 4px; color: var(--nav-text); }
+  .nav-item:hover { background: var(--nav-hover); color: var(--nav-active); }
+  .nav-item.active { background: var(--primary); color: #fff; }
+  
+  .project-item { padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+  .project-item:hover { background: var(--nav-hover); color: var(--nav-active); }
+  .project-item.active { background: #1e293b; color: #fff; border-left: 3px solid var(--primary); }
 
-  /* Sidebar Items */
-  .project-list-item { padding: 12px 16px; font-size: 13px; font-weight: 600; color: var(--text-muted); border-radius: 12px; cursor: pointer; transition: 0.2s; word-break: break-word; }
-  .project-list-item:hover { background: var(--bg-page); color: var(--text-main); }
-  .project-list-item.active { background: var(--primary-light); color: var(--primary); }
+  /* CENTER WORKSPACE */
+  .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg-page); }
+  .workspace-header { background: #fff; padding: 24px 32px; border-bottom: 1px solid var(--border-soft); display: flex; flex-direction: column; gap: 16px; }
+  .header-top-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  .project-title-group { display: flex; align-items: center; gap: 12px; }
+  .workspace-title { font-size: 24px; font-weight: 800; color: var(--text-main); }
+  .btn-icon { background: #f1f5f9; border: none; border-radius: 6px; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: 0.2s; }
+  .btn-icon:hover { background: #e2e8f0; color: var(--text-main); }
+  
+  .workspace-actions { display: flex; gap: 8px; }
+  .workspace-scroll { flex: 1; overflow-y: auto; padding: 32px; }
 
-  /* Inputs with Focus Rings */
-  input, select, textarea { font-size: 13px; padding: 10px 14px; border: 1px solid var(--border-soft); background: #fff; border-radius: 10px; outline: none; width: 100%; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
-  input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
-  
-  /* Buttons */
-  button { padding: 10px 16px; border: none; border-radius: 999px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
-  
-  /* Modern Toolbar Buttons (Ghost style) */
-  .btn-action-bar { background: transparent; color: var(--text-muted); padding: 8px 14px; font-size: 12px; }
-  .btn-action-bar:hover { background: #f3f4f6; color: var(--text-main); }
-  
-  .btn-delete { background: #fee2e2; color: #ef4444; padding: 8px 14px; font-size: 12px; }
-  .btn-delete:hover { background: #fecaca; }
-  .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2); }
-  .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 6px 8px rgba(79, 70, 229, 0.25); }
-  .btn-success { background: var(--color-complete); color: #fff; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2); }
+  /* RIGHT SIDEBAR (Context Panel) */
+  .right-sidebar { width: 300px; background: #fff; border-left: 1px solid var(--border-soft); display: flex; flex-direction: column; overflow-y: auto; }
+  .right-panel-section { padding: 24px; border-bottom: 1px solid var(--border-soft); }
 
-  /* Headers */
-  details > summary { list-style: none; cursor: pointer; user-select: none; }
-  details > summary::-webkit-details-marker { display: none; }
-  .section-title { font-size: 13px; font-weight: 700; margin: 30px 0 16px 0; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; display: flex; align-items: center; }
-  .btn-add-small { padding: 6px 12px; font-size: 11px; margin-left: 12px; background: var(--primary-light); color: var(--primary); border-radius: 999px; border: none; cursor: pointer; font-weight: 700; }
-  .btn-add-small:hover { background: #c7d2fe; }
+  /* UI Elements */
+  input, select, textarea { font-size: 13px; padding: 10px 12px; border: 1px solid #cbd5e1; background: #fff; border-radius: 8px; outline: none; width: 100%; transition: 0.2s; }
+  input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
+  
+  button { padding: 8px 16px; border: none; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: 0.2s; }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-hover); }
+  .btn-outline { background: transparent; border: 1px solid #cbd5e1; color: var(--text-main); }
+  .btn-outline:hover { background: #f1f5f9; }
+  .btn-danger-outline { background: transparent; color: #ef4444; }
+  .btn-danger-outline:hover { background: #fee2e2; }
+
+  .card { background: var(--bg-card); border-radius: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-soft); padding: 20px; }
+  
+  .section-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between; }
   
   /* Progress Bar */
-  .progress-wrapper { width: 100%; background: #e5e7eb; border-radius: 999px; height: 8px; margin-bottom: 24px; overflow: hidden; }
-  .progress-fill { height: 100%; background: var(--color-complete); transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 999px; }
-  .progress-text { font-size: 12px; font-weight: 700; color: var(--text-muted); text-align: right; margin-bottom: 8px; letter-spacing: 0.5px; }
+  .progress-wrapper { width: 100%; background: #f1f5f9; border-radius: 999px; height: 8px; overflow: hidden; margin-top: 8px; }
+  .progress-fill { height: 100%; background: var(--color-complete); transition: width 0.5s ease; }
+  .progress-text { font-size: 12px; font-weight: 700; color: var(--text-muted); }
 
-  /* Contractors */
-  .contractors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; margin-top: 10px; }
-  .contractor-card { padding: 16px; }
-  .contractor-card input { margin-bottom: 8px; font-size: 12px; padding: 8px 12px; }
-  .contractor-card .trade-title { font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-  .del-btn-icon { cursor: pointer; color: #ef4444; font-size: 16px; font-weight: bold; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #fee2e2; transition: 0.2s; }
-  .del-btn-icon:hover { background: #fecaca; }
+  /* Workflow Tiles (Clearer Hierarchy) */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+  .tile { display: flex; flex-direction: column; gap: 12px; position: relative; transition: 0.2s; cursor: grab; background: #fff; border-radius: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-soft); padding: 16px; }
+  
+  /* Tile States - Making them instantly recognizable */
+  .tile.status-locked { background: var(--color-locked-bg); opacity: 0.6; border: 1px dashed #cbd5e1; box-shadow: none; }
+  .tile.status-ready { border: 2px solid var(--color-ready); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15); }
+  .tile.status-in { border: 2px solid var(--color-progress); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15); }
+  .tile.status-complete { border: 1px solid #a7f3d0; background: #f0fdf4; }
 
-  /* Tiles Grid */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-  .tile { display: flex; flex-direction: column; gap: 14px; position: relative; transition: 0.2s; cursor: grab; }
-  .tile:active { cursor: grabbing; opacity: 0.9; transform: scale(0.98); }
-  .tile.drag-over { border: 2px dashed var(--primary); opacity: 0.6; }
-  
-  .tile.status-locked { opacity: 0.6; background: #fafafa; box-shadow: none; border: 1px solid var(--border-soft); }
-  .tile.status-ready { border: 2px solid var(--text-main); }
-  
   .tile-header { display: flex; justify-content: space-between; align-items: center; }
-  .step-badge { font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .bg-locked { background: #f3f4f6; color: var(--text-muted); }
+  .step-badge { font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 999px; }
+  .bg-locked { background: #e2e8f0; color: #64748b; }
   .bg-ready { background: #fef3c7; color: #b45309; }
-  .bg-progress { background: #e0f2fe; color: #0369a1; }
-  .bg-complete { background: #dcfce3; color: #166534; }
+  .bg-progress { background: #dbeafe; color: #1d4ed8; }
+  .bg-complete { background: #d1fae5; color: #047857; }
 
-  .tile-title { font-size: 16px; font-weight: 700; display: flex; gap: 8px; align-items: flex-start; line-height: 1.3; }
-  .drag-handle { color: #cbd5e1; cursor: grab; font-size: 16px; margin-top: 2px; transition: 0.2s; }
-  .tile:hover .drag-handle { color: #94a3b8; }
+  .tile-title { font-size: 15px; font-weight: 700; line-height: 1.3; display: flex; gap: 8px; align-items: flex-start; }
+  .drag-handle { color: #cbd5e1; cursor: grab; font-size: 16px; transition: 0.2s; }
   
-  .project-tag { font-size: 11px; color: var(--primary); font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; background: var(--primary-light); padding: 4px 8px; border-radius: 6px; width: fit-content; }
   .tile-meta { display: flex; gap: 8px; }
-  .tile-meta input[type="date"] { padding: 8px 12px; font-size: 12px; }
-  
   .doc-link-input { display: flex; gap: 8px; }
-  .doc-btn { background: #f3f4f6; color: var(--text-main); padding: 8px 12px; border-radius: 8px; text-decoration: none; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; transition: 0.2s; }
-  .doc-btn:hover { background: #e5e7eb; }
-  .tile textarea { height: 60px; font-size: 13px; resize: none; padding: 10px 12px; line-height: 1.4; }
+  .doc-btn { background: #f1f5f9; color: var(--text-main); padding: 8px 12px; border-radius: 8px; text-decoration: none; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; transition: 0.2s; }
+  .doc-btn:hover { background: #e2e8f0; }
+  .tile textarea { height: 60px; resize: none; }
   
-  .smart-btn { width: 100%; padding: 12px; margin-top: auto; font-size: 13px; font-weight: 700; border-radius: 12px; text-align: center; border: none; cursor: pointer; transition: 0.2s; }
-  .btn-locked { background: transparent; color: var(--text-muted); border: 1px dashed var(--border-soft); cursor: not-allowed; }
+  .smart-btn { width: 100%; padding: 12px; margin-top: auto; font-size: 13px; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; transition: 0.2s; }
+  .btn-locked { background: transparent; color: var(--text-muted); cursor: not-allowed; border: 1px dashed #cbd5e1; }
+  .btn-success { background: var(--color-complete); color: #fff; }
 
-  /* Checkbox Styles */
-  .check-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f3f4f6; gap: 12px; transition: 0.2s; }
+  /* Contractors & Checklists */
+  .contractors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; margin-bottom: 32px; }
+  .trade-title { font-weight: 800; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; display: flex; justify-content: space-between; }
+  
+  .check-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9; gap: 12px; }
+  .check-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary); }
+  .check-text { font-size: 13px; flex: 1; }
+  .chk-del { color: #ef4444; font-weight: bold; cursor: pointer; border: none; background: transparent; padding: 4px; opacity: 0; transition: 0.2s; }
   .check-item:hover .chk-del { opacity: 1; }
-  .check-item input[type="checkbox"] { width: 16px; height: 16px; margin: 0; cursor: pointer; accent-color: var(--primary); }
-  .check-text { font-size: 13px; flex: 1; color: var(--text-main); line-height: 1.4; }
-  .chk-del { opacity: 0; color: #ef4444; font-size: 18px; font-weight: bold; cursor: pointer; border: none; background: transparent; padding: 0 4px; transition: 0.2s; }
 
-  /* Calendar Grid Styles */
+  /* Calendar */
   .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; }
   .cal-header-day { font-weight: 700; text-align: center; font-size: 12px; color: var(--text-muted); text-transform: uppercase; padding-bottom: 8px; }
-  .cal-cell { min-height: 110px; border-radius: 12px; padding: 10px; cursor: pointer; display: flex; flex-direction: column; gap: 6px; transition: 0.2s; background: #fff; border: 1px solid var(--border-soft); box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
-  .cal-cell:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); border-color: #cbd5e1; }
-  .cal-date-num { font-size: 14px; font-weight: 800; color: var(--text-main); }
-  .cal-event { font-size: 11px; background: var(--primary-light); color: var(--primary); padding: 6px 8px; border-radius: 6px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .cal-event.completed { text-decoration: line-through; opacity: 0.6; background: #f3f4f6; color: var(--text-muted); }
+  .cal-cell { min-height: 110px; border-radius: 12px; padding: 10px; cursor: pointer; background: #fff; border: 1px solid var(--border-soft); display: flex; flex-direction: column; gap: 6px; transition: 0.2s; }
+  .cal-cell:hover { border-color: var(--primary); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+  .cal-date-num { font-size: 14px; font-weight: 800; }
+  .cal-event { font-size: 11px; background: #e0e7ff; color: var(--primary); padding: 6px 8px; border-radius: 6px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cal-event.completed { text-decoration: line-through; opacity: 0.6; background: #f1f5f9; color: var(--text-muted); }
+
+  /* Empty States */
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); font-weight: 600; background: #fff; border-radius: 12px; border: 1px dashed #cbd5e1; margin-top: 20px; }
 
   /* Modals */
-  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17, 24, 39, 0.4); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 200; }
-  .modal-content { background: #fff; width: 100%; max-width: 420px; padding: 32px; border-radius: 20px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
-  .modal-title { font-weight: 800; font-size: 18px; margin-bottom: 8px; color: var(--text-main); }
+  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 200; }
+  .modal-content { background: #fff; width: 100%; max-width: 420px; padding: 32px; border-radius: 16px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+  .modal-title { font-weight: 800; font-size: 18px; margin-bottom: 8px; }
   .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; }
 
-  .empty-state { text-align: center; padding: 80px 20px; color: var(--text-muted); font-weight: 600; font-size: 14px; background: var(--bg-card); border-radius: 16px; border: 1px dashed var(--border-soft); }
+  @media (max-width: 900px) {
+    .app-layout { flex-direction: column; overflow: auto; }
+    .left-sidebar { width: 100%; height: auto; flex: none; border-right: none; border-bottom: 1px solid #1e293b; }
+    .right-sidebar { width: 100%; border-left: none; border-top: 1px solid var(--border-soft); }
+    .workspace-scroll { padding: 16px; }
+  }
 </style>
 </head>
 <body>
@@ -170,7 +168,7 @@
     <div class="modal-title" id="modal-project-title">Add New Project</div>
     <input type="text" id="project-address-input" placeholder="Enter Project Address (e.g. 12 Smith St)">
     <div class="modal-actions">
-      <button class="btn-action-bar" onclick="closeModals()">Cancel</button>
+      <button class="btn-outline" onclick="closeModals()">Cancel</button>
       <button class="btn-primary" onclick="submitProjectModal()">Save Project</button>
     </div>
   </div>
@@ -187,7 +185,7 @@
     <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 4px;">Activate After:</div>
     <select id="new-job-prereq"></select>
     <div class="modal-actions">
-      <button class="btn-action-bar" onclick="closeModals()">Cancel</button>
+      <button class="btn-outline" onclick="closeModals()">Cancel</button>
       <button class="btn-primary" onclick="addJob()">Add Job</button>
     </div>
   </div>
@@ -201,13 +199,12 @@
     <input type="text" id="new-trade-contact" placeholder="Contact Name">
     <input type="email" id="new-trade-email" placeholder="Email Address">
     <div class="modal-actions">
-      <button class="btn-action-bar" onclick="closeModals()">Cancel</button>
+      <button class="btn-outline" onclick="closeModals()">Cancel</button>
       <button class="btn-primary" onclick="addTrade()">Add Trade</button>
     </div>
   </div>
 </div>
 
-<!-- Calendar Event Modal -->
 <div class="modal-overlay" id="modal-event">
   <div class="modal-content">
     <div class="modal-title">Add Booking / Meeting</div>
@@ -215,42 +212,52 @@
     <input type="date" id="event-date">
     <input type="text" id="event-text" placeholder="e.g. Certifier Inspection...">
     <div class="modal-actions">
-      <button class="btn-action-bar" onclick="closeModals()">Cancel</button>
+      <button class="btn-outline" onclick="closeModals()">Cancel</button>
       <button class="btn-primary" onclick="addCalendarEvent()">Save Booking</button>
     </div>
   </div>
 </div>
 
-<!-- Main App -->
+<!-- Main App Shell -->
 <div class="app-layout">
-  <!-- LEFT COLUMN: Project Directory -->
-  <aside class="left-sidebar" id="left-sidebar-content"></aside>
+  
+  <!-- LEFT NAV MENU -->
+  <aside class="left-sidebar">
+    <div class="sidebar-header">KARNEL HOMES</div>
+    
+    <div class="sidebar-section" style="border-bottom: 1px solid #1e293b; padding-bottom: 20px; flex: none;">
+      <div class="sidebar-title">Main Views</div>
+      <div class="nav-item active" id="nav-project" onclick="setView('PROJECT')">🏢 Project Board</div>
+      <div class="nav-item" id="nav-day" onclick="setView('DAY')">☀️ My Day</div>
+      <div class="nav-item" id="nav-calendar" onclick="setView('CALENDAR')">📅 Calendar</div>
+    </div>
 
-  <!-- CENTER COLUMN: Trades & Tiles -->
-  <main class="main-content">
-    <div class="top-nav">
-      <div class="logo">KARNEL HOMES <span style="font-size: 12px; color: var(--text-muted); font-weight: 600; margin-left: 8px;">Portal</span></div>
-      
-      <div class="view-toggle">
-        <button class="view-btn active" id="view-project-btn" onclick="setView('PROJECT')">🏢 Project View</button>
-        <button class="view-btn" id="view-day-btn" onclick="setView('DAY')">☀️ My Day</button>
-        <button class="view-btn" id="view-calendar-btn" onclick="setView('CALENDAR')">📅 Calendar</button>
+    <div class="sidebar-section" style="display: flex; flex-direction: column;">
+      <div class="sidebar-title">
+        Active Projects
+        <button style="background: transparent; border: none; color: var(--primary); cursor: pointer; font-size: 16px; padding: 0;" onclick="openProjectModal('NEW')" title="New Project">＋</button>
       </div>
-
-      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;" id="project-controls">
-        <select id="project-selector" onchange="switchProject(this.value)" style="width: auto; padding: 8px 16px; border-radius: 999px;"></select>
-        <button class="btn-action-bar" onclick="editProjectName()">✏️ Edit Name</button>
-        <button class="btn-action-bar" onclick="openProjectModal('NEW')">+ New</button>
-        <button class="btn-action-bar" onclick="openProjectModal('COPY')">📋 Copy</button>
-        <button class="btn-action-bar" onclick="exportBackupData()">💾 Backup</button>
-        <button class="btn-delete" style="border-radius: 999px;" onclick="deleteCurrentProject()">🗑️ Delete</button>
+      <div id="project-list-container" style="flex: 1; overflow-y: auto;">
+        <!-- Project list renders here -->
       </div>
     </div>
-    <div id="portal-content"></div>
+  </aside>
+
+  <!-- CENTER WORKSPACE -->
+  <main class="main-content">
+    <header class="workspace-header" id="workspace-header">
+      <!-- Dynamic header renders here based on view -->
+    </header>
+    
+    <div class="workspace-scroll" id="portal-content">
+      <!-- Dynamic content renders here -->
+    </div>
   </main>
 
-  <!-- RIGHT COLUMN: Location Details & Checklist -->
-  <aside class="right-sidebar" id="right-sidebar-content"></aside>
+  <!-- RIGHT CONTEXT PANEL -->
+  <aside class="right-sidebar" id="right-sidebar-content">
+      <!-- Details and checklists render here -->
+  </aside>
 </div>
 
 <script>
@@ -282,14 +289,12 @@
     { id: 1, name: "CC / CDC Approval Received", owner: "Office", prereqs: [], status: "READY TO START", notes: "", date: "" }
   ];
 
-  let projects = JSON.parse(localStorage.getItem('karnel_data_final9')) || {};
-  let currentProjectId = localStorage.getItem('karnel_active_final9') || null;
+  let projects = JSON.parse(localStorage.getItem('karnel_data_final10')) || {};
+  let currentProjectId = localStorage.getItem('karnel_active_final10') || null;
   let rolodex = JSON.parse(localStorage.getItem('karnel_rolodex')) || [];
   let currentView = 'PROJECT'; 
   let draggedStepId = null;
   let projectModalMode = 'NEW';
-  
-  // Calendar tracking
   let calMonth = new Date().getMonth();
   let calYear = new Date().getFullYear();
 
@@ -297,8 +302,8 @@
   // 3. CLOUD SYNC & LOCAL STORAGE LOGIC
   // ==========================================
   function saveState() {
-    localStorage.setItem('karnel_data_final9', JSON.stringify(projects));
-    localStorage.setItem('karnel_active_final9', currentProjectId);
+    localStorage.setItem('karnel_data_final10', JSON.stringify(projects));
+    localStorage.setItem('karnel_active_final10', currentProjectId);
     localStorage.setItem('karnel_rolodex', JSON.stringify([...new Set(rolodex)])); 
     updateRolodexDatalist();
     syncToSupabase();
@@ -349,7 +354,7 @@
   }
 
   function editProjectName() {
-    if (!currentProjectId || !projects[currentProjectId]) return alert("No active project to edit.");
+    if (!currentProjectId || !projects[currentProjectId]) return;
     const currentName = projects[currentProjectId].name;
     const newName = prompt("Edit Project Address:", currentName);
     if (newName && newName.trim() !== "") {
@@ -401,22 +406,18 @@
     }
   }
 
-  function switchProject(id) { currentProjectId = id; saveState(); render(); }
+  function switchProject(id) { currentProjectId = id; currentView = 'PROJECT'; saveState(); render(); }
+  
   function setView(viewMode) {
     currentView = viewMode;
-    document.getElementById('view-project-btn').className = `view-btn ${viewMode === 'PROJECT' ? 'active' : ''}`;
-    document.getElementById('view-day-btn').className = `view-btn ${viewMode === 'DAY' ? 'active' : ''}`;
-    document.getElementById('view-calendar-btn').className = `view-btn ${viewMode === 'CALENDAR' ? 'active' : ''}`;
-    
-    document.getElementById('project-controls').style.display = viewMode === 'PROJECT' ? 'flex' : 'none';
+    document.getElementById('nav-project').className = `nav-item ${viewMode === 'PROJECT' ? 'active' : ''}`;
+    document.getElementById('nav-day').className = `nav-item ${viewMode === 'DAY' ? 'active' : ''}`;
+    document.getElementById('nav-calendar').className = `nav-item ${viewMode === 'CALENDAR' ? 'active' : ''}`;
     render();
   }
 
   function closeModals() {
-    document.getElementById('modal-project').style.display = 'none';
-    document.getElementById('modal-job').style.display = 'none';
-    document.getElementById('modal-trade').style.display = 'none';
-    document.getElementById('modal-event').style.display = 'none';
+    document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none');
   }
 
   /* JOBS & TRADES */
@@ -534,13 +535,7 @@
   }
 
   /* CALENDAR LOGIC */
-  function changeMonth(direction) {
-    calMonth += direction;
-    if (calMonth < 0) { calMonth = 11; calYear--; }
-    if (calMonth > 11) { calMonth = 0; calYear++; }
-    render();
-  }
-
+  function changeMonth(direction) { calMonth += direction; if (calMonth < 0) { calMonth = 11; calYear--; } if (calMonth > 11) { calMonth = 0; calYear++; } render(); }
   function openCalendarModal(dateStr) {
     if (!currentProjectId || !projects[currentProjectId]) return alert("Please select an active project from the left menu first.");
     document.getElementById('event-modal-project-name').innerText = "📍 " + projects[currentProjectId].name;
@@ -549,84 +544,20 @@
     document.getElementById('modal-event').style.display = 'flex';
     setTimeout(() => document.getElementById('event-text').focus(), 100);
   }
-
   function addCalendarEvent() {
     const text = document.getElementById('event-text').value.trim();
     const date = document.getElementById('event-date').value;
     if (!text || !date) return alert("Please enter both a date and a description.");
-    
     const project = projects[currentProjectId];
     project.events = project.events || [];
     project.events.push({ id: Date.now(), date: date, text: text, status: "PENDING" });
-    
     saveState();
     closeModals();
     render();
   }
-
   function toggleEventStatus(projectId, eventId) {
     const ev = projects[projectId].events.find(e => e.id === eventId);
-    if (ev) {
-      ev.status = ev.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED';
-      saveState();
-      render();
-    }
-  }
-  function deleteCalendarEvent(projectId, eventId) {
-    projects[projectId].events = projects[projectId].events.filter(e => e.id !== eventId);
-    saveState();
-    render();
-  }
-
-  function generateCalendarHTML() {
-    const firstDay = new Date(calYear, calMonth, 1).getDay(); 
-    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-    const today = new Date();
-    const monthName = new Date(calYear, calMonth).toLocaleString('default', { month: 'long' });
-
-    let html = `
-      <div class="card" style="padding: 32px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;">
-          <button class="btn-action-bar" onclick="changeMonth(-1)">◀ Previous</button>
-          <div style="font-size: 20px; font-weight: 800; text-transform: uppercase; color: var(--primary);">${monthName} ${calYear}</div>
-          <button class="btn-action-bar" onclick="changeMonth(1)">Next ▶</button>
-        </div>
-        <div class="cal-grid">
-    `;
-
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    days.forEach(d => { html += `<div class="cal-header-day">${d}</div>`; });
-
-    for (let i = 0; i < firstDay; i++) { html += `<div></div>`; }
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      const dateStr = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      const isToday = (day === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear());
-      
-      let bgStyle = isToday ? 'background: #f0f9ff; border: 2px solid var(--primary);' : '';
-      
-      let dayEvents = '';
-      Object.values(projects).forEach(project => {
-        (project.events || []).forEach(ev => {
-          if (ev.date === dateStr) {
-            const statusClass = ev.status === 'COMPLETED' ? 'completed' : '';
-            dayEvents += `
-              <div class="cal-event ${statusClass}" title="${project.name} - ${ev.text}" onclick="event.stopPropagation(); toggleEventStatus('${project.id}', ${ev.id})">
-                <strong>${project.name.substring(0,6)}..</strong>: ${ev.text}
-              </div>`;
-          }
-        });
-      });
-
-      html += `
-        <div class="cal-cell" style="${bgStyle}" onclick="openCalendarModal('${dateStr}')">
-          <div class="cal-date-num">${day}</div>
-          <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">${dayEvents}</div>
-        </div>
-      `;
-    }
-    html += `</div></div>`;
-    return html;
+    if (ev) { ev.status = ev.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED'; saveState(); render(); }
   }
 
   function evaluateDependencies(steps) {
@@ -645,19 +576,19 @@
     let smartButton = '';
     if (step.status === 'READY TO START') smartButton = `<button class="smart-btn btn-primary" onclick="updateField('${projectId}', 'step', ${step.id}, 'status', 'IN PROGRESS')">Start Work ▶</button>`;
     else if (step.status === 'IN PROGRESS') smartButton = `<button class="smart-btn btn-success" onclick="updateField('${projectId}', 'step', ${step.id}, 'status', 'COMPLETE')">Mark Complete ✓</button>`;
-    else if (step.status === 'COMPLETE') smartButton = `<button class="smart-btn" style="background:#f3f4f6; color:#6b7280;" onclick="updateField('${projectId}', 'step', ${step.id}, 'status', 'IN PROGRESS')">↺ Reopen Task</button>`;
+    else if (step.status === 'COMPLETE') smartButton = `<button class="smart-btn" style="background:#f1f5f9; color:#64748b;" onclick="updateField('${projectId}', 'step', ${step.id}, 'status', 'IN PROGRESS')">↺ Reopen Task</button>`;
     else smartButton = `<button class="smart-btn btn-locked" disabled>🔒 Locked</button>`;
 
     let projectTagHtml = projectName ? `<div class="project-tag">📍 ${projectName}</div>` : '';
 
     return `
-      <div class="tile card ${statusClass}" draggable="true" ondragstart="dragStart(event, ${step.id})" ondragover="dragOver(event, this)" ondragleave="dragLeave(event, this)" ondrop="drop(event, ${step.id}, this)">
+      <div class="tile ${statusClass}" draggable="true" ondragstart="dragStart(event, ${step.id})" ondragover="dragOver(event, this)" ondragleave="dragLeave(event, this)" ondrop="drop(event, ${step.id}, this)">
         ${projectTagHtml}
         <div class="tile-header">
           <span class="step-badge ${badgeClass}">${step.status}</span>
           <div style="display:flex; gap:8px; align-items:center;">
-            <span style="font-size:12px; font-weight:700; color:var(--text-muted);">${step.owner}</span>
-            <span class="del-btn-icon" onclick="removeJob('${projectId}', ${step.id})" title="Delete Job">×</span>
+            <span style="font-size:11px; font-weight:700; color:var(--text-muted);">${step.owner}</span>
+            <span class="chk-del" style="opacity:1;" onclick="removeJob('${projectId}', ${step.id})" title="Delete Job">×</span>
           </div>
         </div>
         <div class="tile-title"><span class="drag-handle" title="Drag to reorder">⋮⋮</span> ${step.name}</div>
@@ -673,35 +604,26 @@
   }
 
   function render() {
-    const leftSidebar = document.getElementById("left-sidebar-content");
-    const rightSidebar = document.getElementById("right-sidebar-content");
+    const listContainer = document.getElementById("project-list-container");
+    const workspaceHeader = document.getElementById("workspace-header");
     const content = document.getElementById("portal-content");
-    const selector = document.getElementById("project-selector");
+    const rightSidebar = document.getElementById("right-sidebar-content");
 
-    // Populate Selector Dropdown
-    selector.innerHTML = "";
-    Object.keys(projects).forEach(id => {
-      const opt = document.createElement("option");
-      opt.value = id; opt.innerText = projects[id].name;
-      if (id === currentProjectId) opt.selected = true;
-      selector.appendChild(opt);
-    });
-
-    // --- RENDER LEFT SIDEBAR (Project List) ---
-    let leftHtml = `<div class="card"><div class="section-title" style="margin-top:0;">📂 Projects</div><div style="display:flex; flex-direction:column; gap:4px;">`;
+    // --- LEFT SIDEBAR (Projects) ---
+    let listHtml = '';
     if (Object.keys(projects).length === 0) {
-      leftHtml += `<div style="font-size:13px; color:var(--text-muted);">No projects yet.</div>`;
+      listHtml = `<div style="font-size:13px; color:var(--nav-text); padding: 0 14px;">No active projects.</div>`;
     } else {
       Object.values(projects).forEach(p => {
-        const isActive = p.id === currentProjectId && currentView !== 'DAY';
-        leftHtml += `<div class="project-list-item ${isActive ? 'active' : ''}" onclick="switchProject('${p.id}')">${p.name}</div>`;
+        const isActive = p.id === currentProjectId && currentView !== 'DAY' && currentView !== 'CALENDAR';
+        listHtml += `<div class="project-item ${isActive ? 'active' : ''}" onclick="switchProject('${p.id}')">${p.name}</div>`;
       });
     }
-    leftHtml += `</div></div>`;
-    leftSidebar.innerHTML = leftHtml;
+    listContainer.innerHTML = listHtml;
 
     if (Object.keys(projects).length === 0) {
-      content.innerHTML = `<div class="empty-state">No Active Projects. Click + New Project to begin.</div>`;
+      workspaceHeader.innerHTML = `<div class="workspace-title">Welcome to Karnel Homes</div>`;
+      content.innerHTML = `<div class="empty-state">No Active Projects.<br><br>Click the <b>+ New Project</b> button on the left menu to begin.</div>`;
       rightSidebar.style.display = "none";
       return;
     }
@@ -709,20 +631,66 @@
     // --- RENDER CALENDAR VIEW ---
     if (currentView === 'CALENDAR') {
       rightSidebar.style.display = "none";
-      content.innerHTML = generateCalendarHTML();
+      workspaceHeader.innerHTML = `
+        <div class="header-top-row">
+          <div class="workspace-title">📅 Global Calendar</div>
+        </div>
+      `;
+      
+      const firstDay = new Date(calYear, calMonth, 1).getDay(); 
+      const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+      const today = new Date();
+      const monthName = new Date(calYear, calMonth).toLocaleString('default', { month: 'long' });
+
+      let calHtml = `
+        <div class="card" style="padding: 32px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;">
+            <button class="btn-outline" onclick="changeMonth(-1)">◀ Previous</button>
+            <div style="font-size: 20px; font-weight: 800; text-transform: uppercase; color: var(--primary);">${monthName} ${calYear}</div>
+            <button class="btn-outline" onclick="changeMonth(1)">Next ▶</button>
+          </div>
+          <div class="cal-grid">
+      `;
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      days.forEach(d => { calHtml += `<div class="cal-header-day">${d}</div>`; });
+      for (let i = 0; i < firstDay; i++) { calHtml += `<div></div>`; }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const isToday = (day === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear());
+        let bgStyle = isToday ? 'background: #f0f9ff; border: 2px solid var(--primary);' : '';
+        
+        let dayEvents = '';
+        Object.values(projects).forEach(project => {
+          (project.events || []).forEach(ev => {
+            if (ev.date === dateStr) {
+              const statusClass = ev.status === 'COMPLETED' ? 'completed' : '';
+              dayEvents += `<div class="cal-event ${statusClass}" title="${project.name} - ${ev.text}" onclick="event.stopPropagation(); toggleEventStatus('${project.id}', ${ev.id})"><strong>${project.name.substring(0,6)}..</strong>: ${ev.text}</div>`;
+            }
+          });
+        });
+        calHtml += `<div class="cal-cell" style="${bgStyle}" onclick="openCalendarModal('${dateStr}')"><div class="cal-date-num">${day}</div><div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">${dayEvents}</div></div>`;
+      }
+      calHtml += `</div></div>`;
+      content.innerHTML = calHtml;
       return;
     }
 
     // --- RENDER MY DAY VIEW ---
     if (currentView === 'DAY') {
+      workspaceHeader.innerHTML = `
+        <div class="header-top-row">
+          <div class="workspace-title">☀️ My Day Overview</div>
+        </div>
+      `;
       rightSidebar.style.display = "flex";
       
-      let sideHtml = `<div class="card"><div style="font-size: 12px; font-weight: 800; text-transform: uppercase; margin-bottom: 12px; color: var(--text-muted);">📋 Global Minor Tasks</div>`;
+      let sideHtml = `<div class="right-panel-section"><div class="section-title">📋 Global Minor Tasks</div>`;
       let pendingCount = 0;
       Object.values(projects).forEach(project => {
         const pending = (project.checklist || []).filter(i => i.status === 'PENDING');
         if(pending.length > 0) {
-          sideHtml += `<div style="font-size: 11px; font-weight: 700; color: var(--primary); margin-top: 16px; margin-bottom: 8px; background: var(--primary-light); padding: 4px 8px; border-radius: 6px; display: inline-block;">📍 ${project.name}</div>`;
+          sideHtml += `<div style="font-size: 11px; font-weight: 700; color: var(--primary); margin-top: 16px; margin-bottom: 8px; background: #e0e7ff; padding: 4px 8px; border-radius: 6px; display: inline-block;">📍 ${project.name}</div>`;
           pending.forEach(item => {
             pendingCount++;
             sideHtml += `
@@ -738,22 +706,16 @@
       sideHtml += `</div>`;
       rightSidebar.innerHTML = sideHtml;
 
-      // 48-Hour Event Warning Logic
-      let eventHtml = `<div class="section-title" style="margin-top:0;">📅 Priority Bookings (Due within 48 Hrs or Overdue)</div><div style="display:flex; flex-direction:column; gap:16px; margin-bottom: 32px;">`;
+      let eventHtml = `<div class="section-title" style="margin-top:0;">📅 Priority Bookings (Due within 48 Hrs)</div><div style="display:flex; flex-direction:column; gap:16px; margin-bottom: 32px;">`;
       let eventCount = 0;
-      const today = new Date();
-      today.setHours(0,0,0,0);
-      const targetDate = new Date(today);
-      targetDate.setDate(today.getDate() + 2);
+      const today = new Date(); today.setHours(0,0,0,0);
+      const targetDate = new Date(today); targetDate.setDate(today.getDate() + 2);
 
       Object.values(projects).forEach(project => {
         (project.events || []).forEach(ev => {
           if (ev.status === 'COMPLETED') return; 
-          
           const parts = ev.date.split('-');
-          const evDate = new Date(parts[0], parts[1]-1, parts[2]);
-          evDate.setHours(0,0,0,0);
-
+          const evDate = new Date(parts[0], parts[1]-1, parts[2]); evDate.setHours(0,0,0,0);
           if (evDate <= targetDate) {
             eventCount++;
             const dateString = evDate.toLocaleDateString('en-AU', { weekday: 'short', month: 'short', day: 'numeric' });
@@ -767,16 +729,13 @@
                     📍 <span style="color:var(--primary); font-weight:700;">${project.name}</span>
                   </div>
                 </div>
-              </div>
-            `;
+              </div>`;
           }
         });
       });
-
       if (eventCount === 0) eventHtml += `<div style="font-size: 14px; color: var(--text-muted);">No upcoming priority bookings.</div>`;
       eventHtml += `</div>`;
 
-      // Render My Day Active Workflow Tiles
       let html = eventHtml + `<div class="section-title" style="margin-top:0;">☀️ Today's Active Tasks</div><div class="grid">`;
       let activeTaskCount = 0;
       Object.values(projects).forEach(project => {
@@ -788,29 +747,51 @@
           }
         });
       });
-      if (activeTaskCount === 0) html += `<div class="empty-state" style="grid-column: 1/-1;">You're all caught up! No active tasks for today.</div>`;
+      if (activeTaskCount === 0) html += `<div class="empty-state" style="grid-column: 1/-1;">You're all caught up! No active workflow tiles for today.</div>`;
       html += `</div>`;
       content.innerHTML = html;
       return;
     }
 
-    // --- RENDER PROJECT VIEW ---
+    // --- RENDER PROJECT VIEW (Workspace) ---
     if (!currentProjectId || !projects[currentProjectId]) return;
     const project = projects[currentProjectId];
-    
     evaluateDependencies(project.steps);
+
+    const totalSteps = project.steps.length;
+    const completedSteps = project.steps.filter(s => s.status === 'COMPLETE').length;
+    const progressPercent = totalSteps === 0 ? 0 : Math.round((completedSteps / totalSteps) * 100);
+
+    // Build Header
+    workspaceHeader.innerHTML = `
+      <div class="header-top-row">
+        <div class="project-title-group">
+          <div class="workspace-title">${project.name}</div>
+          <button class="btn-icon" onclick="editProjectName()" title="Edit Name">✏️</button>
+        </div>
+        <div class="workspace-actions">
+          <button class="btn-outline" onclick="openProjectModal('COPY')">📋 Copy</button>
+          <button class="btn-outline" onclick="exportBackupData()">💾 Backup</button>
+          <button class="btn-danger-outline" onclick="deleteCurrentProject()">🗑️ Delete</button>
+        </div>
+      </div>
+      <div>
+        <div class="progress-text">${progressPercent}% Workflow Completed</div>
+        <div class="progress-wrapper"><div class="progress-fill" style="width: ${progressPercent}%;"></div></div>
+      </div>
+    `;
 
     // Right Sidebar
     rightSidebar.style.display = "flex";
     let rightHtml = `
-      <div class="card">
-        <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px;">📍 Project Location</div>
+      <div class="right-panel-section">
+        <div class="section-title" style="margin-top:0;">📍 Location</div>
     `;
     if (project.projectLocationLink) {
       rightHtml += `
         <div style="display: flex; gap: 8px; align-items: center;">
           <a href="${project.projectLocationLink}" target="_blank" class="btn-primary" style="text-decoration: none; padding: 10px 16px; font-size: 13px; flex: 1; text-align: center;">🌍 Open Map</a>
-          <button class="btn-delete" style="padding: 10px 16px; border-radius: 999px;" onclick="updateField('${project.id}', 'locationLink', null, null, '')" title="Edit Link">✎</button>
+          <button class="btn-outline" style="padding: 10px; width: 40px;" onclick="updateField('${project.id}', 'locationLink', null, null, '')" title="Edit Link">✏️</button>
         </div>
       `;
     } else {
@@ -819,8 +800,8 @@
     
     rightHtml += `
       </div>
-      <div class="card">
-        <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px;">📋 Minor Tasks</div>
+      <div class="right-panel-section" style="border-bottom:none;">
+        <div class="section-title" style="margin-top:0;">📋 Minor Tasks</div>
         <input type="text" id="new-check-text" placeholder="Add task & press Enter..." onkeypress="if(event.key==='Enter') addChecklistItem()" style="margin-bottom: 12px;">
         <div style="display: flex; flex-direction: column;">
     `;
@@ -837,27 +818,18 @@
     rightHtml += `</div></div>`;
     rightSidebar.innerHTML = rightHtml;
 
-    // Calculate Progress
-    const totalSteps = project.steps.length;
-    const completedSteps = project.steps.filter(s => s.status === 'COMPLETE').length;
-    const progressPercent = totalSteps === 0 ? 0 : Math.round((completedSteps / totalSteps) * 100);
-
-    // Center Content
+    // Center Content (Trades & Tiles)
     let html = `
-      <div class="progress-text">${progressPercent}% Workflow Completed</div>
-      <div class="progress-wrapper"><div class="progress-fill" style="width: ${progressPercent}%;"></div></div>
-
-      <details class="contractors-collapse">
-        <summary class="section-title" style="margin-top: 0; outline: none; padding: 12px; background: var(--bg-card); border-radius: 12px; box-shadow: var(--shadow-card);">
-          ▶ PROJECT DIRECTORY / TRADES
-          <button class="btn-add-small" style="margin-left:auto;" onclick="openTradeModal(); event.preventDefault();">+ Add Trade</button>
-        </summary>
-        <div class="contractors-grid">`;
+      <div class="section-title" style="margin-top: 0;">
+        PROJECT DIRECTORY / TRADES
+        <button class="btn-add-small" onclick="openTradeModal();">+ Add Trade</button>
+      </div>
+      <div class="contractors-grid">`;
     project.contractors.forEach((c, i) => {
       html += `
-        <div class="card contractor-card">
-          <div class="trade-title">${c.trade}<span class="del-btn-icon" onclick="removeTrade(${i})" title="Remove Trade">×</span></div>
-          <input type="text" list="rolodex-companies" placeholder="Company Name" value="${c.company}" onchange="updateField('${project.id}', 'contractor', ${i}, 'company', this.value)">
+        <div class="card" style="padding: 16px;">
+          <div class="trade-title">${c.trade}<span class="chk-del" style="opacity:1;" onclick="removeTrade(${i})" title="Remove Trade">×</span></div>
+          <input type="text" list="rolodex-companies" placeholder="Company Name" value="${c.company}" onchange="updateField('${project.id}', 'contractor', ${i}, 'company', this.value)" style="margin-bottom:8px;">
           <div style="display: flex; gap: 8px;">
             <input type="text" placeholder="Contact" value="${c.contact}" onchange="updateField('${project.id}', 'contractor', ${i}, 'contact', this.value)">
             <input type="email" placeholder="Email" value="${c.email}" onchange="updateField('${project.id}', 'contractor', ${i}, 'email', this.value)">
@@ -866,9 +838,9 @@
       `;
     });
     
-    html += `</div></details>
-      <div class="section-title" style="margin-top: 32px;">
-        WORKFLOW TILES
+    html += `</div>
+      <div class="section-title" style="margin-top: 32px; border-top: 1px solid var(--border-soft); padding-top: 32px;">
+        WORKFLOW SEQUENCE
         <button class="btn-add-small" onclick="openJobModal()">+ Add Job</button>
       </div>
       <div class="grid">`;
