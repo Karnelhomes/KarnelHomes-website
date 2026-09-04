@@ -9,163 +9,185 @@
 <style>
   /* MODERN, HIGH-CONTRAST SAAS PALETTE */
   :root {
-    --nav-bg: #0f172a;        /* Deep Slate for Sidebar */
+    --nav-bg: #0f172a;
     --nav-text: #94a3b8;
     --nav-active: #ffffff;
     --nav-hover: #1e293b;
-    
-    --bg-page: #f8fafc;       /* Light gray workspace */
+    --bg-page: #f8fafc;
     --bg-card: #ffffff;
-    
     --text-main: #0f172a;
     --text-muted: #64748b;
-    
     --primary: #4f46e5;
     --primary-hover: #4338ca;
-    
     --border-soft: #e2e8f0;
-    
     --color-locked-bg: #f1f5f9;
     --color-ready: #f59e0b;
     --color-progress: #3b82f6;
     --color-complete: #10b981;
-
     --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
     --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-  
-  /* App Shell */
   body { background: var(--bg-page); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
   
   .app-layout { display: flex; flex: 1; overflow: hidden; }
   
-  /* LEFT SIDEBAR (Dark Navigation) */
-  .left-sidebar { width: 260px; background: var(--nav-bg); color: var(--nav-text); display: flex; flex-direction: column; border-right: 1px solid #1e293b; z-index: 10; }
-  .sidebar-header { padding: 24px 20px; font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.5px; border-bottom: 1px solid #1e293b; }
-  .sidebar-section { padding: 20px; flex: 1; overflow-y: auto; }
+  /* LEFT SIDEBAR */
+  .left-sidebar { width: 250px; background: var(--nav-bg); color: var(--nav-text); display: flex; flex-direction: column; border-right: 1px solid #1e293b; z-index: 10; }
+  .sidebar-header { padding: 20px 20px; font-size: 18px; font-weight: 800; color: #fff; letter-spacing: -0.5px; border-bottom: 1px solid #1e293b; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;}
+  .sidebar-section { padding: 16px; flex: 1; overflow-y: auto; }
   .sidebar-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; color: #64748b; display: flex; justify-content: space-between; align-items: center;}
   
-  .nav-item { padding: 10px 14px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; margin-bottom: 4px; color: var(--nav-text); }
+  .nav-item { padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; margin-bottom: 4px; color: var(--nav-text); }
   .nav-item:hover { background: var(--nav-hover); color: var(--nav-active); }
   .nav-item.active { background: var(--primary); color: #fff; }
   
-  .project-item { padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+  .project-item { padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
   .project-item:hover { background: var(--nav-hover); color: var(--nav-active); }
   .project-item.active { background: #1e293b; color: #fff; border-left: 3px solid var(--primary); }
 
+  /* Save & Status Indicators */
+  .save-indicator { font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 4px; letter-spacing: 0.5px; transition: all 0.3s; display: inline-block; }
+  .save-indicator.saving { background: #f59e0b; color: #fff; }
+  .save-indicator.saved { background: #10b981; color: #fff; }
+
   /* CENTER WORKSPACE */
   .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg-page); }
-  .workspace-header { background: #fff; padding: 24px 32px; border-bottom: 1px solid var(--border-soft); display: flex; flex-direction: column; gap: 16px; }
+  .workspace-header { background: #fff; padding: 20px 28px; border-bottom: 1px solid var(--border-soft); display: flex; flex-direction: column; gap: 12px; }
   .header-top-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
-  .project-title-group { display: flex; align-items: center; gap: 12px; }
-  .workspace-title { font-size: 24px; font-weight: 800; color: var(--text-main); }
-  .btn-icon { background: #f1f5f9; border: none; border-radius: 6px; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: 0.2s; }
+  .project-title-group { display: flex; align-items: center; gap: 12px; flex: 1; }
+  .workspace-title { font-size: 22px; font-weight: 800; color: var(--text-main); }
+  .btn-icon { background: #f1f5f9; border: none; border-radius: 6px; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: 0.2s; }
   .btn-icon:hover { background: #e2e8f0; color: var(--text-main); }
   
-  .workspace-actions { display: flex; gap: 8px; }
-  .workspace-scroll { flex: 1; overflow-y: auto; padding: 32px; }
+  .workspace-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .workspace-scroll { flex: 1; overflow-y: auto; padding: 24px 28px; }
 
-  /* RIGHT SIDEBAR (Context Panel) */
-  .right-sidebar { width: 300px; background: #fff; border-left: 1px solid var(--border-soft); display: flex; flex-direction: column; overflow-y: auto; }
-  .right-panel-section { padding: 24px; border-bottom: 1px solid var(--border-soft); }
+  /* RIGHT SIDEBAR */
+  .right-sidebar { width: 280px; background: #fff; border-left: 1px solid var(--border-soft); display: flex; flex-direction: column; overflow-y: auto; }
+  .right-panel-section { padding: 20px; border-bottom: 1px solid var(--border-soft); }
 
   /* UI Elements */
-  input, select, textarea { font-size: 13px; padding: 10px 12px; border: 1px solid #cbd5e1; background: #fff; border-radius: 8px; outline: none; width: 100%; transition: 0.2s; }
+  input, select, textarea { font-size: 12px; padding: 8px 12px; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; outline: none; width: 100%; transition: 0.2s; }
   input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
   
-  button { padding: 8px 16px; border: none; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: 0.2s; }
+  button { padding: 6px 14px; border: none; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; transition: 0.2s; }
   .btn-primary { background: var(--primary); color: #fff; }
   .btn-primary:hover { background: var(--primary-hover); }
   .btn-outline { background: transparent; border: 1px solid #cbd5e1; color: var(--text-main); }
   .btn-outline:hover { background: #f1f5f9; }
-  .btn-danger-outline { background: transparent; color: #ef4444; }
+  .btn-danger-outline { background: transparent; color: #ef4444; padding: 6px 10px; }
   .btn-danger-outline:hover { background: #fee2e2; }
-
-  .card { background: var(--bg-card); border-radius: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-soft); padding: 20px; }
   
-  /* Collapsible Sections */
-  details > summary { list-style: none; cursor: pointer; user-select: none; }
+  .btn-add-small { background: transparent; border: 1px solid var(--border-soft); border-radius: 6px; padding: 4px 12px; font-size: 11px; font-weight: 700; color: var(--primary); cursor: pointer; transition: 0.2s; }
+  .btn-add-small:hover { background: var(--primary); color: #fff; }
+
+  .card { background: var(--bg-card); border-radius: 10px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-soft); padding: 16px; }
+  
+  details > summary { list-style: none; cursor: pointer; user-select: none; outline: none; }
   details > summary::-webkit-details-marker { display: none; }
   .chevron { display: inline-block; transition: transform 0.2s; font-size: 10px; color: var(--text-muted); }
   details:not([open]) .chevron { transform: rotate(-90deg); }
   
-  .section-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between; }
+  .section-title { font-size: 13px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between; }
   
-  /* Progress Bar */
-  .progress-wrapper { width: 100%; background: #f1f5f9; border-radius: 999px; height: 8px; overflow: hidden; margin-top: 8px; }
+  .progress-wrapper { width: 100%; background: #f1f5f9; border-radius: 999px; height: 6px; overflow: hidden; margin-top: 6px; }
   .progress-fill { height: 100%; background: var(--color-complete); transition: width 0.5s ease; }
-  .progress-text { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+  .progress-text { font-size: 11px; font-weight: 700; color: var(--text-muted); }
 
-  /* Workflow Tiles (Clearer Hierarchy) */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; margin-top: 16px; }
-  .tile { display: flex; flex-direction: column; gap: 12px; position: relative; transition: 0.2s; cursor: grab; background: #fff; border-radius: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-soft); padding: 16px; }
+  /* Loading Skeleton */
+  .loading-skeleton { animation: pulse 1.5s ease-in-out infinite; background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%); background-size: 200% 100%; border-radius: 4px; }
+  @keyframes pulse { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+  /* ENTERPRISE TRADES TABLE */
+  .table-wrapper { width: 100%; overflow-x: auto; background: #fff; border-radius: 8px; border: 1px solid var(--border-soft); box-shadow: var(--shadow-sm); margin-top: 8px; margin-bottom: 24px; }
+  .trades-table { width: 100%; border-collapse: collapse; text-align: left; }
+  .trades-table th { background: #f8fafc; padding: 10px 14px; font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid var(--border-soft); }
+  .trades-table td { padding: 6px 14px; border-bottom: 1px solid var(--border-soft); vertical-align: middle; }
+  .trades-table tr:last-child td { border-bottom: none; }
+  .trades-table input { padding: 6px 8px; font-size: 12px; margin: 0; box-shadow: none; border: 1px solid transparent; background: transparent; }
+  .trades-table input:hover { border: 1px solid var(--border-soft); background: #f8fafc; }
+  .trades-table input:focus { border: 1px solid var(--primary); background: #fff; box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1); }
+
+  /* HIGH DENSITY TILES */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 12px; }
+  .tile { display: flex; flex-direction: column; gap: 8px; position: relative; transition: 0.2s; cursor: grab; background: #fff; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-soft); padding: 12px; }
   
-  /* Tile States - Making them instantly recognizable */
   .tile.status-locked { background: var(--color-locked-bg); opacity: 0.6; border: 1px dashed #cbd5e1; box-shadow: none; }
-  .tile.status-ready { border: 2px solid var(--color-ready); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15); }
-  .tile.status-in { border: 2px solid var(--color-progress); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15); }
+  .tile.status-ready { border: 2px solid var(--color-ready); box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15); }
+  .tile.status-in { border: 2px solid var(--color-progress); box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15); }
   .tile.status-complete { border: 1px solid #a7f3d0; background: #f0fdf4; }
 
+  .drag-over { border: 2px dashed var(--primary); background: #f0f9ff; transform: scale(1.02); transition: 0.2s; }
+
   .tile-header { display: flex; justify-content: space-between; align-items: center; }
-  .step-badge { font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 999px; }
+  .step-badge { font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 999px; }
   .bg-locked { background: #e2e8f0; color: #64748b; }
   .bg-ready { background: #fef3c7; color: #b45309; }
   .bg-progress { background: #dbeafe; color: #1d4ed8; }
   .bg-complete { background: #d1fae5; color: #047857; }
 
-  .tile-title { font-size: 15px; font-weight: 700; line-height: 1.3; display: flex; gap: 8px; align-items: flex-start; }
-  .drag-handle { color: #cbd5e1; cursor: grab; font-size: 16px; transition: 0.2s; }
+  .tile-title { font-size: 13px; font-weight: 700; line-height: 1.3; display: flex; gap: 6px; align-items: flex-start; }
+  .drag-handle { color: #cbd5e1; cursor: grab; font-size: 14px; transition: 0.2s; }
   
-  .tile-meta { display: flex; gap: 8px; }
-  .doc-link-input { display: flex; gap: 8px; }
-  .doc-btn { background: #f1f5f9; color: var(--text-main); padding: 8px 12px; border-radius: 8px; text-decoration: none; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; transition: 0.2s; }
-  .doc-btn:hover { background: #e2e8f0; }
-  .tile textarea { height: 60px; resize: none; }
+  .tile-meta { display: flex; gap: 6px; }
+  .project-tag { font-size: 10px; font-weight: 700; color: var(--primary); background: #e0e7ff; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 4px; width: fit-content; }
   
-  .smart-btn { width: 100%; padding: 12px; margin-top: auto; font-size: 13px; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; transition: 0.2s; }
+  .tile textarea { height: 36px; padding: 6px 8px; font-size: 11px; resize: none; transition: height 0.2s ease; }
+  .tile textarea:focus { height: 70px; }
+  
+  .smart-btn { width: 100%; padding: 8px; margin-top: auto; font-size: 11px; font-weight: 700; border-radius: 6px; border: none; cursor: pointer; transition: 0.2s; }
   .btn-locked { background: transparent; color: var(--text-muted); cursor: not-allowed; border: 1px dashed #cbd5e1; }
   .btn-success { background: var(--color-complete); color: #fff; }
 
-  /* Contractors & Checklists */
-  .contractors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; margin-bottom: 16px; margin-top: 16px; }
-  .trade-title { font-weight: 800; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; display: flex; justify-content: space-between; }
-  
-  .check-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9; gap: 12px; }
-  .check-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary); }
-  .check-text { font-size: 13px; flex: 1; }
-  .chk-del { color: #ef4444; font-weight: bold; cursor: pointer; border: none; background: transparent; padding: 4px; opacity: 0; transition: 0.2s; }
+  /* Checklists */
+  .check-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f1f5f9; gap: 8px; }
+  .check-item input[type="checkbox"] { width: 14px; height: 14px; cursor: pointer; accent-color: var(--primary); }
+  .check-text { font-size: 12px; flex: 1; word-break: break-word; }
+  .chk-del { color: #ef4444; font-weight: bold; cursor: pointer; border: none; background: transparent; padding: 2px 6px; opacity: 0; transition: 0.2s; }
   .check-item:hover .chk-del { opacity: 1; }
 
   /* Calendar */
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; }
-  .cal-header-day { font-weight: 700; text-align: center; font-size: 12px; color: var(--text-muted); text-transform: uppercase; padding-bottom: 8px; }
-  .cal-cell { min-height: 110px; border-radius: 12px; padding: 10px; cursor: pointer; background: #fff; border: 1px solid var(--border-soft); display: flex; flex-direction: column; gap: 6px; transition: 0.2s; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+  .cal-header-day { font-weight: 700; text-align: center; font-size: 11px; color: var(--text-muted); text-transform: uppercase; padding-bottom: 6px; }
+  .cal-cell { min-height: 90px; border-radius: 8px; padding: 8px; cursor: pointer; background: #fff; border: 1px solid var(--border-soft); display: flex; flex-direction: column; gap: 4px; transition: 0.2s; }
   .cal-cell:hover { border-color: var(--primary); box-shadow: var(--shadow-md); transform: translateY(-2px); }
-  .cal-date-num { font-size: 14px; font-weight: 800; }
-  .cal-event { font-size: 11px; background: #e0e7ff; color: var(--primary); padding: 6px 8px; border-radius: 6px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cal-date-num { font-size: 13px; font-weight: 800; }
+  .cal-event { font-size: 10px; background: #e0e7ff; color: var(--primary); padding: 4px 6px; border-radius: 4px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .cal-event.completed { text-decoration: line-through; opacity: 0.6; background: #f1f5f9; color: var(--text-muted); }
 
-  /* Empty States */
-  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); font-weight: 600; background: #fff; border-radius: 12px; border: 1px dashed #cbd5e1; margin-top: 20px; }
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); font-weight: 600; background: #fff; border-radius: 8px; border: 1px dashed #cbd5e1; margin-top: 16px; font-size: 13px; }
 
-  /* Modals */
+  /* Modals & Toasts */
   .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 200; }
-  .modal-content { background: #fff; width: 100%; max-width: 420px; padding: 32px; border-radius: 16px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-  .modal-title { font-weight: 800; font-size: 18px; margin-bottom: 8px; }
-  .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; }
+  .modal-content { background: #fff; width: 100%; max-width: 400px; padding: 24px; border-radius: 12px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+  .modal-title { font-weight: 800; font-size: 16px; margin-bottom: 4px; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
 
+  .toast { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; z-index: 999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: slideIn 0.3s ease; }
+  @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+  /* Responsive fixes */
   @media (max-width: 900px) {
     .app-layout { flex-direction: column; overflow: auto; }
     .left-sidebar { width: 100%; height: auto; flex: none; border-right: none; border-bottom: 1px solid #1e293b; }
     .right-sidebar { width: 100%; border-left: none; border-top: 1px solid var(--border-soft); }
     .workspace-scroll { padding: 16px; }
   }
+  @media (max-width: 600px) {
+    .workspace-header { padding: 12px 16px; }
+    .workspace-scroll { padding: 12px 16px; }
+    .grid { grid-template-columns: 1fr; }
+    .header-top-row { flex-direction: column; align-items: stretch; }
+    .workspace-actions { flex-wrap: wrap; }
+    .workspace-title { font-size: 18px; }
+  }
 </style>
 </head>
 <body>
 
+<!-- Datalist placed properly in the DOM flow -->
 <datalist id="rolodex-companies"></datalist>
 
 <!-- Modals -->
@@ -188,7 +210,7 @@
       <option value="Site">Owner: Site</option>
       <option value="Office">Owner: Office</option>
     </select>
-    <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 4px;">Activate After:</div>
+    <div style="font-size: 11px; font-weight: 600; color: var(--text-muted); margin-top: 4px;">Activate After:</div>
     <select id="new-job-prereq"></select>
     <div class="modal-actions">
       <button class="btn-outline" onclick="closeModals()">Cancel</button>
@@ -214,7 +236,7 @@
 <div class="modal-overlay" id="modal-event">
   <div class="modal-content">
     <div class="modal-title">Add Booking / Meeting</div>
-    <div style="font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: -5px;" id="event-modal-project-name"></div>
+    <div style="font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: -5px;" id="event-modal-project-name"></div>
     <input type="date" id="event-date">
     <input type="text" id="event-text" placeholder="e.g. Certifier Inspection...">
     <div class="modal-actions">
@@ -229,9 +251,15 @@
   
   <!-- LEFT NAV MENU -->
   <aside class="left-sidebar">
-    <div class="sidebar-header">KARNEL HOMES</div>
+    <div class="sidebar-header">
+      <span>KARNEL HOMES</span>
+      <div style="display: flex; gap: 4px; align-items: center;">
+        <span id="save-status" class="save-indicator saved">💾 SAVED</span>
+        <span id="cloud-sync-status" class="save-indicator" style="background: #f59e0b; color: #fff;">⚠️ OFFLINE</span>
+      </div>
+    </div>
     
-    <div class="sidebar-section" style="border-bottom: 1px solid #1e293b; padding-bottom: 20px; flex: none;">
+    <div class="sidebar-section" style="border-bottom: 1px solid #1e293b; padding-bottom: 16px; flex: none;">
       <div class="sidebar-title">Main Views</div>
       <div class="nav-item active" id="nav-project" onclick="setView('PROJECT')">🏢 Project Board</div>
       <div class="nav-item" id="nav-day" onclick="setView('DAY')">☀️ My Day</div>
@@ -251,22 +279,69 @@
 
   <!-- CENTER WORKSPACE -->
   <main class="main-content">
-    <header class="workspace-header" id="workspace-header">
-      <!-- Dynamic header renders here based on view -->
-    </header>
-    
-    <div class="workspace-scroll" id="portal-content">
-      <!-- Dynamic content renders here -->
-    </div>
+    <header class="workspace-header" id="workspace-header"></header>
+    <div class="workspace-scroll" id="portal-content"></div>
   </main>
 
   <!-- RIGHT CONTEXT PANEL -->
-  <aside class="right-sidebar" id="right-sidebar-content">
-      <!-- Details and checklists render here -->
-  </aside>
+  <aside class="right-sidebar" id="right-sidebar-content"></aside>
 </div>
 
 <script>
+  // ==========================================
+  // UTILITY HELPERS
+  // ==========================================
+  function escapeHTML(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>'"]/g, match => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+    }[match]));
+  }
+
+  function validateInput(value, maxLength = 200) {
+    if (!value || typeof value !== 'string') return '';
+    return value.trim().slice(0, maxLength);
+  }
+
+  function validateURL(string) {
+    try {
+      const url = new URL(string);
+      return url.protocol === 'http:' || url.protocol === 'https:' || url.protocol === 'file:' || url.protocol === 'ftp:';
+    } catch (_) { return false; }
+  }
+
+  function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+  }
+
+  function showToast(message, isError = false) {
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    if (isError) toast.style.borderLeft = '4px solid #ef4444';
+    else toast.style.borderLeft = '4px solid #10b981';
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transition = 'opacity 0.3s';
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+
+  // Use event delegation for the checklist input to prevent duplicate listeners
+  document.addEventListener('keypress', function(e) {
+    if (e.target && e.target.id === 'new-check-text' && e.key === 'Enter') {
+      e.preventDefault();
+      addChecklistItem();
+    }
+  });
+
   // ==========================================
   // 1. SUPABASE CONNECTION DETAILS
   // ==========================================
@@ -274,12 +349,24 @@
   const SUPABASE_KEY = 'sb_publishable_k9sU8tyILCmQTxAI36ufWQ__JsPNSRY';
   
   let supabaseClient = null;
+  let supabaseChannel = null;
 
   try {
     if (SUPABASE_URL.startsWith('http')) {
       supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     }
   } catch(e) { console.error("Supabase error:", e); }
+
+  function initCloudStatus() {
+    const statusEl = document.getElementById('cloud-sync-status');
+    if (supabaseClient) {
+      statusEl.textContent = '☁️ LIVE';
+      statusEl.style.background = '#10b981';
+    } else {
+      statusEl.textContent = '⚠️ OFFLINE';
+      statusEl.style.background = '#f59e0b';
+    }
+  }
 
   // ==========================================
   // 2. STATE & DEFAULT TEMPLATES
@@ -295,8 +382,8 @@
     { id: 1, name: "CC / CDC Approval Received", owner: "Office", prereqs: [], status: "READY TO START", notes: "", date: "" }
   ];
 
-  let projects = JSON.parse(localStorage.getItem('karnel_data_final10')) || {};
-  let currentProjectId = localStorage.getItem('karnel_active_final10') || null;
+  let projects = JSON.parse(localStorage.getItem('karnel_data_final14')) || {};
+  let currentProjectId = localStorage.getItem('karnel_active_final14') || null;
   let rolodex = JSON.parse(localStorage.getItem('karnel_rolodex')) || [];
   let currentView = 'PROJECT'; 
   let draggedStepId = null;
@@ -307,24 +394,49 @@
   // ==========================================
   // 3. CLOUD SYNC & LOCAL STORAGE LOGIC
   // ==========================================
-  function saveState() {
-    localStorage.setItem('karnel_data_final10', JSON.stringify(projects));
-    localStorage.setItem('karnel_active_final10', currentProjectId);
+  async function saveState() {
+    const status = document.getElementById('save-status');
+    if (status) {
+      status.className = 'save-indicator saving';
+      status.textContent = '💾 SAVING...';
+    }
+
+    localStorage.setItem('karnel_data_final14', JSON.stringify(projects));
+    localStorage.setItem('karnel_active_final14', currentProjectId);
     localStorage.setItem('karnel_rolodex', JSON.stringify([...new Set(rolodex)])); 
     updateRolodexDatalist();
-    syncToSupabase();
+    
+    await syncToSupabase();
+    
+    if (status) {
+      status.className = 'save-indicator saved';
+      status.textContent = '💾 SAVED';
+    }
   }
+
+  const debouncedSave = debounce(saveState, 500);
 
   async function syncToSupabase() {
     if (!supabaseClient || !currentProjectId || !projects[currentProjectId]) return;
     try {
       await supabaseClient.from('karnel_projects').upsert({ id: currentProjectId, name: projects[currentProjectId].name, data: projects[currentProjectId] });
-    } catch (e) {}
+      initCloudStatus(); 
+    } catch (e) {
+      console.warn("Cloud sync failed - saving locally only");
+      const statusEl = document.getElementById('cloud-sync-status');
+      statusEl.textContent = '⚠️ OFFLINE';
+      statusEl.style.background = '#f59e0b';
+      showToast("Cloud sync failed. Data saved locally.", true);
+    }
   }
 
   async function loadFromCloud() {
     if (!supabaseClient) return;
     try {
+      if (supabaseChannel) {
+        supabaseClient.removeChannel(supabaseChannel);
+      }
+
       const { data } = await supabaseClient.from('karnel_projects').select('*');
       if (data && data.length > 0) {
         data.forEach(row => { projects[row.id] = row.data; });
@@ -332,12 +444,47 @@
         if (!currentProjectId || !projects[currentProjectId]) currentProjectId = data[0].id;
         render();
       }
-      supabaseClient.channel('karnel-live').on('postgres_changes', { event: '*', schema: 'public', table: 'karnel_projects' }, payload => {
+      
+      supabaseChannel = supabaseClient.channel('karnel-live');
+      supabaseChannel.on('postgres_changes', { event: '*', schema: 'public', table: 'karnel_projects' }, payload => {
           projects[payload.new.id] = payload.new.data;
-          if (payload.new.id === currentProjectId || currentView === 'DAY' || currentView === 'CALENDAR') render();
+          const activeEl = document.activeElement;
+          const isEditing = activeEl && ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl.tagName);
+          if (!isEditing && (payload.new.id === currentProjectId || currentView === 'DAY' || currentView === 'CALENDAR')) {
+              render();
+          }
       }).subscribe();
-    } catch (e) {}
+    } catch (e) {
+      console.warn("Failed to load initial data from Supabase.");
+      showToast("Failed to load initial data from server.", true);
+    }
   }
+
+  async function manualSync() {
+    const btn = document.getElementById('sync-btn');
+    if (btn) {
+      const originalText = btn.textContent;
+      btn.textContent = '⏳ Syncing...';
+      btn.disabled = true;
+      try {
+        await loadFromCloud();
+        initCloudStatus();
+        render();
+        showToast("Data successfully synced.");
+      } catch (e) {
+        showToast("Sync failed. Check connection.", true);
+      } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
+    }
+  }
+
+  window.addEventListener('beforeunload', () => {
+    if (supabaseClient && supabaseChannel) {
+      supabaseClient.removeChannel(supabaseChannel);
+    }
+  });
 
   // ==========================================
   // 4. CORE APP FUNCTIONS
@@ -345,7 +492,7 @@
   function updateRolodexDatalist() {
     const list = document.getElementById('rolodex-companies');
     list.innerHTML = '';
-    rolodex.forEach(company => { if(company.trim()) list.innerHTML += `<option value="${company}">`; });
+    rolodex.forEach(company => { if(company.trim()) list.innerHTML += `<option value="${escapeHTML(company)}">`; });
   }
 
   function exportBackupData() {
@@ -357,15 +504,17 @@
     document.body.appendChild(dlAnchorElem);
     dlAnchorElem.click();
     dlAnchorElem.remove();
+    showToast("Backup exported successfully.");
   }
 
-  function editProjectName() {
+  async function editProjectName() {
     if (!currentProjectId || !projects[currentProjectId]) return;
     const currentName = projects[currentProjectId].name;
     const newName = prompt("Edit Project Address:", currentName);
-    if (newName && newName.trim() !== "") {
-      projects[currentProjectId].name = newName.trim();
-      saveState();
+    const validName = validateInput(newName);
+    if (validName && validName !== "") {
+      projects[currentProjectId].name = validName;
+      await saveState();
       render();
     }
   }
@@ -380,9 +529,9 @@
     document.getElementById('project-address-input').focus();
   }
 
-  function submitProjectModal() {
-    const name = document.getElementById('project-address-input').value.trim();
-    if (!name) return alert("Please enter an address.");
+  async function submitProjectModal() {
+    const name = validateInput(document.getElementById('project-address-input').value);
+    if (!name) return alert("Please enter a valid address.");
     
     if (projectModalMode === 'NEW') {
       const id = 'proj_' + Date.now();
@@ -391,28 +540,38 @@
     } else if (projectModalMode === 'COPY') {
       const original = projects[currentProjectId];
       const newId = 'proj_' + Date.now();
-      const copiedSteps = original.steps.map(step => ({ ...step, status: step.prereqs.length === 0 ? "READY TO START" : "LOCKED", notes: "", date: "", docLink: "" }));
+      const copiedSteps = original.steps.map(step => ({ ...step, status: step.prereqs.length === 0 ? "READY TO START" : "LOCKED", notes: "", date: "" }));
       projects[newId] = { id: newId, name: name, contractors: JSON.parse(JSON.stringify(original.contractors)), steps: copiedSteps, checklist: [], events: [], projectLocationLink: "" };
       currentProjectId = newId;
     }
     setView('PROJECT');
-    saveState();
+    await saveState();
     closeModals();
     render();
+    showToast("Project created successfully.");
   }
 
-  function deleteCurrentProject() {
+  async function deleteCurrentProject() {
     if (!currentProjectId) return;
-    if (confirm("Are you sure you want to delete this project permanently?")) {
-      if(supabaseClient) supabaseClient.from('karnel_projects').delete().eq('id', currentProjectId).then();
+    const projectName = projects[currentProjectId]?.name || 'this project';
+    if (confirm(`⚠️ Are you sure you want to delete "${projectName}"? This action cannot be undone!`)) {
+      if(supabaseClient) await supabaseClient.from('karnel_projects').delete().eq('id', currentProjectId);
       delete projects[currentProjectId];
       currentProjectId = Object.keys(projects)[0] || null;
-      saveState();
+      
+      if (!currentProjectId) {
+        currentView = 'PROJECT';
+        document.querySelectorAll('.nav-item').forEach(el => el.className = 'nav-item');
+        document.getElementById('nav-project').className = 'nav-item active';
+      }
+      
+      await saveState();
       render();
+      showToast("Project deleted.");
     }
   }
 
-  function switchProject(id) { currentProjectId = id; currentView = 'PROJECT'; saveState(); render(); }
+  async function switchProject(id) { currentProjectId = id; currentView = 'PROJECT'; await saveState(); render(); }
   
   function setView(viewMode) {
     currentView = viewMode;
@@ -431,13 +590,13 @@
     if (!currentProjectId) return alert("Create a project first!");
     const prereqSelect = document.getElementById('new-job-prereq');
     prereqSelect.innerHTML = '<option value="0">None (Start Immediately)</option>';
-    projects[currentProjectId].steps.forEach(s => { prereqSelect.innerHTML += `<option value="${s.id}">Wait for: ${s.name}</option>`; });
+    projects[currentProjectId].steps.forEach(s => { prereqSelect.innerHTML += `<option value="${s.id}">Wait for: ${escapeHTML(s.name)}</option>`; });
     document.getElementById('new-job-name').value = '';
     document.getElementById('modal-job').style.display = 'flex';
   }
 
-  function addJob() {
-    const name = document.getElementById('new-job-name').value;
+  async function addJob() {
+    const name = validateInput(document.getElementById('new-job-name').value);
     const owner = document.getElementById('new-job-owner').value;
     const prereqId = parseInt(document.getElementById('new-job-prereq').value);
     if (!name) return alert("Please enter a job title");
@@ -446,18 +605,18 @@
     const prereqs = prereqId === 0 ? [] : [prereqId];
     project.steps.push({ id: newId, name: name, owner: owner, prereqs: prereqs, status: "LOCKED", notes: "", date: "" });
     evaluateDependencies(project.steps);
-    saveState();
+    await saveState();
     closeModals();
     render();
   }
 
-  function removeJob(projectId, stepId) {
+  async function removeJob(projectId, stepId) {
     if (confirm("Are you sure you want to delete this job?")) {
       const project = projects[projectId];
       project.steps = project.steps.filter(s => s.id !== stepId);
       project.steps.forEach(s => { s.prereqs = s.prereqs.filter(id => id !== stepId); });
       evaluateDependencies(project.steps);
-      saveState();
+      await saveState();
       render();
     }
   }
@@ -467,29 +626,36 @@
     document.getElementById('modal-trade').style.display = 'flex';
   }
 
-  function addTrade() {
-    const trade = document.getElementById('new-trade-role').value;
+  async function addTrade() {
+    const trade = validateInput(document.getElementById('new-trade-role').value);
+    const company = validateInput(document.getElementById('new-trade-company').value);
+    const contact = validateInput(document.getElementById('new-trade-contact').value);
+    const email = validateInput(document.getElementById('new-trade-email').value);
+    
     if (!trade) return alert("Please enter a Trade / Role");
-    projects[currentProjectId].contractors.push({ trade: trade, company: document.getElementById('new-trade-company').value, contact: document.getElementById('new-trade-contact').value, email: document.getElementById('new-trade-email').value });
-    saveState();
+    projects[currentProjectId].contractors.push({ trade, company, contact, email });
+    await saveState();
     closeModals();
     render();
   }
 
-  function removeTrade(index) {
+  async function removeTrade(index) {
     if (confirm("Remove this trade?")) {
       projects[currentProjectId].contractors.splice(index, 1);
-      saveState();
+      await saveState();
       render();
     }
   }
 
-  function updateField(projectId, type, id, field, value) {
+  async function updateField(projectId, type, id, field, value) {
     const project = projects[projectId];
     if (!project) return;
+    
     if (type === 'contractor') {
       project.contractors[id][field] = value;
-      if (field === 'company' && value.trim()) rolodex.push(value.trim());
+      if (field === 'company' && value.trim() && !rolodex.includes(value.trim())) {
+        rolodex.push(value.trim());
+      }
     } else if (type === 'step') {
       const step = project.steps.find(s => s.id === id);
       if (step) {
@@ -497,46 +663,68 @@
         if (field === 'status') evaluateDependencies(project.steps);
       }
     } else if (type === 'locationLink') {
+      if (value && !validateURL(value)) {
+        alert('Please enter a valid URL (include http:// or https://)');
+        return;
+      }
       project.projectLocationLink = value;
     }
-    saveState();
-    render(); 
+    
+    if (field === 'notes' || field === 'company' || field === 'contact' || field === 'email') {
+      debouncedSave();
+    } else {
+      await saveState();
+      render(); 
+    }
   }
 
   /* DRAG AND DROP */
-  function dragStart(event, stepId) { draggedStepId = stepId; event.dataTransfer.effectAllowed = 'move'; }
+  function dragStart(event, stepId) { 
+    if (currentView !== 'PROJECT') { event.preventDefault(); return false; }
+    draggedStepId = stepId; 
+    event.dataTransfer.effectAllowed = 'move'; 
+    event.dataTransfer.setData('text/plain', stepId.toString());
+  }
   function dragOver(event, el) { event.preventDefault(); el.classList.add('drag-over'); }
   function dragLeave(event, el) { el.classList.remove('drag-over'); }
-  function drop(event, targetId, el) {
+  async function drop(event, targetId, el) {
     event.preventDefault();
     el.classList.remove('drag-over');
-    if (draggedStepId === targetId) return;
+    
+    const draggedId = parseInt(event.dataTransfer.getData('text/plain'));
+    if (isNaN(draggedId) || draggedId === targetId || currentView !== 'PROJECT') return;
+    
     const project = projects[currentProjectId];
-    const fromIndex = project.steps.findIndex(s => s.id === draggedStepId);
+    const fromIndex = project.steps.findIndex(s => s.id === draggedId);
     const toIndex = project.steps.findIndex(s => s.id === targetId);
+    if (fromIndex === -1 || toIndex === -1) return;
+    
     const movedStep = project.steps.splice(fromIndex, 1)[0];
     project.steps.splice(toIndex, 0, movedStep);
-    saveState();
+    await saveState();
     render();
   }
 
   /* CHECKLIST */
-  function addChecklistItem() {
+  async function addChecklistItem() {
     const input = document.getElementById('new-check-text');
-    if(!input.value || !currentProjectId) return;
+    if(!input) return;
+    const text = validateInput(input.value);
+    if(!text || !currentProjectId) return;
+    
     projects[currentProjectId].checklist = projects[currentProjectId].checklist || [];
-    projects[currentProjectId].checklist.push({ id: Date.now(), text: input.value, status: "PENDING" });
+    projects[currentProjectId].checklist.push({ id: Date.now(), text: text, status: "PENDING" });
     input.value = '';
-    saveState();
+    await saveState();
     render();
   }
-  function updateChecklistStatus(projectId, id, status) {
+  async function updateChecklistStatus(projectId, id, status) {
     const item = projects[projectId].checklist.find(i => i.id === id);
-    if(item) { item.status = status; saveState(); render(); }
+    if(item) { item.status = status; await saveState(); render(); }
   }
-  function deleteChecklistItem(projectId, id) {
+  async function deleteChecklistItem(projectId, id) {
     projects[projectId].checklist = projects[projectId].checklist.filter(i => i.id !== id);
-    saveState();
+    await saveState();
     render();
   }
 
@@ -544,26 +732,26 @@
   function changeMonth(direction) { calMonth += direction; if (calMonth < 0) { calMonth = 11; calYear--; } if (calMonth > 11) { calMonth = 0; calYear++; } render(); }
   function openCalendarModal(dateStr) {
     if (!currentProjectId || !projects[currentProjectId]) return alert("Please select an active project from the left menu first.");
-    document.getElementById('event-modal-project-name').innerText = "📍 " + projects[currentProjectId].name;
+    document.getElementById('event-modal-project-name').innerText = "📍 " + escapeHTML(projects[currentProjectId].name);
     document.getElementById('event-date').value = dateStr;
     document.getElementById('event-text').value = '';
     document.getElementById('modal-event').style.display = 'flex';
     setTimeout(() => document.getElementById('event-text').focus(), 100);
   }
-  function addCalendarEvent() {
-    const text = document.getElementById('event-text').value.trim();
+  async function addCalendarEvent() {
+    const text = validateInput(document.getElementById('event-text').value);
     const date = document.getElementById('event-date').value;
     if (!text || !date) return alert("Please enter both a date and a description.");
     const project = projects[currentProjectId];
     project.events = project.events || [];
     project.events.push({ id: Date.now(), date: date, text: text, status: "PENDING" });
-    saveState();
+    await saveState();
     closeModals();
     render();
   }
-  function toggleEventStatus(projectId, eventId) {
+  async function toggleEventStatus(projectId, eventId) {
     const ev = projects[projectId].events.find(e => e.id === eventId);
-    if (ev) { ev.status = ev.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED'; saveState(); render(); }
+    if (ev) { ev.status = ev.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED'; await saveState(); render(); }
   }
 
   function evaluateDependencies(steps) {
@@ -585,25 +773,22 @@
     else if (step.status === 'COMPLETE') smartButton = `<button class="smart-btn" style="background:#f1f5f9; color:#64748b;" onclick="updateField('${projectId}', 'step', ${step.id}, 'status', 'IN PROGRESS')">↺ Reopen Task</button>`;
     else smartButton = `<button class="smart-btn btn-locked" disabled>🔒 Locked</button>`;
 
-    let projectTagHtml = projectName ? `<div class="project-tag">📍 ${projectName}</div>` : '';
+    let projectTagHtml = projectName ? `<div class="project-tag">📍 ${escapeHTML(projectName)}</div>` : '';
+    const isDraggable = currentView === 'PROJECT' ? 'true' : 'false';
 
     return `
-      <div class="tile ${statusClass}" draggable="true" ondragstart="dragStart(event, ${step.id})" ondragover="dragOver(event, this)" ondragleave="dragLeave(event, this)" ondrop="drop(event, ${step.id}, this)">
+      <div class="tile ${statusClass}" draggable="${isDraggable}" ondragstart="dragStart(event, ${step.id})" ondragover="dragOver(event, this)" ondragleave="dragLeave(event, this)" ondrop="drop(event, ${step.id}, this)">
         ${projectTagHtml}
         <div class="tile-header">
           <span class="step-badge ${badgeClass}">${step.status}</span>
-          <div style="display:flex; gap:8px; align-items:center;">
-            <span style="font-size:11px; font-weight:700; color:var(--text-muted);">${step.owner}</span>
-            <span class="chk-del" style="opacity:1;" onclick="removeJob('${projectId}', ${step.id})" title="Delete Job">×</span>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <span style="font-size:10px; font-weight:700; color:var(--text-muted);">${escapeHTML(step.owner)}</span>
+            <button class="btn-danger-outline" style="padding: 2px 6px; font-size:14px; font-weight:bold;" onclick="removeJob('${projectId}', ${step.id})" title="Delete Job">×</button>
           </div>
         </div>
-        <div class="tile-title"><span class="drag-handle" title="Drag to reorder">⋮⋮</span> ${step.name}</div>
+        <div class="tile-title"><span class="drag-handle" title="Drag to reorder">⋮⋮</span> ${escapeHTML(step.name)}</div>
         <div class="tile-meta"><input type="date" value="${step.date}" onchange="updateField('${projectId}', 'step', ${step.id}, 'date', this.value)"></div>
-        <div class="doc-link-input">
-          <input type="url" placeholder="Paste doc/invoice link..." value="${step.docLink || ''}" onchange="updateField('${projectId}', 'step', ${step.id}, 'docLink', this.value)">
-          ${step.docLink ? `<a href="${step.docLink}" target="_blank" class="doc-btn">📂 View</a>` : ''}
-        </div>
-        <textarea placeholder="Quick notes..." onchange="updateField('${projectId}', 'step', ${step.id}, 'notes', this.value)">${step.notes}</textarea>
+        <textarea placeholder="Quick notes..." oninput="updateField('${projectId}', 'step', ${step.id}, 'notes', this.value)">${escapeHTML(step.notes)}</textarea>
         ${smartButton}
       </div>
     `;
@@ -618,11 +803,11 @@
     // --- LEFT SIDEBAR (Projects) ---
     let listHtml = '';
     if (Object.keys(projects).length === 0) {
-      listHtml = `<div style="font-size:13px; color:var(--nav-text); padding: 0 14px;">No active projects.</div>`;
+      listHtml = `<div style="font-size:12px; color:var(--nav-text); padding: 0 12px;">No active projects.</div>`;
     } else {
       Object.values(projects).forEach(p => {
         const isActive = p.id === currentProjectId && currentView !== 'DAY' && currentView !== 'CALENDAR';
-        listHtml += `<div class="project-item ${isActive ? 'active' : ''}" onclick="switchProject('${p.id}')">${p.name}</div>`;
+        listHtml += `<div class="project-item ${isActive ? 'active' : ''}" onclick="switchProject('${p.id}')">${escapeHTML(p.name)}</div>`;
       });
     }
     listContainer.innerHTML = listHtml;
@@ -639,9 +824,9 @@
       rightSidebar.style.display = "none";
       workspaceHeader.innerHTML = `
         <div class="header-top-row">
-          <div class="workspace-title">📅 Global Calendar</div>
-        </div>
-      `;
+            <div class="workspace-title">📅 Global Calendar</div>
+            <div class="workspace-actions"><button id="sync-btn" class="btn-outline" onclick="manualSync()">🔄 Sync</button></div>
+        </div>`;
       
       const firstDay = new Date(calYear, calMonth, 1).getDay(); 
       const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
@@ -649,10 +834,10 @@
       const monthName = new Date(calYear, calMonth).toLocaleString('default', { month: 'long' });
 
       let calHtml = `
-        <div class="card" style="padding: 32px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;">
+        <div class="card" style="padding: 24px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
             <button class="btn-outline" onclick="changeMonth(-1)">◀ Previous</button>
-            <div style="font-size: 20px; font-weight: 800; text-transform: uppercase; color: var(--primary);">${monthName} ${calYear}</div>
+            <div style="font-size: 18px; font-weight: 800; text-transform: uppercase; color: var(--primary);">${monthName} ${calYear}</div>
             <button class="btn-outline" onclick="changeMonth(1)">Next ▶</button>
           </div>
           <div class="cal-grid">
@@ -671,11 +856,11 @@
           (project.events || []).forEach(ev => {
             if (ev.date === dateStr) {
               const statusClass = ev.status === 'COMPLETED' ? 'completed' : '';
-              dayEvents += `<div class="cal-event ${statusClass}" title="${project.name} - ${ev.text}" onclick="event.stopPropagation(); toggleEventStatus('${project.id}', ${ev.id})"><strong>${project.name.substring(0,6)}..</strong>: ${ev.text}</div>`;
+              dayEvents += `<div class="cal-event ${statusClass}" title="${escapeHTML(project.name)} - ${escapeHTML(ev.text)}" onclick="event.stopPropagation(); toggleEventStatus('${project.id}', ${ev.id})"><strong>${escapeHTML(project.name.substring(0,6))}..</strong>: ${escapeHTML(ev.text)}</div>`;
             }
           });
         });
-        calHtml += `<div class="cal-cell" style="${bgStyle}" onclick="openCalendarModal('${dateStr}')"><div class="cal-date-num">${day}</div><div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">${dayEvents}</div></div>`;
+        calHtml += `<div class="cal-cell" style="${bgStyle}" onclick="openCalendarModal('${dateStr}')"><div class="cal-date-num">${day}</div><div style="display:flex; flex-direction:column; gap:4px; margin-top:4px;">${dayEvents}</div></div>`;
       }
       calHtml += `</div></div>`;
       content.innerHTML = calHtml;
@@ -686,9 +871,9 @@
     if (currentView === 'DAY') {
       workspaceHeader.innerHTML = `
         <div class="header-top-row">
-          <div class="workspace-title">☀️ My Day Overview</div>
-        </div>
-      `;
+            <div class="workspace-title">☀️ My Day Overview</div>
+            <div class="workspace-actions"><button id="sync-btn" class="btn-outline" onclick="manualSync()">🔄 Sync</button></div>
+        </div>`;
       rightSidebar.style.display = "flex";
       
       let sideHtml = `<div class="right-panel-section"><div class="section-title">📋 Global Minor Tasks</div>`;
@@ -696,50 +881,53 @@
       Object.values(projects).forEach(project => {
         const pending = (project.checklist || []).filter(i => i.status === 'PENDING');
         if(pending.length > 0) {
-          sideHtml += `<div style="font-size: 11px; font-weight: 700; color: var(--primary); margin-top: 16px; margin-bottom: 8px; background: #e0e7ff; padding: 4px 8px; border-radius: 6px; display: inline-block;">📍 ${project.name}</div>`;
+          sideHtml += `<div style="font-size: 11px; font-weight: 700; color: var(--primary); margin-top: 12px; margin-bottom: 6px; background: #e0e7ff; padding: 4px 8px; border-radius: 4px; display: inline-block;">📍 ${escapeHTML(project.name)}</div>`;
           pending.forEach(item => {
             pendingCount++;
             sideHtml += `
               <div class="check-item">
                 <input type="checkbox" onchange="updateChecklistStatus('${project.id}', ${item.id}, 'COMPLETED')">
-                <div class="check-text">${item.text}</div>
+                <div class="check-text">${escapeHTML(item.text)}</div>
               </div>
             `;
           });
         }
       });
-      if(pendingCount === 0) sideHtml += `<div style="font-size: 13px; color: var(--text-muted); margin-top: 10px;">All minor tasks are clear!</div>`;
+      if(pendingCount === 0) sideHtml += `<div style="font-size: 12px; color: var(--text-muted); margin-top: 10px;">All minor tasks are clear!</div>`;
       sideHtml += `</div>`;
       rightSidebar.innerHTML = sideHtml;
 
-      let eventHtml = `<div class="section-title" style="margin-top:0;">📅 Priority Bookings (Due within 48 Hrs)</div><div style="display:flex; flex-direction:column; gap:16px; margin-bottom: 32px;">`;
+      let eventHtml = `<div class="section-title" style="margin-top:0;">📅 Priority Bookings (Due within 48 Hrs)</div><div style="display:flex; flex-direction:column; gap:12px; margin-bottom: 24px;">`;
       let eventCount = 0;
-      const today = new Date(); today.setHours(0,0,0,0);
-      const targetDate = new Date(today); targetDate.setDate(today.getDate() + 2);
+      
+      const today = new Date();
+      const twoDaysLater = new Date(today);
+      twoDaysLater.setDate(twoDaysLater.getDate() + 2);
 
       Object.values(projects).forEach(project => {
         (project.events || []).forEach(ev => {
           if (ev.status === 'COMPLETED') return; 
-          const parts = ev.date.split('-');
-          const evDate = new Date(parts[0], parts[1]-1, parts[2]); evDate.setHours(0,0,0,0);
-          if (evDate <= targetDate) {
+          
+          const evDate = new Date(ev.date + 'T00:00:00'); 
+          
+          if (evDate <= twoDaysLater) {
             eventCount++;
             const dateString = evDate.toLocaleDateString('en-AU', { weekday: 'short', month: 'short', day: 'numeric' });
             eventHtml += `
-              <div class="card" style="padding:16px; display:flex; align-items:flex-start; gap:16px; border-left: 4px solid var(--color-ready);">
-                <input type="checkbox" onchange="toggleEventStatus('${project.id}', ${ev.id})" style="width:20px; height:20px; flex-shrink:0; margin-top:2px;">
+              <div class="card" style="padding:12px; display:flex; align-items:flex-start; gap:12px; border-left: 4px solid var(--color-ready);">
+                <input type="checkbox" onchange="toggleEventStatus('${project.id}', ${ev.id})" style="width:16px; height:16px; flex-shrink:0; margin-top:2px;">
                 <div style="flex:1;">
-                  <div style="font-size:15px; font-weight:700;">${ev.text}</div>
-                  <div style="font-size:12px; color:var(--text-muted); margin-top:6px; display:flex; align-items:center; gap:8px;">
-                    <span style="background: #fef3c7; color: #b45309; padding: 2px 8px; border-radius: 999px; font-weight:700;">🗓️ ${dateString}</span> 
-                    📍 <span style="color:var(--primary); font-weight:700;">${project.name}</span>
+                  <div style="font-size:13px; font-weight:700;">${escapeHTML(ev.text)}</div>
+                  <div style="font-size:11px; color:var(--text-muted); margin-top:4px; display:flex; align-items:center; gap:6px;">
+                    <span style="background: #fef3c7; color: #b45309; padding: 2px 6px; border-radius: 999px; font-weight:700;">🗓️ ${dateString}</span> 
+                    📍 <span style="color:var(--primary); font-weight:700;">${escapeHTML(project.name)}</span>
                   </div>
                 </div>
               </div>`;
           }
         });
       });
-      if (eventCount === 0) eventHtml += `<div style="font-size: 14px; color: var(--text-muted);">No upcoming priority bookings.</div>`;
+      if (eventCount === 0) eventHtml += `<div style="font-size: 13px; color: var(--text-muted);">No upcoming priority bookings.</div>`;
       eventHtml += `</div>`;
 
       let html = eventHtml + `<div class="section-title" style="margin-top:0;">☀️ Today's Active Tasks</div><div class="grid">`;
@@ -772,10 +960,11 @@
     workspaceHeader.innerHTML = `
       <div class="header-top-row">
         <div class="project-title-group">
-          <div class="workspace-title">${project.name}</div>
+          <div class="workspace-title">${escapeHTML(project.name)}</div>
           <button class="btn-icon" onclick="editProjectName()" title="Edit Name">✏️</button>
         </div>
         <div class="workspace-actions">
+          <button id="sync-btn" class="btn-outline" onclick="manualSync()">🔄 Sync</button>
           <button class="btn-outline" onclick="openProjectModal('COPY')">📋 Copy</button>
           <button class="btn-outline" onclick="exportBackupData()">💾 Backup</button>
           <button class="btn-danger-outline" onclick="deleteCurrentProject()">🗑️ Delete</button>
@@ -798,8 +987,8 @@
     if (project.projectLocationLink) {
       rightHtml += `
         <div style="display: flex; gap: 8px; align-items: center;">
-          <a href="${project.projectLocationLink}" target="_blank" class="btn-primary" style="text-decoration: none; padding: 10px 16px; font-size: 13px; flex: 1; text-align: center;">🌍 Open Map</a>
-          <button class="btn-outline" style="padding: 10px; width: 40px;" onclick="updateField('${project.id}', 'locationLink', null, null, '')" title="Edit Link">✏️</button>
+          <a href="${escapeHTML(project.projectLocationLink)}" target="_blank" class="btn-primary" style="text-decoration: none; padding: 8px 12px; font-size: 12px; flex: 1; text-align: center;">🌍 Open Map</a>
+          <button class="btn-outline" style="padding: 8px; width: 34px;" onclick="updateField('${project.id}', 'locationLink', null, null, '')" title="Edit Link">✏️</button>
         </div>
       `;
     } else {
@@ -810,7 +999,7 @@
       </div>
       <div class="right-panel-section" style="border-bottom:none;">
         <div class="section-title" style="margin-top:0;">📋 Minor Tasks</div>
-        <input type="text" id="new-check-text" placeholder="Add task & press Enter..." onkeypress="if(event.key==='Enter') addChecklistItem()" style="margin-bottom: 12px;">
+        <input type="text" id="new-check-text" placeholder="Add task & press Enter..." style="margin-bottom: 12px;">
         <div style="display: flex; flex-direction: column;">
     `;
     (project.checklist || []).forEach(item => {
@@ -818,7 +1007,7 @@
       rightHtml += `
         <div class="check-item" style="${isDone ? 'opacity: 0.5;' : ''}">
            <input type="checkbox" ${isDone ? 'checked' : ''} onchange="updateChecklistStatus('${project.id}', ${item.id}, this.checked ? 'COMPLETED' : 'PENDING')">
-           <div class="check-text" style="${isDone ? 'text-decoration: line-through;' : ''}">${item.text}</div>
+           <div class="check-text" style="${isDone ? 'text-decoration: line-through;' : ''}">${escapeHTML(item.text)}</div>
            <button class="chk-del" onclick="deleteChecklistItem('${project.id}', ${item.id})">×</button>
         </div>
       `;
@@ -826,7 +1015,7 @@
     rightHtml += `</div></div>`;
     rightSidebar.innerHTML = rightHtml;
 
-    // Center Content (Trades & Tiles)
+    // Center Content
     let html = `
       <details open>
         <summary class="section-title" style="margin-top: 0;">
@@ -835,24 +1024,36 @@
           </div>
           <button class="btn-add-small" onclick="event.preventDefault(); openTradeModal();">+ Add Trade</button>
         </summary>
-        <div class="contractors-grid">`;
+        
+        <div class="table-wrapper">
+          <table class="trades-table">
+            <thead>
+              <tr>
+                <th>Trade / Role</th>
+                <th>Company</th>
+                <th>Contact</th>
+                <th>Email</th>
+                <th style="width: 40px;"></th>
+              </tr>
+            </thead>
+            <tbody>
+    `;
         
     project.contractors.forEach((c, i) => {
       html += `
-        <div class="card" style="padding: 16px;">
-          <div class="trade-title">${c.trade}<span class="chk-del" style="opacity:1;" onclick="removeTrade(${i})" title="Remove Trade">×</span></div>
-          <input type="text" list="rolodex-companies" placeholder="Company Name" value="${c.company}" onchange="updateField('${project.id}', 'contractor', ${i}, 'company', this.value)" style="margin-bottom:8px;">
-          <div style="display: flex; gap: 8px;">
-            <input type="text" placeholder="Contact" value="${c.contact}" onchange="updateField('${project.id}', 'contractor', ${i}, 'contact', this.value)">
-            <input type="email" placeholder="Email" value="${c.email}" onchange="updateField('${project.id}', 'contractor', ${i}, 'email', this.value)">
-          </div>
-        </div>
+        <tr>
+          <td style="font-weight: 700; font-size: 11px; color: var(--text-muted); text-transform: uppercase;">${escapeHTML(c.trade)}</td>
+          <td><input type="text" list="rolodex-companies" placeholder="Company Name" value="${escapeHTML(c.company)}" oninput="updateField('${project.id}', 'contractor', ${i}, 'company', this.value)"></td>
+          <td><input type="text" placeholder="Contact Name" value="${escapeHTML(c.contact)}" oninput="updateField('${project.id}', 'contractor', ${i}, 'contact', this.value)"></td>
+          <td><input type="email" placeholder="Email Address" value="${escapeHTML(c.email)}" oninput="updateField('${project.id}', 'contractor', ${i}, 'email', this.value)"></td>
+          <td><button class="btn-danger-outline" style="padding: 4px 8px; font-size: 14px; font-weight: bold;" onclick="removeTrade(${i})" title="Remove Trade">×</button></td>
+        </tr>
       `;
     });
     
-    html += `</div></details>
+    html += `</tbody></table></div></details>
       <details open>
-        <summary class="section-title" style="margin-top: 16px; border-top: 1px solid var(--border-soft); padding-top: 24px;">
+        <summary class="section-title" style="margin-top: 24px; border-top: 1px solid var(--border-soft); padding-top: 24px;">
           <div style="display: flex; align-items: center; gap: 8px;">
             <span class="chevron">▼</span> WORKFLOW SEQUENCE
           </div>
@@ -868,6 +1069,7 @@
 
   // --- INITIALIZE APP ---
   updateRolodexDatalist();
+  initCloudStatus();
   render();
   loadFromCloud();
 
