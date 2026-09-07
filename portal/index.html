@@ -96,10 +96,6 @@
   .progress-fill { height: 100%; background: var(--color-complete); transition: width 0.5s ease; }
   .progress-text { font-size: 11px; font-weight: 700; color: var(--text-muted); }
 
-  /* Loading Skeleton */
-  .loading-skeleton { animation: pulse 1.5s ease-in-out infinite; background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%); background-size: 200% 100%; border-radius: 4px; }
-  @keyframes pulse { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
   /* ENTERPRISE TRADES TABLE */
   .table-wrapper { width: 100%; overflow-x: auto; background: #fff; border-radius: 8px; border: 1px solid var(--border-soft); box-shadow: var(--shadow-sm); margin-top: 8px; margin-bottom: 24px; }
   .trades-table { width: 100%; border-collapse: collapse; text-align: left; }
@@ -161,7 +157,7 @@
 
   /* Modals & Toasts */
   .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 200; }
-  .modal-content { background: #fff; width: 100%; max-width: 400px; padding: 24px; border-radius: 12px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+  .modal-content { background: #fff; width: 100%; max-width: 440px; padding: 24px; border-radius: 12px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
   .modal-title { font-weight: 800; font-size: 16px; margin-bottom: 4px; }
   .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
 
@@ -187,7 +183,6 @@
 </head>
 <body>
 
-<!-- Datalist placed properly in the DOM flow -->
 <datalist id="rolodex-companies"></datalist>
 
 <!-- Modals -->
@@ -233,15 +228,27 @@
   </div>
 </div>
 
+<!-- Day Planner Modal -->
 <div class="modal-overlay" id="modal-event">
   <div class="modal-content">
-    <div class="modal-title">Add Booking / Meeting</div>
-    <div style="font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: -5px;" id="event-modal-project-name"></div>
-    <input type="date" id="event-date">
-    <input type="text" id="event-text" placeholder="e.g. Certifier Inspection...">
+    <div class="modal-title" id="event-modal-title">Bookings & Agendas</div>
+    
+    <!-- Dynamic List of Existing Agendas -->
+    <div id="event-list-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; padding-right: 4px;"></div>
+    
+    <div style="border-top: 1px solid var(--border-soft); margin: 8px 0;"></div>
+    
+    <!-- Add New Agenda -->
+    <div style="font-size: 13px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">Add New Booking</div>
+    <select id="event-project-selector" style="font-weight: 600; background: var(--bg-page);"></select>
+    <div style="display: flex; gap: 8px;">
+      <input type="date" id="event-date" style="width: 130px;" onchange="onCalendarDateChange(this.value)">
+      <input type="text" id="event-text" style="flex: 1;" placeholder="Agenda details...">
+    </div>
+    
     <div class="modal-actions">
-      <button class="btn-outline" onclick="closeModals()">Cancel</button>
-      <button class="btn-primary" onclick="addCalendarEvent()">Save Booking</button>
+      <button class="btn-outline" onclick="closeModals()">Done</button>
+      <button class="btn-primary" onclick="addCalendarEvent()">+ Add</button>
     </div>
   </div>
 </div>
@@ -334,11 +341,15 @@
     }, 3000);
   }
 
-  // Use event delegation for the checklist input to prevent duplicate listeners
+  // Global Keypress Delegates
   document.addEventListener('keypress', function(e) {
     if (e.target && e.target.id === 'new-check-text' && e.key === 'Enter') {
       e.preventDefault();
       addChecklistItem();
+    }
+    if (e.target && e.target.id === 'event-text' && e.key === 'Enter') {
+      e.preventDefault();
+      addCalendarEvent();
     }
   });
 
@@ -382,14 +393,15 @@
     { id: 1, name: "CC / CDC Approval Received", owner: "Office", prereqs: [], status: "READY TO START", notes: "", date: "" }
   ];
 
-  let projects = JSON.parse(localStorage.getItem('karnel_data_final14')) || {};
-  let currentProjectId = localStorage.getItem('karnel_active_final14') || null;
+  let projects = JSON.parse(localStorage.getItem('karnel_data_final15')) || {};
+  let currentProjectId = localStorage.getItem('karnel_active_final15') || null;
   let rolodex = JSON.parse(localStorage.getItem('karnel_rolodex')) || [];
   let currentView = 'PROJECT'; 
   let draggedStepId = null;
   let projectModalMode = 'NEW';
   let calMonth = new Date().getMonth();
   let calYear = new Date().getFullYear();
+  let activeModalDate = null;
 
   // ==========================================
   // 3. CLOUD SYNC & LOCAL STORAGE LOGIC
@@ -401,8 +413,8 @@
       status.textContent = '💾 SAVING...';
     }
 
-    localStorage.setItem('karnel_data_final14', JSON.stringify(projects));
-    localStorage.setItem('karnel_active_final14', currentProjectId);
+    localStorage.setItem('karnel_data_final15', JSON.stringify(projects));
+    localStorage.setItem('karnel_active_final15', currentProjectId);
     localStorage.setItem('karnel_rolodex', JSON.stringify([...new Set(rolodex)])); 
     updateRolodexDatalist();
     
@@ -728,30 +740,111 @@
     render();
   }
 
-  /* CALENDAR LOGIC */
+  /* ENHANCED CALENDAR / PLANNER LOGIC */
   function changeMonth(direction) { calMonth += direction; if (calMonth < 0) { calMonth = 11; calYear--; } if (calMonth > 11) { calMonth = 0; calYear++; } render(); }
-  function openCalendarModal(dateStr) {
-    if (!currentProjectId || !projects[currentProjectId]) return alert("Please select an active project from the left menu first.");
-    document.getElementById('event-modal-project-name').innerText = "📍 " + escapeHTML(projects[currentProjectId].name);
+  
+  function onCalendarDateChange(val) {
+    activeModalDate = val;
+    const titleDate = new Date(val + 'T00:00:00');
+    document.getElementById('event-modal-title').innerText = "Agendas for " + titleDate.toLocaleDateString('en-AU', { weekday: 'short', month: 'short', day: 'numeric' });
+    refreshEventList(val);
+  }
+
+  function refreshEventList(dateStr) {
+    const listContainer = document.getElementById('event-list-container');
+    let html = '';
+    let count = 0;
+    
+    Object.values(projects).forEach(project => {
+      (project.events || []).forEach(ev => {
+        if (ev.date === dateStr) {
+          count++;
+          const isDone = ev.status === 'COMPLETED';
+          html += `
+            <div class="card" style="padding: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; ${isDone ? 'opacity: 0.6; background: #f8fafc;' : 'border-left: 3px solid var(--primary);'}">
+              <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleEventStatusModal('${project.id}', ${ev.id})" style="width: 16px; height: 16px; cursor: pointer;">
+              <div style="flex: 1;">
+                <div style="font-size: 13px; font-weight: 700; ${isDone ? 'text-decoration: line-through;' : ''}">${escapeHTML(ev.text)}</div>
+                <div style="font-size: 10px; color: var(--text-muted); font-weight: 700; margin-top: 4px;">📍 ${escapeHTML(project.name)}</div>
+              </div>
+              <button class="btn-danger-outline" style="padding: 4px 8px; font-size:14px; font-weight:bold;" onclick="deleteEventModal('${project.id}', ${ev.id})" title="Delete Agenda">×</button>
+            </div>
+          `;
+        }
+      });
+    });
+    
+    if (count === 0) {
+      html = `<div style="text-align: center; color: var(--text-muted); font-size: 12px; padding: 20px 0; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">No agendas for this date.</div>`;
+    }
+    listContainer.innerHTML = html;
+  }
+
+  function openCalendarModal(dateStr, preselectProjectId = null) {
+    if (!currentProjectId && !preselectProjectId && Object.keys(projects).length === 0) return alert("Please create a project first.");
+    
+    activeModalDate = dateStr;
+    const titleDate = new Date(dateStr + 'T00:00:00');
+    document.getElementById('event-modal-title').innerText = "Agendas for " + titleDate.toLocaleDateString('en-AU', { weekday: 'short', month: 'short', day: 'numeric' });
     document.getElementById('event-date').value = dateStr;
+    
+    const projSel = document.getElementById('event-project-selector');
+    projSel.innerHTML = '';
+    Object.values(projects).forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = "📍 " + escapeHTML(p.name);
+      if (preselectProjectId && p.id === preselectProjectId) opt.selected = true;
+      else if (!preselectProjectId && p.id === currentProjectId) opt.selected = true;
+      projSel.appendChild(opt);
+    });
+
+    refreshEventList(dateStr);
+
     document.getElementById('event-text').value = '';
     document.getElementById('modal-event').style.display = 'flex';
     setTimeout(() => document.getElementById('event-text').focus(), 100);
   }
+
   async function addCalendarEvent() {
     const text = validateInput(document.getElementById('event-text').value);
     const date = document.getElementById('event-date').value;
-    if (!text || !date) return alert("Please enter both a date and a description.");
-    const project = projects[currentProjectId];
+    const projId = document.getElementById('event-project-selector').value;
+    
+    if (!text || !date || !projId) return alert("Please enter a description and ensure a project is selected.");
+    const project = projects[projId];
+    if (!project) return;
+    
     project.events = project.events || [];
     project.events.push({ id: Date.now(), date: date, text: text, status: "PENDING" });
+    
     await saveState();
-    closeModals();
+    
+    document.getElementById('event-text').value = '';
+    activeModalDate = date; 
+    refreshEventList(date);
     render();
+    
+    document.getElementById('event-text').focus();
   }
-  async function toggleEventStatus(projectId, eventId) {
+
+  async function toggleEventStatusModal(projectId, eventId) {
     const ev = projects[projectId].events.find(e => e.id === eventId);
-    if (ev) { ev.status = ev.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED'; await saveState(); render(); }
+    if (ev) { 
+      ev.status = ev.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED'; 
+      await saveState(); 
+      refreshEventList(activeModalDate);
+      render(); 
+    }
+  }
+
+  async function deleteEventModal(projectId, eventId) {
+    if(confirm("Delete this agenda?")) {
+      projects[projectId].events = projects[projectId].events.filter(e => e.id !== eventId);
+      await saveState();
+      refreshEventList(activeModalDate);
+      render();
+    }
   }
 
   function evaluateDependencies(steps) {
@@ -856,7 +949,7 @@
           (project.events || []).forEach(ev => {
             if (ev.date === dateStr) {
               const statusClass = ev.status === 'COMPLETED' ? 'completed' : '';
-              dayEvents += `<div class="cal-event ${statusClass}" title="${escapeHTML(project.name)} - ${escapeHTML(ev.text)}" onclick="event.stopPropagation(); toggleEventStatus('${project.id}', ${ev.id})"><strong>${escapeHTML(project.name.substring(0,6))}..</strong>: ${escapeHTML(ev.text)}</div>`;
+              dayEvents += `<div class="cal-event ${statusClass}" title="${escapeHTML(project.name)} - ${escapeHTML(ev.text)}" onclick="event.stopPropagation(); toggleEventStatusModal('${project.id}', ${ev.id})"><strong>${escapeHTML(project.name.substring(0,6))}..</strong>: ${escapeHTML(ev.text)}</div>`;
             }
           });
         });
@@ -956,7 +1049,10 @@
     const completedSteps = project.steps.filter(s => s.status === 'COMPLETE').length;
     const progressPercent = totalSteps === 0 ? 0 : Math.round((completedSteps / totalSteps) * 100);
 
-    // Build Header
+    const localToday = new Date();
+    const todayStr = localToday.getFullYear() + '-' + String(localToday.getMonth()+1).padStart(2,'0') + '-' + String(localToday.getDate()).padStart(2,'0');
+
+    // Build Header (Added Calendar Button Here)
     workspaceHeader.innerHTML = `
       <div class="header-top-row">
         <div class="project-title-group">
@@ -964,6 +1060,7 @@
           <button class="btn-icon" onclick="editProjectName()" title="Edit Name">✏️</button>
         </div>
         <div class="workspace-actions">
+          <button class="btn-outline" style="background: #e0e7ff; color: var(--primary); border-color: var(--primary);" onclick="openCalendarModal('${todayStr}', '${project.id}')">📅 Book Agenda</button>
           <button id="sync-btn" class="btn-outline" onclick="manualSync()">🔄 Sync</button>
           <button class="btn-outline" onclick="openProjectModal('COPY')">📋 Copy</button>
           <button class="btn-outline" onclick="exportBackupData()">💾 Backup</button>
