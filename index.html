@@ -1,1182 +1,1123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KARNEL HOMES - Site Portal</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-  /* MODERN, HIGH-CONTRAST SAAS PALETTE */
-  :root {
-    --nav-bg: #0f172a;
-    --nav-text: #94a3b8;
-    --nav-active: #ffffff;
-    --nav-hover: #1e293b;
-    --bg-page: #f8fafc;
-    --bg-card: #ffffff;
-    --text-main: #0f172a;
-    --text-muted: #64748b;
-    --primary: #4f46e5;
-    --primary-hover: #4338ca;
-    --border-soft: #e2e8f0;
-    --color-locked-bg: #f1f5f9;
-    --color-ready: #f59e0b;
-    --color-progress: #3b82f6;
-    --color-complete: #10b981;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
-  }
+    <!-- Primary Page Title & Search Metadata -->
+    <title>KARNEL HOMES | Luxury Custom Home Builder Sydney</title>
+    <meta name="description" content="KARNEL HOMES specializes in bespoke new luxury homes, architectural knockdown rebuilds, and premium duplexes across Sydney. Founded by Sandeep Singh.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.karnelhomes.com.au">
 
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-  body { background: var(--bg-page); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-  
-  .app-layout { display: flex; flex: 1; overflow: hidden; }
-  
-  /* LEFT SIDEBAR */
-  .left-sidebar { width: 250px; background: var(--nav-bg); color: var(--nav-text); display: flex; flex-direction: column; border-right: 1px solid #1e293b; z-index: 10; }
-  .sidebar-header { padding: 20px 20px; font-size: 18px; font-weight: 800; color: #fff; letter-spacing: -0.5px; border-bottom: 1px solid #1e293b; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;}
-  .sidebar-section { padding: 16px; flex: 1; overflow-y: auto; }
-  .sidebar-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; color: #64748b; display: flex; justify-content: space-between; align-items: center;}
-  
-  .nav-item { padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; margin-bottom: 4px; color: var(--nav-text); }
-  .nav-item:hover { background: var(--nav-hover); color: var(--nav-active); }
-  .nav-item.active { background: var(--primary); color: #fff; }
-  
-  .project-item { padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
-  .project-item:hover { background: var(--nav-hover); color: var(--nav-active); }
-  .project-item.active { background: #1e293b; color: #fff; border-left: 3px solid var(--primary); }
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png">
 
-  /* Save & Status Indicators */
-  .save-indicator { font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 4px; letter-spacing: 0.5px; transition: all 0.3s; display: inline-block; }
-  .save-indicator.saving { background: #f59e0b; color: #fff; }
-  .save-indicator.saved { background: #10b981; color: #fff; }
+    <!-- Open Graph / Facebook & Google Search Preview -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.karnelhomes.com.au">
+    <meta property="og:title" content="KARNEL HOMES | Luxury Custom Home Builder Sydney">
+    <meta property="og:description" content="Architect-designed custom homes, built with clarity and care across Sydney.">
+    <meta property="og:image" content="https://www.karnelhomes.com.au/images/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:alt" content="Karnel Homes Custom Building Projects">
 
-  /* CENTER WORKSPACE */
-  .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg-page); }
-  .workspace-header { background: #fff; padding: 20px 28px; border-bottom: 1px solid var(--border-soft); display: flex; flex-direction: column; gap: 12px; }
-  .header-top-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
-  .project-title-group { display: flex; align-items: center; gap: 12px; flex: 1; }
-  .workspace-title { font-size: 22px; font-weight: 800; color: var(--text-main); }
-  .btn-icon { background: #f1f5f9; border: none; border-radius: 6px; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: 0.2s; }
-  .btn-icon:hover { background: #e2e8f0; color: var(--text-main); }
-  
-  .workspace-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-  .workspace-scroll { flex: 1; overflow-y: auto; padding: 24px 28px; }
+    <!-- Twitter Card Fallback -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="KARNEL HOMES | Luxury Custom Home Builder Sydney">
+    <meta name="twitter:description" content="Architect-designed custom homes, built with clarity and care across Sydney.">
+    <meta name="twitter:image" content="https://www.karnelhomes.com.au/images/og-image.jpg">
 
-  /* RIGHT SIDEBAR */
-  .right-sidebar { width: 280px; background: #fff; border-left: 1px solid var(--border-soft); display: flex; flex-direction: column; overflow-y: auto; }
-  .right-panel-section { padding: 20px; border-bottom: 1px solid var(--border-soft); }
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-  /* UI Elements */
-  input, select, textarea { font-size: 12px; padding: 8px 12px; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; outline: none; width: 100%; transition: 0.2s; }
-  input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
-  
-  button { padding: 6px 14px; border: none; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; transition: 0.2s; }
-  .btn-primary { background: var(--primary); color: #fff; }
-  .btn-primary:hover { background: var(--primary-hover); }
-  .btn-outline { background: transparent; border: 1px solid #cbd5e1; color: var(--text-main); }
-  .btn-outline:hover { background: #f1f5f9; }
-  .btn-danger-outline { background: transparent; color: #ef4444; padding: 6px 10px; }
-  .btn-danger-outline:hover { background: #fee2e2; }
-  
-  .btn-add-small { background: transparent; border: 1px solid var(--border-soft); border-radius: 6px; padding: 4px 12px; font-size: 11px; font-weight: 700; color: var(--primary); cursor: pointer; transition: 0.2s; }
-  .btn-add-small:hover { background: var(--primary); color: #fff; }
+    <!-- Structured Data (Schema.org) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": ["LocalBusiness", "HomeAndConstructionBusiness"],
+      "name": "KARNEL HOMES",
+      "url": "https://www.karnelhomes.com.au",
+      "logo": "https://www.karnelhomes.com.au/favicon.png",
+      "image": "https://www.karnelhomes.com.au/images/og-image.jpg",
+      "telephone": "0434 289 857",
+      "email": "info@karnelhomes.com.au",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "322 Abell Road",
+        "addressLocality": "Melonba",
+        "addressRegion": "NSW",
+        "postalCode": "2765",
+        "addressCountry": "AU"
+      },
+      "priceRange": "$$$$"
+    }
+    </script>
 
-  .card { background: var(--bg-card); border-radius: 10px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-soft); padding: 16px; }
-  
-  details > summary { list-style: none; cursor: pointer; user-select: none; outline: none; }
-  details > summary::-webkit-details-marker { display: none; }
-  .chevron { display: inline-block; transition: transform 0.2s; font-size: 10px; color: var(--text-muted); }
-  details:not([open]) .chevron { transform: rotate(-90deg); }
-  
-  .section-title { font-size: 13px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between; }
-  
-  .progress-wrapper { width: 100%; background: #f1f5f9; border-radius: 999px; height: 6px; overflow: hidden; margin-top: 6px; }
-  .progress-fill { height: 100%; background: var(--color-complete); transition: width 0.5s ease; }
-  .progress-text { font-size: 11px; font-weight: 700; color: var(--text-muted); }
+    <style>
+        /* --- DESIGN DNA & DESIGN SYSTEM --- */
+        :root {
+            --bg-primary: #F5F4F0;
+            --bg-secondary: #F7F7F7;
+            --text-main: #1C2022;
+            --text-muted: #6E767A;
+            --accent: #C5A880;
+            --accent-hover: #A38760;
+            --white: #FFFFFF;
+            --glass: rgba(255, 255, 255, 0.75);
+            --font-display: 'Cormorant Garamond', serif;
+            --font-body: 'Inter', sans-serif;
+            --transition-smooth: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-fast: all 0.3s ease;
+        }
 
-  /* ENTERPRISE TRADES TABLE */
-  .table-wrapper { width: 100%; overflow-x: auto; background: #fff; border-radius: 8px; border: 1px solid var(--border-soft); box-shadow: var(--shadow-sm); margin-top: 8px; margin-bottom: 24px; }
-  .trades-table { width: 100%; border-collapse: collapse; text-align: left; }
-  .trades-table th { background: #f8fafc; padding: 10px 14px; font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid var(--border-soft); }
-  .trades-table td { padding: 6px 14px; border-bottom: 1px solid var(--border-soft); vertical-align: middle; }
-  .trades-table tr:last-child td { border-bottom: none; }
-  .trades-table input { padding: 6px 8px; font-size: 12px; margin: 0; box-shadow: none; border: 1px solid transparent; background: transparent; }
-  .trades-table input:hover { border: 1px solid var(--border-soft); background: #f8fafc; }
-  .trades-table input:focus { border: 1px solid var(--primary); background: #fff; box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1); }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-  /* HIGH DENSITY TILES */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 12px; }
-  .tile { display: flex; flex-direction: column; gap: 8px; position: relative; transition: 0.2s; cursor: grab; background: #fff; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-soft); padding: 12px; }
-  
-  .tile.status-locked { background: var(--color-locked-bg); opacity: 0.6; border: 1px dashed #cbd5e1; box-shadow: none; }
-  .tile.status-ready { border: 2px solid var(--color-ready); box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15); }
-  .tile.status-in { border: 2px solid var(--color-progress); box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15); }
-  .tile.status-complete { border: 1px solid #a7f3d0; background: #f0fdf4; }
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-family: var(--font-body);
+        }
 
-  .drag-over { border: 2px dashed var(--primary); background: #f0f9ff; transform: scale(1.02); transition: 0.2s; }
+        body {
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
 
-  .tile-header { display: flex; justify-content: space-between; align-items: center; }
-  .step-badge { font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 999px; }
-  .bg-locked { background: #e2e8f0; color: #64748b; }
-  .bg-ready { background: #fef3c7; color: #b45309; }
-  .bg-progress { background: #dbeafe; color: #1d4ed8; }
-  .bg-complete { background: #d1fae5; color: #047857; }
+        a:focus-visible, button:focus-visible, input:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 4px;
+        }
 
-  .tile-title { font-size: 13px; font-weight: 700; line-height: 1.3; display: flex; gap: 6px; align-items: flex-start; }
-  .drag-handle { color: #cbd5e1; cursor: grab; font-size: 14px; transition: 0.2s; }
-  
-  .tile-meta { display: flex; gap: 6px; }
-  .project-tag { font-size: 10px; font-weight: 700; color: var(--primary); background: #e0e7ff; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 4px; width: fit-content; }
-  
-  .tile textarea { height: 36px; padding: 6px 8px; font-size: 11px; resize: none; transition: height 0.2s ease; }
-  .tile textarea:focus { height: 70px; }
-  
-  .smart-btn { width: 100%; padding: 8px; margin-top: auto; font-size: 11px; font-weight: 700; border-radius: 6px; border: none; cursor: pointer; transition: 0.2s; }
-  .btn-locked { background: transparent; color: var(--text-muted); cursor: not-allowed; border: 1px dashed #cbd5e1; }
-  .btn-success { background: var(--color-complete); color: #fff; }
+        h1, h2, h3, h4 {
+            font-family: var(--font-display);
+            font-weight: 400;
+            line-height: 1.2;
+            color: var(--text-main);
+        }
 
-  /* Checklists */
-  .check-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f1f5f9; gap: 8px; }
-  .check-item input[type="checkbox"] { width: 14px; height: 14px; cursor: pointer; accent-color: var(--primary); }
-  .check-text { font-size: 12px; flex: 1; word-break: break-word; }
-  .chk-del { color: #ef4444; font-weight: bold; cursor: pointer; border: none; background: transparent; padding: 2px 6px; opacity: 0; transition: 0.2s; }
-  .check-item:hover .chk-del { opacity: 1; }
+        p {
+            font-weight: 300;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
 
-  /* Calendar */
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-  .cal-header-day { font-weight: 700; text-align: center; font-size: 11px; color: var(--text-muted); text-transform: uppercase; padding-bottom: 6px; }
-  .cal-cell { min-height: 90px; border-radius: 8px; padding: 8px; cursor: pointer; background: #fff; border: 1px solid var(--border-soft); display: flex; flex-direction: column; gap: 4px; transition: 0.2s; }
-  .cal-cell:hover { border-color: var(--primary); box-shadow: var(--shadow-md); transform: translateY(-2px); }
-  .cal-date-num { font-size: 13px; font-weight: 800; }
-  .cal-event { font-size: 10px; background: #e0e7ff; color: var(--primary); padding: 4px 6px; border-radius: 4px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .cal-event.completed { text-decoration: line-through; opacity: 0.6; background: #f1f5f9; color: var(--text-muted); }
+        .section-padding {
+            padding: 120px 8%;
+        }
 
-  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); font-weight: 600; background: #fff; border-radius: 8px; border: 1px dashed #cbd5e1; margin-top: 16px; font-size: 13px; }
+        .reveal {
+            opacity: 0;
+            transform: translate3d(0, 40px, 0);
+            will-change: transform, opacity;
+            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
-  /* Modals & Toasts */
-  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 200; }
-  .modal-content { background: #fff; width: 100%; max-width: 440px; padding: 24px; border-radius: 12px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-  .modal-title { font-weight: 800; font-size: 16px; margin-bottom: 4px; }
-  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+        .reveal.active {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
 
-  .toast { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; z-index: 999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: slideIn 0.3s ease; }
-  @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .reveal-delay-1 { transition-delay: 0.15s; }
+        .reveal-delay-2 { transition-delay: 0.3s; }
 
-  /* Responsive fixes */
-  @media (max-width: 900px) {
-    .app-layout { flex-direction: column; overflow: auto; }
-    .left-sidebar { width: 100%; height: auto; flex: none; border-right: none; border-bottom: 1px solid #1e293b; }
-    .right-sidebar { width: 100%; border-left: none; border-top: 1px solid var(--border-soft); }
-    .workspace-scroll { padding: 16px; }
-  }
-  @media (max-width: 600px) {
-    .workspace-header { padding: 12px 16px; }
-    .workspace-scroll { padding: 12px 16px; }
-    .grid { grid-template-columns: 1fr; }
-    .header-top-row { flex-direction: column; align-items: stretch; }
-    .workspace-actions { flex-wrap: wrap; }
-    .workspace-title { font-size: 18px; }
-  }
-</style>
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 36px;
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            text-decoration: none;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            min-width: 190px;
+            min-height: 48px;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary { background-color: var(--text-main); color: var(--white); }
+        .btn-primary:hover {
+            background-color: var(--accent);
+            transform: translate3d(0, -4px, 0);
+            box-shadow: 0 12px 24px rgba(197, 168, 128, 0.2);
+        }
+
+        .btn-secondary { border: 1px solid var(--text-main); color: var(--text-main); background: transparent; }
+        .btn-secondary:hover { background-color: var(--text-main); color: var(--white); transform: translate3d(0, -4px, 0); }
+
+        /* --- STICKY NAVIGATION HEADER --- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: var(--transition-smooth);
+            background-color: transparent;
+            padding: 30px 8%;
+        }
+
+        header.scrolled {
+            background-color: var(--white);
+            padding: 15px 8%;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.03);
+        }
+
+        .nav-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--text-main));
+            width: 0%;
+            transition: width 0.1s ease-out;
+        }
+
+        .nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 1800px; margin: 0 auto; }
+        .logo { font-family: var(--font-display); font-size: 1.8rem; letter-spacing: 0.1em; text-decoration: none; color: var(--text-main); font-weight: 600; transition: var(--transition-fast); }
+        header:not(.scrolled) .nav-links a { color: var(--text-main); }
+        .nav-links { display: flex; gap: 40px; list-style: none; }
+        .nav-links a { text-decoration: none; font-family: var(--font-body); font-size: 0.85rem; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-main); position: relative; padding: 8px 0; transition: var(--transition-fast); }
+        .nav-links a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px; background-color: var(--accent); transition: var(--transition-fast); }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a:hover { color: var(--accent); }
+
+        .burger { display: none; cursor: pointer; background: transparent; border: none; z-index: 1002; padding: 10px; }
+        .burger div { width: 25px; height: 2px; background-color: var(--text-main); margin: 5px; transition: var(--transition-fast); }
+
+        .nav-menu-mobile { position: fixed; top: 0; right: -100%; width: 100%; height: 100vh; background-color: var(--white); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 30px; list-style: none; transition: var(--transition-smooth); z-index: 1001; }
+        .nav-menu-mobile.open { right: 0; }
+        .nav-menu-mobile a { font-family: var(--font-display); font-size: 2rem; text-decoration: none; color: var(--text-main); transition: var(--transition-fast); }
+
+        /* --- HERO SECTION --- */
+        #hero { height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; text-align: center; padding: 0 20px; }
+        
+        .hero-bg { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: linear-gradient(rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 60%, rgba(255,255,255,0) 100%), 
+                        url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1920&q=80') no-repeat center center; 
+            background-size: cover; 
+            animation: panZoom 25s infinite alternate ease-in-out; 
+            z-index: 1; 
+        }
+        
+        .hero-contrast-filter {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            backdrop-filter: brightness(0.96) contrast(1.01);
+            -webkit-backdrop-filter: brightness(0.96) contrast(1.01);
+            z-index: 2;
+        }
+
+        @keyframes panZoom { 0% { transform: scale(1.0); } 100% { transform: scale(1.06); } }
+        
+        .hero-content { position: relative; z-index: 3; max-width: 1050px; color: var(--text-main); }
+        .hero-content h1 { 
+            color: var(--text-main); 
+            font-size: clamp(2.5rem, 5.2vw, 5rem); 
+            margin-bottom: 26px; 
+            font-weight: 400; 
+            letter-spacing: -0.01em;
+            text-shadow: 0 10px 40px rgba(255, 255, 255, 0.95), 0 2px 4px rgba(28, 32, 34, 0.05); 
+        }
+        .hero-content p { 
+            color: #1A1E20; 
+            font-size: clamp(1.15rem, 1.6vw, 1.45rem); 
+            margin-bottom: 45px; 
+            font-family: var(--font-display); 
+            font-style: italic; 
+            font-weight: 600; 
+            letter-spacing: 0.02em;
+            text-shadow: 0 4px 20px rgba(255, 255, 255, 0.9);
+        }
+        
+        .hero-ctas { display: flex; gap: 20px; justify-content: center; }
+        .hero-ctas .btn-secondary { border-color: var(--text-main); color: var(--text-main); background-color: rgba(255,255,255,0.35); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+        .hero-ctas .btn-secondary:hover { background-color: var(--text-main); color: var(--white); transform: translate3d(0, -4px, 0); }
+        
+        .scroll-indicator { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 3; animation: bounce 2s infinite; background: transparent; border: none; cursor: pointer; }
+        .scroll-indicator svg { fill: var(--text-main); width: 30px; height: 30px; }
+
+        /* --- ABOUT US SECTION --- */
+        #about { background-color: var(--bg-secondary); }
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; max-width: 1600px; margin: 0 auto; }
+        .about-image { position: relative; overflow: hidden; height: 600px; border-radius: 4px; box-shadow: 0 30px 60px rgba(0,0,0,0.044); }
+        .about-image img { width: 100%; height: 100%; object-fit: cover; }
+        .about-content h2 { font-size: clamp(2.2rem, 3.5vw, 3.2rem); margin-bottom: 25px; }
+        .about-content .founder-title { font-family: var(--font-body); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent); font-weight: 600; display: block; margin-bottom: 20px; }
+        .about-content p { font-size: 1.1rem; margin-bottom: 25px; line-height: 1.8; }
+
+        /* --- INTRO SECTION --- */
+        .intro-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 80px; align-items: center; max-width: 1600px; margin: 0 auto; }
+        .intro-text h2 { font-size: clamp(2rem, 3.5vw, 3.2rem); margin-bottom: 30px; }
+        .intro-text p { font-size: 1.15rem; margin-bottom: 20px; }
+        .intro-img-wrapper { overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.05); }
+        .intro-img-wrapper img { width: 100%; height: auto; display: block; }
+
+        /* --- SERVICES SECTION --- */
+        #services { background-color: var(--bg-secondary); }
+        .section-header { text-align: center; max-width: 700px; margin: 0 auto 80px auto; }
+        .section-header h2 { font-size: clamp(2rem, 3vw, 2.8rem); margin-bottom: 15px; }
+        .services-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 30px; max-width: 1600px; margin: 0 auto; }
+        .service-card { position: relative; background: var(--white); border-radius: 4px; overflow: hidden; padding: 50px 35px; min-height: 420px; display: flex; flex-direction: column; justify-content: flex-end; z-index: 1; transition: var(--transition-smooth); box-shadow: 0 10px 40px rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.03); }
+        .service-card:nth-child(1) { grid-column: span 3; }
+        .service-card:nth-child(2) { grid-column: span 3; }
+        .service-card:nth-child(3) { grid-column: span 2; }
+        .service-card:nth-child(4) { grid-column: span 2; }
+        .service-card:nth-child(5) { grid-column: span 2; }
+        .service-card-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: -2; transition: var(--transition-smooth); }
+        .service-card::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(28,32,34,0.1) 0%, rgba(28,32,34,0.85) 100%); z-index: -1; }
+        .service-icon { width: 44px; height: 44px; margin-bottom: auto; fill: var(--accent); }
+        .service-card h3 { color: var(--white); font-size: 1.8rem; margin-bottom: 15px; }
+        .service-card p { color: rgba(255,255,255,0.8); font-size: 0.95rem; transform: translate3d(0, 15px, 0); opacity: 0; transition: var(--transition-smooth); }
+        .service-card:hover { transform: translate3d(0, -8px, 0); box-shadow: 0 20px 50px rgba(0,0,0,0.15); }
+        .service-card:hover .service-card-bg { transform: scale(1.06); }
+        .service-card:hover p { transform: translate3d(0, 0, 0); opacity: 1; }
+
+        /* --- PORTFOLIO SLIDER --- */
+        #portfolio { background-color: var(--bg-primary); position: relative; overflow: hidden; }
+        .slider-control-container { display: flex; justify-content: space-between; align-items: center; max-width: 1600px; margin: 0 auto 40px auto; }
+        .slider-arrows { display: flex; gap: 15px; }
+        .slider-arrow { width: 54px; height: 54px; border: 1px solid rgba(0,0,0,0.1); background: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition-fast); border-radius: 50%; }
+        .slider-arrow:hover { background: var(--text-main); border-color: var(--text-main); }
+        .slider-arrow:hover svg { fill: var(--white); }
+        .slider-arrow svg { width: 20px; height: 20px; fill: var(--text-main); transition: var(--transition-fast); }
+        
+        .project-slider-viewport { width: 100%; overflow: hidden; padding: 20px 0 40px 0; }
+        .project-slider-track { display: flex; gap: 40px; transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); will-change: transform; padding-left: 8%; padding-right: 8%; }
+        
+        .project-slide-card { flex: 0 0 480px; background: var(--white); border-radius: 0; overflow: hidden; box-shadow: 0 15px 45px rgba(0,0,0,0.03); display: flex; flex-direction: column; transition: var(--transition-smooth); border: 1px solid #ECEEEF; }
+        .project-slide-card:hover { transform: translate3d(0, -10px, 0); box-shadow: 0 30px 60px rgba(0,0,0,0.08); }
+        
+        .proj-card-img-wrap { width: 100%; height: 320px; overflow: hidden; position: relative; background-color: #F0F2F3; }
+        .proj-card-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: var(--transition-smooth); }
+        .project-slide-card:hover .proj-card-img-wrap img { transform: scale(1.04); }
+        
+        .proj-card-details { padding: 40px 35px; display: flex; flex-direction: column; flex-grow: 1; }
+        .proj-card-meta-tag { font-family: var(--font-body); font-size: 0.8rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 15px; display: block; }
+        .proj-card-title { font-family: var(--font-display); font-size: 2.1rem; color: var(--text-main); margin-bottom: 15px; font-weight: 400; line-height: 1.2; }
+        
+        .proj-card-tags { display: flex; gap: 20px; margin-bottom: 20px; font-size: 0.9rem; color: var(--text-muted); font-weight: 400; }
+        .proj-card-tags span { display: inline-flex; align-items: center; gap: 6px; }
+        .proj-card-tags svg { width: 16px; height: 16px; fill: #9BA4A8; }
+        
+        .proj-card-desc { font-size: 0.98rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 30px; font-weight: 300; }
+        .proj-card-link { font-family: var(--font-body); font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-main); text-decoration: none; margin-top: auto; display: inline-flex; align-items: center; transition: var(--transition-fast); width: fit-content; cursor: pointer; }
+        .proj-card-link:hover { color: var(--accent); }
+        
+        .gallery-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #ECEEEF; color: var(--text-muted); text-align: center; font-family: var(--font-display); font-size: 1.3rem; padding: 20px; }
+        .gallery-placeholder svg { width: 40px; height: 40px; fill: var(--accent); margin-bottom: 10px; }
+
+        /* --- IMMERSIVE CUSTOM LIGHTBOX MODAL --- */
+        .karnel-lightbox {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(28, 32, 34, 0.8); 
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 30px;
+        }
+        .karnel-lightbox.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 85vh;
+            box-shadow: 0 30px 90px rgba(0,0,0,0.3);
+            transform: scale(0.95) translate3d(0, 20px, 0);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .karnel-lightbox.open .lightbox-content {
+            transform: scale(1) translate3d(0, 0, 0);
+        }
+        .lightbox-content img {
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 85vh;
+            object-fit: contain;
+            border: 4px solid var(--white);
+        }
+        .lightbox-close {
+            position: absolute;
+            top: -50px;
+            right: 0;
+            background: transparent;
+            border: none;
+            color: var(--white);
+            font-size: 2.5rem;
+            cursor: pointer;
+            line-height: 1;
+            transition: var(--transition-fast);
+        }
+        .lightbox-close:hover {
+            color: var(--accent);
+        }
+
+        /* --- WHY CHOOSE US SECTION --- */
+        #why-choose-us { background-color: var(--bg-secondary); }
+        .why-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; max-width: 1600px; margin: 0 auto; }
+        .why-card { background-color: var(--white); padding: 50px 40px; border-radius: 4px; transition: var(--transition-smooth); border: 1px solid rgba(0,0,0,0.02); }
+        .why-card .num { font-family: var(--font-display); font-size: 3.5rem; color: rgba(197, 168, 128, 0.3); display: block; margin-bottom: 20px; font-weight: 600; }
+        .why-card h3 { font-size: 1.6rem; margin-bottom: 15px; }
+        .why-card:hover { transform: translate3d(0, -8px, 0); box-shadow: 0 20px 40px rgba(0,0,0,0.04); }
+
+        /* --- INTERACTIVE MAP --- */
+        .map-interactive-wrapper { width: 100%; height: 100%; min-height: 480px; border-radius: 4px; overflow: hidden; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.06); }
+        .map-iframe-cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(28, 32, 34, 0.92) 0%, rgba(45, 52, 56, 0.88) 100%); z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--white); padding: 40px; transition: var(--transition-smooth); cursor: pointer; }
+        .map-iframe-cover svg { width: 64px; height: 64px; fill: var(--accent); margin-bottom: 20px; transform: scale(1); transition: var(--transition-smooth); }
+        .map-iframe-cover h4 { color: var(--white); font-size: 1.8rem; margin-bottom: 10px; letter-spacing: 0.05em; }
+        .map-iframe-cover p { color: rgba(255,255,255,0.7); font-size: 1rem; margin-bottom: 25px; max-width: 320px; }
+        .map-interactive-wrapper:hover .map-iframe-cover svg { transform: scale(1.1) translateY(-5px); }
+        .map-interactive-wrapper:hover .map-iframe-cover { background: linear-gradient(135deg, rgba(197, 168, 128, 0.95) 0%, rgba(28, 32, 34, 0.9) 100%); }
+        
+        .map-action-pulse-btn { padding: 14px 28px; background: var(--white); color: var(--text-main); font-family: var(--font-body); font-weight: 500; font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transition: var(--transition-fast); }
+        .map-interactive-wrapper:hover .map-action-pulse-btn { background: var(--text-main); color: var(--white); }
+
+        /* --- JOURNEY TIMELINE --- */
+        #process { background-color: var(--bg-primary); position: relative; }
+        .timeline-wrapper { position: relative; max-width: 1200px; margin: 60px auto 0 auto; padding: 40px 0; }
+        .timeline-wrapper::before { content: ''; position: absolute; left: 50%; top: 0; width: 2px; height: 100%; background-color: rgba(0, 0, 0, 0.05); transform: translateX(-50%); }
+        .timeline-progress-line { position: absolute; left: 50%; top: 0; width: 2px; background-color: var(--accent); transform: translateX(-50%); height: 0%; transition: height 0.5s ease-out; will-change: height; }
+        .timeline-item { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 80px; position: relative; }
+        .timeline-item:nth-child(even) { flex-direction: row-reverse; }
+        .timeline-badge { width: 50px; height: 50px; border-radius: 50%; background-color: var(--white); border: 2px solid rgba(0, 0, 0, 0.05); position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; justify-content: center; z-index: 2; transition: var(--transition-smooth); }
+        .timeline-badge svg { width: 20px; height: 20px; fill: var(--text-muted); transition: var(--transition-smooth); }
+        .timeline-item.active-node .timeline-badge { border-color: var(--accent); background-color: var(--text-main); }
+        .timeline-item.active-node .timeline-badge svg { fill: var(--accent); }
+        .timeline-panel { width: 45%; padding: 40px; background-color: var(--bg-secondary); border-radius: 4px; box-shadow: 0 5px 25px rgba(0,0,0,0.01); transition: var(--transition-smooth); }
+        .timeline-panel h3 { font-size: 1.5rem; margin-bottom: 10px; }
+        .timeline-panel .step-num { font-size: 0.85rem; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 5px; }
+
+        /* --- IMMERSIVE CORE CTA BLEED ZONE --- */
+        #cta-bleed { 
+            position: relative;
+            background-color: #171a1c;
+            text-align: center; 
+            padding: 140px 20px; 
+            overflow: hidden;
+        }
+        #cta-bleed h2 { color: var(--white); font-size: clamp(2.5rem, 4vw, 3.8rem); margin-bottom: 35px; position: relative; z-index: 5; }
+        
+        /* Force explicit visibility on top of the backdrop canvas elements */
+        #cta-bleed .cta-content-wrapper {
+            position: relative;
+            z-index: 10;
+            opacity: 1 !important;
+            transform: none !important;
+        }
+        
+        #cta-bleed .hero-ctas { position: relative; z-index: 5; }
+        #cta-bleed .hero-ctas .btn-primary { background-color: var(--white); color: var(--text-main); }
+        #cta-bleed .hero-ctas .btn-primary:hover { background-color: var(--accent); color: var(--white); }
+        #cta-bleed .hero-ctas .btn-secondary { color: var(--white); border-color: var(--white); background: rgba(255,255,255,0.1); }
+        #cta-bleed .hero-ctas .btn-secondary:hover { background: var(--white); color: var(--text-main); }
+
+        /* Clean Vector Sand Disorientation Backdrop Layer */
+        .sand-grain-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            background-color: #171a1c;
+        }
+        .sand-base-image {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('images/harbour image.png') no-repeat center center;
+            background-size: cover;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            
+            /* Extremely calm loop that stays responsive and never falls into complete blackout */
+            animation: elegantSandMelt 18s ease-in-out infinite alternate;
+            will-change: transform, filter, opacity;
+        }
+        
+        /* Ambient dynamic texture overlay */
+        .sand-noise-overlay { 
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0.12;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            animation: sandStormMotion 0.9s steps(4) infinite;
+            z-index: 2;
+        }
+
+        @keyframes elegantSandMelt {
+            0% { transform: scale(1); filter: blur(0px) brightness(1); opacity: 1; }
+            40% { transform: scale(1.02); filter: blur(1.5px) brightness(1.02); opacity: 0.95; }
+            70% { transform: scale(1.07); filter: blur(6px) brightness(0.9); opacity: 0.55; }
+            100% { transform: scale(1.12); filter: blur(14px) brightness(0.85); opacity: 0.25; }
+        }
+        @keyframes sandStormMotion {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(10px, -10px, 0); }
+        }
+        
+        /* --- CONTACT INTERFACE --- */
+        #contact { background-color: var(--white); }
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; max-width: 1600px; margin: 0 auto; }
+        .contact-card { background-color: var(--bg-secondary); padding: 60px; border-radius: 4px; }
+        .contact-card h3 { font-size: 2.2rem; margin-bottom: 40px; }
+        .contact-methods { display: flex; flex-direction: column; gap: 30px; }
+        .contact-method-item { display: flex; align-items: flex-start; gap: 20px; }
+        .contact-method-item svg { width: 24px; height: 24px; fill: var(--accent); margin-top: 4px; }
+        .contact-method-item div h4 { font-family: var(--font-body); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 5px; }
+        .contact-method-item div a, .contact-method-item div p { font-size: 1.2rem; color: var(--text-main); text-decoration: none; font-family: var(--font-display); transition: var(--transition-fast); }
+        .contact-method-item div a:hover { color: var(--accent); }
+
+        /* --- GLOBAL FOOTER --- */
+        footer { background-color: #0E1011; color: rgba(255,255,255,0.6); padding: 100px 8% 40px 8%; font-size: 0.9rem; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 60px; max-width: 1600px; margin: 0 auto 80px auto; }
+        .footer-brand .logo { color: var(--white) !important; display: block; margin-bottom: 25px; }
+        .footer-brand p { color: rgba(255,255,255,0.5); max-width: 320px; }
+        .footer-col h4 { color: var(--white); font-family: var(--font-body); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 25px; font-weight: 600; }
+        .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 15px; }
+        .footer-col ul a { color: rgba(255,255,255,0.5); text-decoration: none; transition: var(--transition-fast); }
+        .footer-col ul a:hover { color: var(--accent); padding-left: 5px; }
+        .social-links { display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap; }
+        .social-links a { width: 40px; height: 40px; border-radius: 50%; background-color: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; transition: var(--transition-fast); }
+        .social-links a svg { width: 18px; height: 18px; fill: var(--white); }
+        .social-links a:hover { background-color: var(--accent); }
+        .footer-base { max-width: 1600px; margin: 0 auto; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 40px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; font-size: 0.8rem; }
+        .footer-base-links { display: flex; gap: 30px; }
+        .footer-base-links a { color: rgba(255,255,255,0.4); text-decoration: none; transition: var(--transition-fast); }
+        .footer-base-links a:hover { color: var(--accent); }
+
+        .mobile-sticky-cta { position: fixed; bottom: 20px; right: 20px; z-index: 999; background-color: var(--text-main); color: var(--white); padding: 14px 24px; border-radius: 30px; text-decoration: none; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: none; border: 1px solid rgba(255,255,255,0.1); transition: var(--transition-fast); }
+        .mobile-sticky-cta:hover { background-color: var(--accent); }
+
+        /* --- BREAKPOINTS --- */
+        @media(max-width: 1200px) {
+            .services-grid { grid-template-columns: repeat(2, 1fr); }
+            .service-card:nth-child(1), .service-card:nth-child(2), .service-card:nth-child(3), .service-card:nth-child(4), .service-card:nth-child(5) { grid-column: span 1; }
+            .why-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media(max-width: 992px) {
+            .section-padding { padding: 80px 6%; }
+            .about-grid { grid-template-columns: 1fr; gap: 40px; }
+            .about-image { height: 450px; }
+            .intro-grid { grid-template-columns: 1fr; gap: 40px; }
+            .contact-grid { grid-template-columns: 1fr; }
+            .burger { display: block; }
+            .nav-links { display: none; }
+            .timeline-wrapper::before, .timeline-progress-line { left: 40px; }
+            .timeline-item { flex-direction: row !important; margin-bottom: 50px; }
+            .timeline-panel { width: calc(100% - 80px); margin-left: auto; padding: 30px; }
+            .timeline-badge { left: 40px; }
+            .project-slider-track { padding-left: 6%; }
+            .project-slide-card { flex: 0 0 380px; }
+        }
+
+        @media(max-width: 768px) {
+            .services-grid { grid-template-columns: 1fr; }
+            .why-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+            .hero-ctas { flex-direction: column; align-items: center; width: 100%; }
+            .hero-ctas .btn { width: 100%; }
+            .mobile-sticky-cta { display: block; }
+            
+            /* MOBILE OBJECT COVER IMAGE OPTIMIZATION */
+            .service-card-bg {
+                width: 100% !important;
+                height: 100% !important;
+            }
+            .project-slide-card {
+                flex: 0 0 290px; 
+            }
+            .proj-card-img-wrap {
+                height: 200px;
+            }
+            .proj-card-details {
+                padding: 25px 20px;
+            }
+            .proj-card-title {
+                font-size: 1.6rem;
+            }
+            .lightbox-content {
+                max-width: 95%;
+            }
+            .lightbox-close {
+                top: -45px;
+                right: 5px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<datalist id="rolodex-companies"></datalist>
-
-<!-- Modals -->
-<div class="modal-overlay" id="modal-project">
-  <div class="modal-content">
-    <div class="modal-title" id="modal-project-title">Add New Project</div>
-    <input type="text" id="project-address-input" placeholder="Enter Project Address (e.g. 12 Smith St)">
-    <div class="modal-actions">
-      <button class="btn-outline" onclick="closeModals()">Cancel</button>
-      <button class="btn-primary" onclick="submitProjectModal()">Save Project</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-job">
-  <div class="modal-content">
-    <div class="modal-title">Add Custom Job Tile</div>
-    <input type="text" id="new-job-name" placeholder="Job Title (e.g. Pool Excavation)">
-    <select id="new-job-owner">
-      <option value="Site">Owner: Site</option>
-      <option value="Office">Owner: Office</option>
-    </select>
-    <div style="font-size: 11px; font-weight: 600; color: var(--text-muted); margin-top: 4px;">Activate After:</div>
-    <select id="new-job-prereq"></select>
-    <div class="modal-actions">
-      <button class="btn-outline" onclick="closeModals()">Cancel</button>
-      <button class="btn-primary" onclick="addJob()">Add Job</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-trade">
-  <div class="modal-content">
-    <div class="modal-title">Add New Trade</div>
-    <input type="text" id="new-trade-role" placeholder="Trade / Role (e.g. Concreter)">
-    <input type="text" id="new-trade-company" placeholder="Company Name">
-    <input type="text" id="new-trade-contact" placeholder="Contact Name">
-    <input type="email" id="new-trade-email" placeholder="Email Address">
-    <div class="modal-actions">
-      <button class="btn-outline" onclick="closeModals()">Cancel</button>
-      <button class="btn-primary" onclick="addTrade()">Add Trade</button>
-    </div>
-  </div>
-</div>
-
-<!-- Day Planner Modal -->
-<div class="modal-overlay" id="modal-event">
-  <div class="modal-content">
-    <div class="modal-title" id="event-modal-title">Bookings & Agendas</div>
-    
-    <!-- Dynamic List of Existing Agendas -->
-    <div id="event-list-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; padding-right: 4px;"></div>
-    
-    <div style="border-top: 1px solid var(--border-soft); margin: 8px 0;"></div>
-    
-    <!-- Add New Agenda -->
-    <div style="font-size: 13px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">Add New Booking</div>
-    <select id="event-project-selector" style="font-weight: 600; background: var(--bg-page); border: 1px solid var(--border-soft); border-radius: 6px; padding: 8px;"></select>
-    <div style="display: flex; gap: 8px;">
-      <input type="date" id="event-date" style="width: 130px;" onchange="onCalendarDateChange(this.value)">
-      <input type="text" id="event-text" style="flex: 1;" placeholder="Agenda details...">
-    </div>
-    
-    <div class="modal-actions">
-      <button class="btn-outline" onclick="closeModals()">Done</button>
-      <button class="btn-primary" onclick="addCalendarEvent()">+ Add</button>
-    </div>
-  </div>
-</div>
-
-<!-- Main App Shell -->
-<div class="app-layout">
-  
-  <!-- LEFT NAV MENU -->
-  <aside class="left-sidebar">
-    <div class="sidebar-header">
-      <span>KARNEL HOMES</span>
-      <div style="display: flex; gap: 4px; align-items: center;">
-        <span id="save-status" class="save-indicator saved">💾 SAVED</span>
-        <span id="cloud-sync-status" class="save-indicator" style="background: #f59e0b; color: #fff;">⚠️ OFFLINE</span>
-      </div>
-    </div>
-    
-    <div class="sidebar-section" style="border-bottom: 1px solid #1e293b; padding-bottom: 16px; flex: none;">
-      <div class="sidebar-title">Main Views</div>
-      <div class="nav-item active" id="nav-project" onclick="setView('PROJECT')">🏢 Project Board</div>
-      <div class="nav-item" id="nav-day" onclick="setView('DAY')">☀️ My Day</div>
-      <div class="nav-item" id="nav-calendar" onclick="setView('CALENDAR')">📅 Calendar</div>
-    </div>
-
-    <div class="sidebar-section" style="display: flex; flex-direction: column;">
-      <div class="sidebar-title">
-        Active Projects
-        <button style="background: transparent; border: none; color: var(--primary); cursor: pointer; font-size: 16px; padding: 0;" onclick="openProjectModal('NEW')" title="New Project">＋</button>
-      </div>
-      <div id="project-list-container" style="flex: 1; overflow-y: auto;">
-        <!-- Project list renders here -->
-      </div>
-    </div>
-  </aside>
-
-  <!-- CENTER WORKSPACE -->
-  <main class="main-content">
-    <header class="workspace-header" id="workspace-header"></header>
-    <div class="workspace-scroll" id="portal-content"></div>
-  </main>
-
-  <!-- RIGHT CONTEXT PANEL -->
-  <aside class="right-sidebar" id="right-sidebar-content"></aside>
-</div>
-
-<script>
-  // ==========================================
-  // UTILITY HELPERS
-  // ==========================================
-  function escapeHTML(str) {
-    if (!str) return '';
-    return String(str).replace(/[&<>'"]/g, match => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-    }[match]));
-  }
-
-  function validateInput(value, maxLength = 200) {
-    if (!value || typeof value !== 'string') return '';
-    return value.trim().slice(0, maxLength);
-  }
-
-  // URL VALIDATION UPDATED TO SUPPORT THE MICROSOFT EDGE PROTOCOL
-  function validateURL(string) {
-    try {
-      const url = new URL(string);
-      return url.protocol === 'http:' || url.protocol === 'https:' || url.protocol === 'file:' || url.protocol === 'ftp:' || url.protocol === 'microsoft-edge:';
-    } catch (_) { return false; }
-  }
-
-  function debounce(func, wait) {
-    let timeout;
-    return function(...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(this, args), wait);
-    };
-  }
-
-  function showToast(message, isError = false) {
-    const existing = document.querySelector('.toast');
-    if (existing) existing.remove();
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.textContent = message;
-    if (isError) toast.style.borderLeft = '4px solid #ef4444';
-    else toast.style.borderLeft = '4px solid #10b981';
-    document.body.appendChild(toast);
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      toast.style.transition = 'opacity 0.3s';
-      setTimeout(() => toast.remove(), 300);
-    }, 3000);
-  }
-
-  // Global Keypress Delegates
-  document.addEventListener('keypress', function(e) {
-    if (e.target && e.target.id === 'new-check-text' && e.key === 'Enter') {
-      e.preventDefault();
-      addChecklistItem();
-    }
-    if (e.target && e.target.id === 'event-text' && e.key === 'Enter') {
-      e.preventDefault();
-      addCalendarEvent();
-    }
-  });
-
-  // ==========================================
-  // 1. SUPABASE CONNECTION DETAILS
-  // ==========================================
-  const SUPABASE_URL = 'https://giovxsxgkdilawyxuiqb.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_k9sU8tyILCmQTxAI36ufWQ__JsPNSRY';
-  
-  let supabaseClient = null;
-  let supabaseChannel = null;
-
-  try {
-    if (SUPABASE_URL.startsWith('http')) {
-      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    }
-  } catch(e) { console.error("Supabase error:", e); }
-
-  function initCloudStatus() {
-    const statusEl = document.getElementById('cloud-sync-status');
-    if (supabaseClient) {
-      statusEl.textContent = '☁️ LIVE';
-      statusEl.style.background = '#10b981';
-    } else {
-      statusEl.textContent = '⚠️ OFFLINE';
-      statusEl.style.background = '#f59e0b';
-    }
-  }
-
-  // ==========================================
-  // 2. STATE & DEFAULT TEMPLATES
-  // ==========================================
-  const DEFAULT_CONTRACTORS = [
-    { trade: "Certifier", company: "", contact: "", email: "" },
-    { trade: "Architect", company: "", contact: "", email: "" },
-    { trade: "Plumber", company: "", contact: "", email: "" },
-    { trade: "Electrician", company: "", contact: "", email: "" }
-  ];
-
-  const MASTER_TEMPLATE = [
-    { id: 1, name: "CC / CDC Approval Received", owner: "Office", prereqs: [], status: "READY TO START", notes: "", date: "" }
-  ];
-
-  let projects = JSON.parse(localStorage.getItem('karnel_data_final16')) || {};
-  let currentProjectId = localStorage.getItem('karnel_active_final16') || null;
-  let rolodex = JSON.parse(localStorage.getItem('karnel_rolodex')) || [];
-  let currentView = 'PROJECT'; 
-  let draggedStepId = null;
-  let projectModalMode = 'NEW';
-  let calMonth = new Date().getMonth();
-  let calYear = new Date().getFullYear();
-  let activeModalDate = null;
-
-  // ==========================================
-  // 3. CLOUD SYNC & LOCAL STORAGE LOGIC
-  // ==========================================
-  async function saveState() {
-    const status = document.getElementById('save-status');
-    if (status) {
-      status.className = 'save-indicator saving';
-      status.textContent = '💾 SAVING...';
-    }
-
-    localStorage.setItem('karnel_data_final16', JSON.stringify(projects));
-    localStorage.setItem('karnel_active_final16', currentProjectId);
-    localStorage.setItem('karnel_rolodex', JSON.stringify([...new Set(rolodex)])); 
-    updateRolodexDatalist();
-    
-    await syncToSupabase();
-    
-    if (status) {
-      status.className = 'save-indicator saved';
-      status.textContent = '💾 SAVED';
-    }
-  }
-
-  const debouncedSave = debounce(saveState, 500);
-
-  async function syncToSupabase() {
-    if (!supabaseClient || !currentProjectId || !projects[currentProjectId]) return;
-    try {
-      await supabaseClient.from('karnel_projects').upsert({ id: currentProjectId, name: projects[currentProjectId].name, data: projects[currentProjectId] });
-      initCloudStatus(); 
-    } catch (e) {
-      console.warn("Cloud sync failed - saving locally only");
-      const statusEl = document.getElementById('cloud-sync-status');
-      statusEl.textContent = '⚠️ OFFLINE';
-      statusEl.style.background = '#f59e0b';
-      showToast("Cloud sync failed. Data saved locally.", true);
-    }
-  }
-
-  async function loadFromCloud() {
-    if (!supabaseClient) return;
-    try {
-      if (supabaseChannel) {
-        supabaseClient.removeChannel(supabaseChannel);
-      }
-
-      const { data } = await supabaseClient.from('karnel_projects').select('*');
-      if (data && data.length > 0) {
-        data.forEach(row => { projects[row.id] = row.data; });
-        updateRolodexDatalist();
-        if (!currentProjectId || !projects[currentProjectId]) currentProjectId = data[0].id;
-        render();
-      }
-      
-      supabaseChannel = supabaseClient.channel('karnel-live');
-      supabaseChannel.on('postgres_changes', { event: '*', schema: 'public', table: 'karnel_projects' }, payload => {
-          projects[payload.new.id] = payload.new.data;
-          const activeEl = document.activeElement;
-          const isEditing = activeEl && ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl.tagName);
-          if (!isEditing && (payload.new.id === currentProjectId || currentView === 'DAY' || currentView === 'CALENDAR')) {
-              render();
-          }
-      }).subscribe();
-    } catch (e) {
-      console.warn("Failed to load initial data from Supabase.");
-      showToast("Failed to load initial data from server.", true);
-    }
-  }
-
-  async function manualSync() {
-    const btn = document.getElementById('sync-btn');
-    if (btn) {
-      const originalText = btn.textContent;
-      btn.textContent = '⏳ Syncing...';
-      btn.disabled = true;
-      try {
-        await loadFromCloud();
-        initCloudStatus();
-        render();
-        showToast("Data successfully synced.");
-      } catch (e) {
-        showToast("Sync failed. Check connection.", true);
-      } finally {
-        btn.textContent = originalText;
-        btn.disabled = false;
-      }
-    }
-  }
-
-  window.addEventListener('beforeunload', () => {
-    if (supabaseClient && supabaseChannel) {
-      supabaseClient.removeChannel(supabaseChannel);
-    }
-  });
-
-  // ==========================================
-  // 4. CORE APP FUNCTIONS
-  // ==========================================
-  function updateRolodexDatalist() {
-    const list = document.getElementById('rolodex-companies');
-    list.innerHTML = '';
-    rolodex.forEach(company => { if(company.trim()) list.innerHTML += `<option value="${escapeHTML(company)}">`; });
-  }
-
-  function exportBackupData() {
-    const backupData = { timestamp: new Date().toISOString(), projects: projects, rolodex: rolodex };
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
-    const dlAnchorElem = document.createElement('a');
-    dlAnchorElem.setAttribute("href", dataStr);
-    dlAnchorElem.setAttribute("download", `Karnel_Homes_Backup_${new Date().toISOString().split('T')[0]}.json`);
-    document.body.appendChild(dlAnchorElem);
-    dlAnchorElem.click();
-    dlAnchorElem.remove();
-    showToast("Backup exported successfully.");
-  }
-
-  async function editProjectName() {
-    if (!currentProjectId || !projects[currentProjectId]) return;
-    const currentName = projects[currentProjectId].name;
-    const newName = prompt("Edit Project Address:", currentName);
-    const validName = validateInput(newName);
-    if (validName && validName !== "") {
-      projects[currentProjectId].name = validName;
-      await saveState();
-      render();
-    }
-  }
-
-  /* PROJECT MODALS */
-  function openProjectModal(mode) {
-    if (mode === 'COPY' && (!currentProjectId || !projects[currentProjectId])) return alert("No active project to copy.");
-    projectModalMode = mode;
-    document.getElementById('modal-project-title').innerText = mode === 'NEW' ? 'Create New Project' : 'Copy Current Project';
-    document.getElementById('project-address-input').value = '';
-    document.getElementById('modal-project').style.display = 'flex';
-    document.getElementById('project-address-input').focus();
-  }
-
-  async function submitProjectModal() {
-    const name = validateInput(document.getElementById('project-address-input').value);
-    if (!name) return alert("Please enter a valid address.");
-    
-    if (projectModalMode === 'NEW') {
-      const id = 'proj_' + Date.now();
-      projects[id] = { id: id, name: name, contractors: JSON.parse(JSON.stringify(DEFAULT_CONTRACTORS)), steps: JSON.parse(JSON.stringify(MASTER_TEMPLATE)), checklist: [], events: [], projectLocationLink: "" };
-      currentProjectId = id;
-    } else if (projectModalMode === 'COPY') {
-      const original = projects[currentProjectId];
-      const newId = 'proj_' + Date.now();
-      const copiedSteps = original.steps.map(step => ({ ...step, status: step.prereqs.length === 0 ? "READY TO START" : "LOCKED", notes: "", date: "" }));
-      projects[newId] = { id: newId, name: name, contractors: JSON.parse(JSON.stringify(original.contractors)), steps: copiedSteps, checklist: [], events: [], projectLocationLink: "" };
-      currentProjectId = newId;
-    }
-    setView('PROJECT');
-    await saveState();
-    closeModals();
-    render();
-    showToast("Project created successfully.");
-  }
-
-  async function deleteCurrentProject() {
-    if (!currentProjectId) return;
-    const projectName = projects[currentProjectId]?.name || 'this project';
-    if (confirm(`⚠️ Are you sure you want to delete "${projectName}"? This action cannot be undone!`)) {
-      if(supabaseClient) await supabaseClient.from('karnel_projects').delete().eq('id', currentProjectId);
-      delete projects[currentProjectId];
-      currentProjectId = Object.keys(projects)[0] || null;
-      
-      if (!currentProjectId) {
-        currentView = 'PROJECT';
-        document.querySelectorAll('.nav-item').forEach(el => el.className = 'nav-item');
-        document.getElementById('nav-project').className = 'nav-item active';
-      }
-      
-      await saveState();
-      render();
-      showToast("Project deleted.");
-    }
-  }
-
-  async function switchProject(id) { currentProjectId = id; currentView = 'PROJECT'; await saveState(); render(); }
-  
-  function setView(viewMode) {
-    currentView = viewMode;
-    document.getElementById('nav-project').className = `nav-item ${viewMode === 'PROJECT' ? 'active' : ''}`;
-    document.getElementById('nav-day').className = `nav-item ${viewMode === 'DAY' ? 'active' : ''}`;
-    document.getElementById('nav-calendar').className = `nav-item ${viewMode === 'CALENDAR' ? 'active' : ''}`;
-    render();
-  }
-
-  function closeModals() {
-    document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none');
-  }
-
-  /* JOBS & TRADES */
-  function openJobModal() {
-    if (!currentProjectId) return alert("Create a project first!");
-    const prereqSelect = document.getElementById('new-job-prereq');
-    prereqSelect.innerHTML = '<option value="0">None (Start Immediately)</option>';
-    projects[currentProjectId].steps.forEach(s => { prereqSelect.innerHTML += `<option value="${s.id}">Wait for: ${escapeHTML(s.name)}</option>`; });
-    document.getElementById('new-job-name').value = '';
-    document.getElementById('modal-job').style.display = 'flex';
-  }
-
-  async function addJob() {
-    const name = validateInput(document.getElementById('new-job-name').value);
-    const owner = document.getElementById('new-job-owner').value;
-    const prereqId = parseInt(document.getElementById('new-job-prereq').value);
-    if (!name) return alert("Please enter a job title");
-    const project = projects[currentProjectId];
-    const newId = project.steps.length > 0 ? Math.max(...project.steps.map(s => s.id)) + 1 : 1;
-    const prereqs = prereqId === 0 ? [] : [prereqId];
-    project.steps.push({ id: newId, name: name, owner: owner, prereqs: prereqs, status: "LOCKED", notes: "", date: "" });
-    evaluateDependencies(project.steps);
-    await saveState();
-    closeModals();
-    render();
-  }
-
-  async function removeJob(projectId, stepId) {
-    if (confirm("Are you sure you want to delete this job?")) {
-      const project = projects[projectId];
-      project.steps = project.steps.filter(s => s.id !== stepId);
-      project.steps.forEach(s => { s.prereqs = s.prereqs.filter(id => id !== stepId); });
-      evaluateDependencies(project.steps);
-      await saveState();
-      render();
-    }
-  }
-
-  function openTradeModal() {
-    if (!currentProjectId) return alert("Create a project first!");
-    document.getElementById('modal-trade').style.display = 'flex';
-  }
-
-  async function addTrade() {
-    const trade = validateInput(document.getElementById('new-trade-role').value);
-    const company = validateInput(document.getElementById('new-trade-company').value);
-    const contact = validateInput(document.getElementById('new-trade-contact').value);
-    const email = validateInput(document.getElementById('new-trade-email').value);
-    
-    if (!trade) return alert("Please enter a Trade / Role");
-    projects[currentProjectId].contractors.push({ trade, company, contact, email });
-    await saveState();
-    closeModals();
-    render();
-  }
-
-  async function removeTrade(index) {
-    if (confirm("Remove this trade?")) {
-      projects[currentProjectId].contractors.splice(index, 1);
-      await saveState();
-      render();
-    }
-  }
-
-  async function updateField(projectId, type, id, field, value) {
-    const project = projects[projectId];
-    if (!project) return;
-    
-    if (type === 'contractor') {
-      project.contractors[id][field] = value;
-      if (field === 'company' && value.trim() && !rolodex.includes(value.trim())) {
-        rolodex.push(value.trim());
-      }
-    } else if (type === 'step') {
-      const step = project.steps.find(s => s.id === id);
-      if (step) {
-        step[field] = value;
-        if (field === 'status') evaluateDependencies(project.steps);
-      }
-    } else if (type === 'locationLink') {
-      if (value && !validateURL(value)) {
-        alert('Please enter a valid URL (include http:// or https://)');
-        return;
-      }
-      project.projectLocationLink = value;
-    }
-    
-    if (field === 'notes' || field === 'company' || field === 'contact' || field === 'email') {
-      debouncedSave();
-    } else {
-      await saveState();
-      render(); 
-    }
-  }
-
-  /* DRAG AND DROP */
-  function dragStart(event, stepId) { 
-    if (currentView !== 'PROJECT') { event.preventDefault(); return false; }
-    draggedStepId = stepId; 
-    event.dataTransfer.effectAllowed = 'move'; 
-    event.dataTransfer.setData('text/plain', stepId.toString());
-  }
-  function dragOver(event, el) { event.preventDefault(); el.classList.add('drag-over'); }
-  function dragLeave(event, el) { el.classList.remove('drag-over'); }
-  async function drop(event, targetId, el) {
-    event.preventDefault();
-    el.classList.remove('drag-over');
-    
-    const draggedId = parseInt(event.dataTransfer.getData('text/plain'));
-    if (isNaN(draggedId) || draggedId === targetId || currentView !== 'PROJECT') return;
-    
-    const project = projects[currentProjectId];
-    const fromIndex = project.steps.findIndex(s => s.id === draggedId);
-    const toIndex = project.steps.findIndex(s => s.id === targetId);
-    if (fromIndex === -1 || toIndex === -1) return;
-    
-    const movedStep = project.steps.splice(fromIndex, 1)[0];
-    project.steps.splice(toIndex, 0, movedStep);
-    await saveState();
-    render();
-  }
-
-  /* CHECKLIST */
-  async function addChecklistItem() {
-    const input = document.getElementById('new-check-text');
-    if(!input) return;
-    const text = validateInput(input.value);
-    if(!text || !currentProjectId) return;
-    
-    projects[currentProjectId].checklist = projects[currentProjectId].checklist || [];
-    projects[currentProjectId].checklist.push({ id: Date.now(), text: text, status: "PENDING" });
-    input.value = '';
-    await saveState();
-    render();
-  }
-  async function updateChecklistStatus(projectId, id, status) {
-    const item = projects[projectId].checklist.find(i => i.id === id);
-    if(item) { item.status = status; await saveState(); render(); }
-  }
-  async function deleteChecklistItem(projectId, id) {
-    projects[projectId].checklist = projects[projectId].checklist.filter(i => i.id !== id);
-    await saveState();
-    render();
-  }
-
-  /* ENHANCED CALENDAR / PLANNER LOGIC */
-  function changeMonth(direction) { calMonth += direction; if (calMonth < 0) { calMonth = 11; calYear--; } if (calMonth > 11) { calMonth = 0; calYear++; } render(); }
-  
-  function onCalendarDateChange(val) {
-    activeModalDate = val;
-    const titleDate = new Date(val + 'T00:00:00');
-    document.getElementById('event-modal-title').innerText = "Agendas for " + titleDate.toLocaleDateString('en-AU', { weekday: 'short', month: 'short', day: 'numeric' });
-    refreshEventList(val);
-  }
-
-  function refreshEventList(dateStr) {
-    const listContainer = document.getElementById('event-list-container');
-    let html = '';
-    let count = 0;
-    
-    Object.values(projects).forEach(project => {
-      (project.events || []).forEach(ev => {
-        if (ev.date === dateStr) {
-          count++;
-          const isDone = ev.status === 'COMPLETED';
-          html += `
-            <div class="card" style="padding: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; ${isDone ? 'opacity: 0.6; background: #f8fafc;' : 'border-left: 3px solid var(--primary);'}">
-              <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleEventStatusModal('${project.id}', ${ev.id})" style="width: 16px; height: 16px; cursor: pointer;">
-              <div style="flex: 1;">
-                <div style="font-size: 13px; font-weight: 700; ${isDone ? 'text-decoration: line-through;' : ''}">${escapeHTML(ev.text)}</div>
-                <div style="font-size: 10px; color: var(--text-muted); font-weight: 700; margin-top: 4px;">📍 ${escapeHTML(project.name)}</div>
-              </div>
-              <button class="btn-danger-outline" style="padding: 4px 8px; font-size:14px; font-weight:bold;" onclick="deleteEventModal('${project.id}', ${ev.id})" title="Delete Agenda">×</button>
-            </div>
-          `;
-        }
-      });
-    });
-    
-    if (count === 0) {
-      html = `<div style="text-align: center; color: var(--text-muted); font-size: 12px; padding: 20px 0; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">No agendas for this date.</div>`;
-    }
-    listContainer.innerHTML = html;
-  }
-
-  function openCalendarModal(dateStr, preselectProjectId = null) {
-    if (!currentProjectId && !preselectProjectId && Object.keys(projects).length === 0) return alert("Please create a project first.");
-    
-    activeModalDate = dateStr;
-    const titleDate = new Date(dateStr + 'T00:00:00');
-    document.getElementById('event-modal-title').innerText = "Agendas for " + titleDate.toLocaleDateString('en-AU', { weekday: 'short', month: 'short', day: 'numeric' });
-    document.getElementById('event-date').value = dateStr;
-    
-    const projSel = document.getElementById('event-project-selector');
-    projSel.innerHTML = '';
-    Object.values(projects).forEach(p => {
-      const opt = document.createElement('option');
-      opt.value = p.id;
-      opt.textContent = "📍 " + escapeHTML(p.name);
-      if (preselectProjectId && p.id === preselectProjectId) opt.selected = true;
-      else if (!preselectProjectId && p.id === currentProjectId) opt.selected = true;
-      projSel.appendChild(opt);
-    });
-
-    refreshEventList(dateStr);
-
-    document.getElementById('event-text').value = '';
-    document.getElementById('modal-event').style.display = 'flex';
-    setTimeout(() => document.getElementById('event-text').focus(), 100);
-  }
-
-  async function addCalendarEvent() {
-    const text = validateInput(document.getElementById('event-text').value);
-    const date = document.getElementById('event-date').value;
-    const projId = document.getElementById('event-project-selector').value;
-    
-    if (!text || !date || !projId) return alert("Please enter a description and ensure a project is selected.");
-    const project = projects[projId];
-    if (!project) return;
-    
-    project.events = project.events || [];
-    project.events.push({ id: Date.now(), date: date, text: text, status: "PENDING" });
-    
-    await saveState();
-    
-    document.getElementById('event-text').value = '';
-    activeModalDate = date; 
-    refreshEventList(date);
-    render();
-    
-    document.getElementById('event-text').focus();
-  }
-
-  async function toggleEventStatusModal(projectId, eventId) {
-    const ev = projects[projectId].events.find(e => e.id === eventId);
-    if (ev) { 
-      ev.status = ev.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED'; 
-      await saveState(); 
-      refreshEventList(activeModalDate);
-      render(); 
-    }
-  }
-
-  async function deleteEventModal(projectId, eventId) {
-    if(confirm("Delete this agenda?")) {
-      projects[projectId].events = projects[projectId].events.filter(e => e.id !== eventId);
-      await saveState();
-      refreshEventList(activeModalDate);
-      render();
-    }
-  }
-
-  function evaluateDependencies(steps) {
-    steps.forEach(step => {
-      if (step.status === "COMPLETE") return;
-      const prereqsMet = step.prereqs.every(reqId => steps.find(s => s.id === reqId)?.status === "COMPLETE");
-      if (prereqsMet && step.status === "LOCKED") step.status = "READY TO START";
-      else if (!prereqsMet && step.status !== "LOCKED") step.status = "LOCKED";
-    });
-  }
-
-  function generateTileHTML(step, projectId, projectName = null) {
-    let statusClass = "status-" + step.status.replace(/ /g, '-').toLowerCase().split('-')[0];
-    let badgeClass = "bg-" + statusClass.split('-')[1];
-
-    let smartButton = '';
-    if (step.status === 'READY TO START') smartButton = `<button class="smart-btn btn-primary" onclick="updateField('${projectId}', 'step', ${step.id}, 'status', 'IN PROGRESS')">Start Work ▶</button>`;
-    else if (step.status === 'IN PROGRESS') smartButton = `<button class="smart-btn btn-success" onclick="updateField('${projectId}', 'step', ${step.id}, 'status', 'COMPLETE')">Mark Complete ✓</button>`;
-    else if (step.status === 'COMPLETE') smartButton = `<button class="smart-btn" style="background:#f1f5f9; color:#64748b;" onclick="updateField('${projectId}', 'step', ${step.id}, 'status', 'IN PROGRESS')">↺ Reopen Task</button>`;
-    else smartButton = `<button class="smart-btn btn-locked" disabled>🔒 Locked</button>`;
-
-    let projectTagHtml = projectName ? `<div class="project-tag">📍 ${escapeHTML(projectName)}</div>` : '';
-    const isDraggable = currentView === 'PROJECT' ? 'true' : 'false';
-
-    return `
-      <div class="tile ${statusClass}" draggable="${isDraggable}" ondragstart="dragStart(event, ${step.id})" ondragover="dragOver(event, this)" ondragleave="dragLeave(event, this)" ondrop="drop(event, ${step.id}, this)">
-        ${projectTagHtml}
-        <div class="tile-header">
-          <span class="step-badge ${badgeClass}">${step.status}</span>
-          <div style="display:flex; gap:6px; align-items:center;">
-            <span style="font-size:10px; font-weight:700; color:var(--text-muted);">${escapeHTML(step.owner)}</span>
-            <button class="btn-danger-outline" style="padding: 2px 6px; font-size:14px; font-weight:bold;" onclick="removeJob('${projectId}', ${step.id})" title="Delete Job">×</button>
-          </div>
+    <header id="main-header">
+        <div class="nav-progress" id="scroll-progress"></div>
+        <div class="nav-container">
+            <a href="#hero" class="logo" aria-label="KARNEL HOMES Home">KARNEL</a>
+            <nav role="navigation" aria-label="Main Navigation">
+                <ul class="nav-links">
+                    <li><a href="#hero">Home</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#intro">What We Build</a></li>
+                    <li><a href="#portfolio">Projects</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <button class="burger" id="menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                <div></div>
+                <div></div>
+                <div></div>
+            </button>
         </div>
-        <div class="tile-title"><span class="drag-handle" title="Drag to reorder">⋮⋮</span> ${escapeHTML(step.name)}</div>
-        <div class="tile-meta"><input type="date" value="${step.date}" onchange="updateField('${projectId}', 'step', ${step.id}, 'date', this.value)"></div>
-        <textarea placeholder="Quick notes..." oninput="updateField('${projectId}', 'step', ${step.id}, 'notes', this.value)">${escapeHTML(step.notes)}</textarea>
-        ${smartButton}
-      </div>
-    `;
-  }
+    </header>
 
-  function render() {
-    const listContainer = document.getElementById("project-list-container");
-    const workspaceHeader = document.getElementById("workspace-header");
-    const content = document.getElementById("portal-content");
-    const rightSidebar = document.getElementById("right-sidebar-content");
+    <ul class="nav-menu-mobile" id="mobile-menu">
+        <li><a href="#hero" class="mob-link">Home</a></li>
+        <li><a href="#about" class="mob-link">About Us</a></li>
+        <li><a href="#intro" class="mob-link">What We Build</a></li>
+        <li><a href="#portfolio" class="mob-link">Projects</a></li>
+        <li><a href="#contact" class="mob-link">Contact</a></li>
+    </ul>
 
-    // --- LEFT SIDEBAR (Projects) ---
-    let listHtml = '';
-    if (Object.keys(projects).length === 0) {
-      listHtml = `<div style="font-size:12px; color:var(--nav-text); padding: 0 12px;">No active projects.</div>`;
-    } else {
-      Object.values(projects).forEach(p => {
-        const isActive = p.id === currentProjectId && currentView !== 'DAY' && currentView !== 'CALENDAR';
-        listHtml += `<div class="project-item ${isActive ? 'active' : ''}" onclick="switchProject('${p.id}')">${escapeHTML(p.name)}</div>`;
-      });
-    }
-    listContainer.innerHTML = listHtml;
-
-    if (Object.keys(projects).length === 0) {
-      workspaceHeader.innerHTML = `<div class="workspace-title">Welcome to Karnel Homes</div>`;
-      content.innerHTML = `<div class="empty-state">No Active Projects.<br><br>Click the <b>+ New Project</b> button on the left menu to begin.</div>`;
-      rightSidebar.style.display = "none";
-      return;
-    }
-
-    // --- RENDER CALENDAR VIEW ---
-    if (currentView === 'CALENDAR') {
-      rightSidebar.style.display = "none";
-      workspaceHeader.innerHTML = `
-        <div class="header-top-row">
-            <div class="workspace-title">📅 Global Calendar</div>
-            <div class="workspace-actions"><button id="sync-btn" class="btn-outline" onclick="manualSync()">🔄 Sync</button></div>
-        </div>`;
-      
-      const firstDay = new Date(calYear, calMonth, 1).getDay(); 
-      const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-      const today = new Date();
-      const monthName = new Date(calYear, calMonth).toLocaleString('default', { month: 'long' });
-
-      let calHtml = `
-        <div class="card" style="padding: 24px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-            <button class="btn-outline" onclick="changeMonth(-1)">◀ Previous</button>
-            <div style="font-size: 18px; font-weight: 800; text-transform: uppercase; color: var(--primary);">${monthName} ${calYear}</div>
-            <button class="btn-outline" onclick="changeMonth(1)">Next ▶</button>
-          </div>
-          <div class="cal-grid">
-      `;
-      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-      days.forEach(d => { calHtml += `<div class="cal-header-day">${d}</div>`; });
-      for (let i = 0; i < firstDay; i++) { calHtml += `<div></div>`; }
-
-      for (let day = 1; day <= daysInMonth; day++) {
-        const dateStr = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const isToday = (day === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear());
-        let bgStyle = isToday ? 'background: #f0f9ff; border: 2px solid var(--primary);' : '';
-        
-        let dayEvents = '';
-        Object.values(projects).forEach(project => {
-          (project.events || []).forEach(ev => {
-            if (ev.date === dateStr) {
-              const statusClass = ev.status === 'COMPLETED' ? 'completed' : '';
-              dayEvents += `<div class="cal-event ${statusClass}" title="${escapeHTML(project.name)} - ${escapeHTML(ev.text)}" onclick="event.stopPropagation(); toggleEventStatusModal('${project.id}', ${ev.id})"><strong>${escapeHTML(project.name.substring(0,6))}..</strong>: ${escapeHTML(ev.text)}</div>`;
-            }
-          });
-        });
-        calHtml += `<div class="cal-cell" style="${bgStyle}" onclick="openCalendarModal('${dateStr}')"><div class="cal-date-num">${day}</div><div style="display:flex; flex-direction:column; gap:4px; margin-top:4px;">${dayEvents}</div></div>`;
-      }
-      calHtml += `</div></div>`;
-      content.innerHTML = calHtml;
-      return;
-    }
-
-    // --- RENDER MY DAY VIEW ---
-    if (currentView === 'DAY') {
-      workspaceHeader.innerHTML = `
-        <div class="header-top-row">
-            <div class="workspace-title">☀️ My Day Overview</div>
-            <div class="workspace-actions"><button id="sync-btn" class="btn-outline" onclick="manualSync()">🔄 Sync</button></div>
-        </div>`;
-      rightSidebar.style.display = "flex";
-      
-      let sideHtml = `<div class="right-panel-section"><div class="section-title">📋 Global Minor Tasks</div>`;
-      let pendingCount = 0;
-      Object.values(projects).forEach(project => {
-        const pending = (project.checklist || []).filter(i => i.status === 'PENDING');
-        if(pending.length > 0) {
-          sideHtml += `<div style="font-size: 11px; font-weight: 700; color: var(--primary); margin-top: 12px; margin-bottom: 6px; background: #e0e7ff; padding: 4px 8px; border-radius: 4px; display: inline-block;">📍 ${escapeHTML(project.name)}</div>`;
-          pending.forEach(item => {
-            pendingCount++;
-            sideHtml += `
-              <div class="check-item">
-                <input type="checkbox" onchange="updateChecklistStatus('${project.id}', ${item.id}, 'COMPLETED')">
-                <div class="check-text">${escapeHTML(item.text)}</div>
-              </div>
-            `;
-          });
-        }
-      });
-      if(pendingCount === 0) sideHtml += `<div style="font-size: 12px; color: var(--text-muted); margin-top: 10px;">All minor tasks are clear!</div>`;
-      sideHtml += `</div>`;
-      rightSidebar.innerHTML = sideHtml;
-
-      let eventHtml = `<div class="section-title" style="margin-top:0;">📅 Priority Bookings (Due within 48 Hrs)</div><div style="display:flex; flex-direction:column; gap:12px; margin-bottom: 24px;">`;
-      let eventCount = 0;
-      
-      const today = new Date();
-      const twoDaysLater = new Date(today);
-      twoDaysLater.setDate(twoDaysLater.getDate() + 2);
-
-      Object.values(projects).forEach(project => {
-        (project.events || []).forEach(ev => {
-          if (ev.status === 'COMPLETED') return; 
-          
-          const evDate = new Date(ev.date + 'T00:00:00'); 
-          
-          if (evDate <= twoDaysLater) {
-            eventCount++;
-            const dateString = evDate.toLocaleDateString('en-AU', { weekday: 'short', month: 'short', day: 'numeric' });
-            eventHtml += `
-              <div class="card" style="padding:12px; display:flex; align-items:flex-start; gap:12px; border-left: 4px solid var(--color-ready);">
-                <input type="checkbox" onchange="toggleEventStatus('${project.id}', ${ev.id})" style="width:16px; height:16px; flex-shrink:0; margin-top:2px;">
-                <div style="flex:1;">
-                  <div style="font-size:13px; font-weight:700;">${escapeHTML(ev.text)}</div>
-                  <div style="font-size:11px; color:var(--text-muted); margin-top:4px; display:flex; align-items:center; gap:6px;">
-                    <span style="background: #fef3c7; color: #b45309; padding: 2px 6px; border-radius: 999px; font-weight:700;">🗓️ ${dateString}</span> 
-                    📍 <span style="color:var(--primary); font-weight:700;">${escapeHTML(project.name)}</span>
-                  </div>
+    <main>
+        <!-- HERO SECTION -->
+        <section id="hero">
+            <div class="hero-bg"></div>
+            <div class="hero-contrast-filter"></div>
+            <div class="hero-content">
+                <h1 class="reveal">Designed around how you think.<br>Built for life.</h1>
+                <p class="reveal reveal-delay-1">Architect-designed custom homes, built with clarity and care.</p>
+                <div class="hero-ctas reveal reveal-delay-2">
+                    <a href="#contact" class="btn btn-primary">Book a Consultation</a>
+                    <a href="#portfolio" class="btn btn-secondary">View Projects</a>
                 </div>
-              </div>`;
-          }
+            </div>
+            <button class="scroll-indicator" onclick="document.getElementById('about').scrollIntoView();" aria-label="Scroll down to content">
+                <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+            </button>
+        </section>
+
+        <!-- ABOUT US SECTION -->
+        <section id="about" class="section-padding">
+            <div class="about-grid">
+                <div class="about-image reveal">
+                    <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=800&q=80" alt="Sandeep Singh luxury residential project showcase portfolio layout image" loading="lazy">
+                </div>
+                <div class="about-content reveal reveal-delay-1">
+                    <span class="founder-title">Meet the Founder</span>
+                    <h2>Sandeep Singh</h2>
+                    <p>A visionary leader in the premium luxury residential building business for the last 15 years, Sandeep Singh has been helping families bring their dream homes to reality across Sydney.</p>
+                    <p>Under his direct creative direction, KARNEL HOMES has delivered vast complex custom projects while upholding absolute integrity, spatial excellence, and world-class structural value. For more information regarding your architecture goals, remember we are always just one ring or an email away.</p>
+                    <div style="margin-top: 35px;">
+                        <a href="#contact" class="btn btn-primary">Connect Privately</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- WHAT WE BUILD INTRODUCTION -->
+        <section id="intro" class="section-padding">
+            <div class="intro-grid">
+                <div class="intro-text reveal">
+                    <h2>Bespoke Architectural Builders Across Sydney.</h2>
+                    <p>KARNEL HOMES specialises in bespoke new homes, knockdown rebuilds, duplexes and tailored residential projects across Sydney.</p>
+                    <p>We blend design sophistication with flawless craftsmanship, offering absolute clarity throughout your architectural journey.</p>
+                </div>
+                <div class="intro-img-wrapper reveal reveal-delay-1">
+                    <img src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=800&q=80" alt="Minimal luxury Sydney residential home front architecture view" loading="lazy" width="800" height="600">
+                </div>
+            </div>
+        </section>
+
+        <!-- SERVICES SECTION -->
+        <section id="services" class="section-padding">
+            <div class="section-header reveal">
+                <h2>Our Building Services</h2>
+                <p>Crafting structures optimized for light, space, and premium materials.</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card reveal">
+                    <div class="service-card-bg" style="background-image: url('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=600&q=80');"></div>
+                    <svg class="service-icon" viewBox="0 0 24 24"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3zm0 4.84l4.5 4.05v6.11h-2v-6H9.5v6h-2v-6.11L12 7.84z"/></svg>
+                    <h3>Custom Homes</h3>
+                    <p>Tailored masterworks uniquely designed to mirror individual spatial architectures.</p>
+                </div>
+                <div class="service-card reveal reveal-delay-1">
+                    <div class="service-card-bg" style="background-image: url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80');"></div>
+                    <svg class="service-icon" viewBox="0 0 24 24"><path d="M19 9.3V4h-3v2.6L12 3 2 12h3v8h5v-6h4v6h5v-8h3L19 9.3zM10 10H7V8h3v2zm7 6h-3v-2h3v2zm0-4h-3v-2h3v2z"/></svg>
+                    <h3>Double Storey Homes</h3>
+                    <p>Expansive multidimensional elevations maintaining balanced footprints.</p>
+                </div>
+                <div class="service-card reveal">
+                    <div class="service-card-bg" style="background-image: url('https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=600&q=80');"></div>
+                    <svg class="service-icon" viewBox="0 0 24 24"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zm6 0v7h3v-7h-3zM2 22h20v-2H2v2zm2-16l8-4 8 4v2H2V6z"/></svg>
+                    <h3>Granny Flats</h3>
+                    <p>Sophisticated structural self-contained units maximizing land yields.</p>
+                </div>
+                <div class="service-card reveal reveal-delay-1">
+                    <div class="service-card-bg" style="background-image: url('images/single-storey.jpg');"></div>
+                    <svg class="service-icon" viewBox="0 0 24 24"><path d="M12 5.5l6 4.5v9H6v-9l6-4.5M12 3L4 9v12h16V9l-8-6z"/></svg>
+                    <h3>Single Storey Homes</h3>
+                    <p>Timeless linear floor plans accentuating organic seamless movement.</p>
+                </div>
+                <div class="service-card reveal reveal-delay-2">
+                    <div class="service-card-bg" style="background-image: url('https://images.unsplash.com/photo-1513584684374-8bab748fbf90?auto=format&fit=crop&w=600&q=80');"></div>
+                    <svg class="service-icon" viewBox="0 0 24 24"><path d="M12 2G6.5 2 2 6.5V18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6.5C22 2.5 17.5 2 12 2zm0 3c3.5 0 7 .4 7 1.5S15.5 8 12 8s-7-.4-7-1.5S8.5 5 12 5z"/></svg>
+                    <h3>Knockdown & Rebuild</h3>
+                    <p>Transforming current addresses into modern luxury spaces.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ARCHITECTURAL PROJECTS SLIDER -->
+        <section id="portfolio" class="section-padding">
+            <div class="slider-control-container reveal">
+                <div>
+                    <h2 style="font-size: clamp(2rem, 3vw, 2.8rem); margin-bottom: 5px;">Featured Architectural Works</h2>
+                    <p>Swipe or use arrows to view our portfolio across Sydney.</p>
+                </div>
+                <div class="slider-arrows">
+                    <button class="slider-arrow" id="slide-left-btn" aria-label="Slide portfolio left">
+                        <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
+                    </button>
+                    <button class="slider-arrow" id="slide-right-btn" aria-label="Slide portfolio right">
+                        <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="project-slider-viewport">
+                <div class="project-slider-track" id="project-slider-track">
+                    <!-- Loaded dynamically via JavaScript layout loop array -->
+                </div>
+            </div>
+        </section>
+
+        <!-- DYNAMIC LIGHTBOX OVERLAY WINDOW -->
+        <div class="karnel-lightbox" id="karnelLightbox" role="dialog" aria-hidden="true">
+            <div class="lightbox-content">
+                <button class="lightbox-close" id="lightboxCloseBtn" aria-label="Close image overlay">&times;</button>
+                <img id="lightboxTargetImg" src="" alt="Expanded Architectural Layout Frame View">
+            </div>
+        </div>
+
+        <!-- WHY CHOOSE US -->
+        <section id="why-choose-us" class="section-padding">
+            <div class="section-header reveal">
+                <h2>Why Choose KARNEL HOMES</h2>
+                <p>Engineering premium residential experiences built to endure generations.</p>
+            </div>
+            <div class="why-grid">
+                <div class="why-card reveal">
+                    <span class="num">01</span>
+                    <h3>Designed for Sydney Sites</h3>
+                    <p>Mastery of localized topographical levels, coastal exposure codes, and spatial zoning systems.</p>
+                </div>
+                <div class="why-card reveal reveal-delay-1">
+                    <span class="num">02</span>
+                    <h3>Truly Custom Homes</h3>
+                    <p>Zero repetitive configurations. Every footprint starts from empty canvases matching clear client intent.</p>
+                </div>
+                <div class="why-card reveal reveal-delay-2">
+                    <span class="num">03</span>
+                    <h3>Premium Builder Quality</h3>
+                    <p>Sourcing elite trade partners and architectural compounds guaranteeing immaculate aesthetics.</p>
+                </div>
+                <div class="why-card reveal reveal-delay-3">
+                    <span class="num">04</span>
+                    <h3>A Smoother Process</h3>
+                    <p>Integrated milestone check-ins creating predictable, hyper-clear delivery vectors.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONSTRUCTION TIMELINE -->
+        <section id="process" class="section-padding">
+            <div class="section-header reveal">
+                <h2>The Construction Journey</h2>
+                <p>A 10-step sequence engineered to guarantee certainty and execution clarity.</p>
+            </div>
+            <div class="timeline-wrapper">
+                <div class="timeline-progress-line" id="timeline-indicator"></div>
+
+                <div class="timeline-item reveal">
+                    <div class="timeline-badge"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg></div>
+                    <div class="timeline-panel"> <span class="step-num">Step 01</span> <h3>Initial Consultation</h3> <p>Discussing project visions, fundamental budget configurations, and structural expectations.</p> </div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="timeline-badge"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div>
+                    <div class="timeline-panel"> <span class="step-num">Step 02</span> <h3>Site Assessment</h3> <p>Comprehensive inspection analyzing solar aspect parameters, geotechnical variables, and easements.</p> </div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="timeline-badge"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zMA20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></div>
+                    <div class="timeline-panel"> <span class="step-num">Step 03</span> <h3>Concept Design</h3> <p>Architectural layout drawings translating design targets into structural lines.</p> </div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="timeline-badge"><svg viewBox="0 0 24 24"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm0 2v14h14V5H5zm2 5h10v2H7v-2zm0 4h10v2H7v-2z"/></svg></div>
+                    <div class="timeline-panel"> <span class="step-num">Step 04</span> <h3>Plan Refinement</h3> <p>Optimizing architectural drafts based on real-world space management adjustments.</p> </div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="timeline-badge"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></div>
+                    <div class="timeline-panel"> <span class="step-num">Step 05</span> <h3>Tender & Pricing</h3> <p>Publishing fully comprehensive material cost metrics breakdowns with absolute pricing clarity.</p> </div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="timeline-badge"><svg viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
+                    <div class="timeline-panel"> <span class="step-num">Step 06</span> <h3>Contract Signing</h3> <p>Executing standard HIA contracts complete with defined milestones and timelines.</p> </div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="timeline-badge"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div>
+                    <div class="timeline-panel"> <span class="step-num">Step 07</span> <h3>Council Approvals</h3> <p>Managing DA submissions through local Sydney councils or CDC pathways seamlessly.</p> </div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="timeline-badge"><svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4(1.08.73A1.69 1.69 0 0 1 14 19.43l-.38 2.65c-.03.24-.24.42-.49.42h-4c-.25 0-.46-.18-.49-.42l-.38-2.65c-.61-.25-1.17-.59-1.69-.98l-2.49 1c-.23.09-.49 0-.61-.22l-2-3.46c-.12-.22-.07-.49.12-.64l2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg></div>
+                    <div class="timeline-panel"> <span class="step-num">Step 08</span> <h3>Material Selection</h3> <p>Guided internal styling curation mapping high-end finishes, stone, and architectural details.</p> </div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="timeline-badge"><svg viewBox="0 0 24 24"><path d="M22 2H2v20h20V2zM4 6h16v12H4V6z"/></svg></div>
+                    <div class="timeline-panel"> <span class="step-num">Step 09</span> <h3>Construction Phase</h3> <p>Active physical execution monitored closely via scheduled site safety structural audits.</p> </div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="timeline-badge"><svg viewBox="0 0 24 24"><path d="M12 22c5.52 0 10-4.48 10-10S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10zm1-14h-2v2h2V8zm0 4h-2v4h2v-4z"/></svg></div>
+                    <div class="timeline-panel"> <span class="step-num">Step 10</span> <h3>Handover</h3> <p>Final keys delivery together with formal execution certification documentation.</p> </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONVERSION BLEED ZONE (SAND GRAIN DISORIENTATION INTERFACE) -->
+        <section id="cta-bleed">
+            <div class="sand-grain-layer">
+                <div class="sand-base-image"></div>
+                <div class="sand-noise-overlay"></div>
+            </div>
+            <!-- FIXED: Grouped elements under an static layout shield layer wrapper to avoid script conflict invisibility -->
+            <div class="cta-content-wrapper">
+                <h2>Ready to build your dream home?</h2>
+                <div class="hero-ctas">
+                    <a href="#contact" class="btn btn-primary">Book Consultation</a>
+                    <a href="tel:0434289857" class="btn btn-secondary">Call Now</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT INTERFACE -->
+        <section id="contact" class="section-padding">
+            <div class="contact-grid">
+               <div class="map-interactive-wrapper reveal" id="animated-map-trigger">
+                    <div class="map-iframe-cover" id="map-cover-layer">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                        <h4>322 Abell Rd, Melonba</h4>
+                        <p>Click anywhere to launch instant navigation mapping metrics route directions.</p>
+                        <button class="map-action-pulse-btn">Open Google Maps</button>
+                    </div>
+                    <iframe src="https://maps.google.com/maps?q=322%20Abell%20Road,%20Melonba%20NSW%202765&t=&z=14&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0; min-height:480px;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                
+                <div class="contact-card reveal reveal-delay-1">
+                    <h3>Get in Touch</h3>
+                    <div class="contact-methods">
+                        <div class="contact-method-item">
+                            <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                            <div>
+                                <h4>Phone</h4>
+                                <a href="tel:0434289857">0434 289 857</a>
+                            </div>
+                        </div>
+                        <div class="contact-method-item">
+                            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                            <div>
+                                <h4>Email</h4>
+                                <a href="mailto:info@karnelhomes.com.au">info@karnelhomes.com.au</a>
+                            </div>
+                        </div>
+                        <div class="contact-method-item">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                            <div>
+                                <h4>Display Home</h4>
+                                <p>322 Abell Road, Melonba NSW 2765</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- GLOBAL FOOTER -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="#hero" class="logo">KARNEL</a>
+                <p>Delivering high-performance architectural luxury custom homes and high-end residential engineering models throughout the greater Sydney landscape.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#hero">Home</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#intro">What We Build</a></li>
+                    <li><a href="#portfolio">Our Projects</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="#services">Custom Homes</a></li>
+                    <li><a href="#services">Double Storey</a></li>
+                    <li><a href="#services">Knockdown Rebuild</a></li>
+                    <li><a href="#services">Granny Flats</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Connect</h4>
+                <p style="font-size: 0.85rem; margin-bottom: 15px; color:rgba(255,255,255,0.4);">Stay updated with our latest architectural works.</p>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/karnel_homes/" target="_blank" rel="noopener" aria-label="Follow Karnel Homes on Instagram">
+                        <svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8A3.6 3.6 0 0 0 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6A3.6 3.6 0 0 0 16.4 4H7.6m6.4 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0m1.4-4.25a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5z"/></svg>
+                    </a>
+                    <a href="https://www.facebook.com/share/1BZtaANLo5/" target="_blank" rel="noopener" aria-label="Follow Karnel Homes on Facebook">
+                        <svg viewBox="0 0 24 24"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2m13 2h-2.5A3.5 3.5 0 0 0 12 8.5V11h-2v3h2v7h3v-7h3v-3h-3V9a1 1 0 0 1 1-1h2V5z"/></svg>
+                    </a>
+                    <a href="https://www.linkedin.com/company/karnel-homes/?originalSubdomain=au" target="_blank" rel="noopener" aria-label="Follow Karnel Homes on LinkedIn">
+                        <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.8v8.37h2.8v-4.67c0-.25.02-.5.1-.68a1.14 1.14 0 0 1 1-.77c.76 0 1 .58 1 1.42v4.7h2.8M6.5 8.37a1.37 1.37 0 1 0 0-2.75 1.37 1.37 0 0 0 0 2.75M8 18.5V10.13H5.2v8.37H8z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-base">
+            <p>&copy; 2026 KARNEL HOMES. All rights reserved. Built with pure clarity.</p>
+            <div class="footer-base-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+            </div>
+        </div>
+    </footer>
+
+    <a href="#contact" class="mobile-sticky-cta">Consultation</a>
+
+    <!-- SYSTEM PLATFORM LOGIC SCRIPTS -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            // --- PROJECTS DATA MATRIX ---
+            const projectDataset = [
+                { id: 1, tag: "Project 01", title: "Modern Family Residence", loc: "Edmondson Park NSW", type: "Custom Home", desc: "A stunning contemporary family home featuring open-plan living, premium finishes, and seamless indoor-outdoor flow." },
+                { id: 2, tag: "Project 02", title: "Urban Sanctuary Duplex", loc: "Glenfield NSW", type: "Custom Home", desc: "Sleek geometric design structures configured cleanly to capture high ambient natural light across dual levels." },
+                { id: 3, tag: "Project 03", title: "The Minimalist Pavilion", loc: "Oran Park NSW", type: "Single Storey", desc: "An architectural statement balancing exposed organic concrete finishes with premium timber panel systems." },
+                { id: 4, tag: "Project 04", title: "Suburban Oasis Flat", loc: "Maquarie Fields NSW", type: "Custom Home", desc: "A luxury secondary dwelling optimized fully for space management, comfort, and premium independent living." },
+                { id: 5, tag: "Project 05", title: "Modern Bushland Sanctuary", loc: "Melonba NSW", type: "Single Storey", desc: "Panoramic glass frame system structures framing absolute bespoke luxury spaces built for generational durability." },
+                { id: 6, tag: "Project 06", title: "The Hamptons Residence", loc: "Melonba NSW", type: "Custom Home", desc: "Timeless coastal lines paired delicately with modern high-contrast materiality panels." },
+                { id: 7, tag: "Project 07", title: "High-Yield Executive Studio", loc: "Catherine Field NSW", type: "Custom Home", desc: "Sophisticated detached self-contained floorplans optimizing total land configurations smoothly." },
+                { id: 8, tag: "Project 08", title: "Contemporary Dual Living", loc: "Austral NSW", type: "Custom Home", desc: "Mirror architectural configurations built with flawless sound-insulated structural elements." },
+                { id: 9, tag: "Project 09", title: "The Linear Pavilion", loc: "Kellyville NSW", type: "Custom Home", desc: "Expansive layout configurations accentuating organic light transitions directly from zero-clearance entries." },
+                { id: 10, tag: "Project 10", title: "Bespoke Metro Manor", loc: "Sydney NSW", type: "Double Storey", desc: "A masterwork home configured cleanly around indoor architectural courtyards and skylight systems." },
+                { id: 11, tag: "Project 11", title: "The Timber Ridge Pavilion", loc: "Penrith NSW", type: "Custom Home", desc: "Blending natural stone finishes with warm timber panels to craft a high-end editorial atmosphere." },
+                { id: 12, tag: "Project 12", title: "Western Horizon Estate", loc: "Melonba NSW", type: "Custom Home", desc: "A high-contrast modern layout built explicitly around lifestyle entertaining pools and outdoor pavilions." },
+                { id: 13, tag: "Project 13", title: "Azure Hills Estate", loc: "Sydney NSW", type: "Double Storey", desc: "Featuring elevated structural lines, custom stone masonry accents, and smart automation infrastructure." },
+                { id: 14, tag: "Project 14", title: "The Eco Sanctuary", loc: "Rouse Hill NSW", type: "Custom Home", desc: "High-performance home built with thermal mass concrete panel arrays and natural cross-ventilation lines." },
+                { id: 15, tag: "Project 15", title: "Bespoke Family Estate", loc: "Melonba NSW", type: "Custom Home", desc: "Spacious multi-zoned residential masterpiece boasting exceptional integrated ceiling details." }
+            ];
+
+            // --- RENDER TIMELINE SLIDER ITEMS ---
+            const sliderTrack = document.getElementById("project-slider-track");
+            let trackHTML = "";
+
+            projectDataset.forEach((proj) => {
+                trackHTML += `
+                    <div class="project-slide-card">
+                        <div class="proj-card-img-wrap">
+                            <img src="/images/project${proj.id}.jpg" alt="${proj.title}" onerror="handleMissingSlide(this, '${proj.title}')" loading="lazy">
+                        </div>
+                        <div class="proj-card-details">
+                            <span class="proj-card-meta-tag">${proj.tag}</span>
+                            <h3 class="proj-card-title">${proj.title}</h3>
+                            <div class="proj-card-tags">
+                                <span>
+                                    <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                    ${proj.loc}
+                                </span>
+                                <span>
+                                    <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                                    ${proj.type}
+                                </span>
+                            </div>
+                            <p class="proj-card-desc">${proj.desc}</p>
+                            <a onclick="openKarnelLightbox('/images/project${proj.id}.jpg')" class="proj-card-link">View Project &nbsp;&rarr;</a>
+                        </div>
+                    </div>
+                `;
+            });
+            sliderTrack.innerHTML = trackHTML;
+
+            // --- LIGHTBOX INTERACTIVE ENGINE ---
+            const lightbox = document.getElementById("karnelLightbox");
+            const lightboxImg = document.getElementById("lightboxTargetImg");
+            const lightboxClose = document.getElementById("lightboxCloseBtn");
+
+            window.openKarnelLightbox = (imgSrc) => {
+                lightboxImg.src = imgSrc;
+                lightbox.classList.add("open");
+                lightbox.setAttribute("aria-hidden", "false");
+                document.body.style.overflow = "hidden"; 
+            };
+
+            const closeKarnelLightbox = () => {
+                lightbox.classList.remove("open");
+                lightbox.setAttribute("aria-hidden", "true");
+                document.body.style.overflow = "";
+            };
+
+            lightboxClose.addEventListener("click", closeKarnelLightbox);
+            lightbox.addEventListener("click", (e) => {
+                if (e.target === lightbox) closeKarnelLightbox();
+            });
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Escape" && lightbox.classList.contains("open")) closeKarnelLightbox();
+            });
+
+            // --- GRACEFUL ERROR HANDLING FOR CAROUSEL SLIDES ---
+            window.handleMissingSlide = (img, title) => {
+                img.parentElement.innerHTML = `
+                    <div class="gallery-placeholder">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54-1.96-2.36L6.5 17h11l-3.54-4.71z"/></svg>
+                        <span style="font-size:0.9rem; font-weight:500;">${title}</span>
+                        <small style="font-size:0.7rem; opacity:0.5; margin-top:4px;">Place image inside /images/ folder</small>
+                    </div>
+                `;
+            };
+
+            // --- CAROUSEL SLIDER ENGINE ---
+            const btnLeft = document.getElementById("slide-left-btn");
+            const btnRight = document.getElementById("slide-right-btn");
+            let currentScrollOffset = 0;
+
+            const getMaxScrollOffset = () => {
+                return sliderTrack.scrollWidth - window.innerWidth + (window.innerWidth * 0.16);
+            };
+
+            const slideTrack = (direction) => {
+                const cardWidth = window.innerWidth < 768 ? 330 : 520; 
+                currentScrollOffset += (direction * cardWidth);
+                
+                const maxScroll = getMaxScrollOffset();
+                if (currentScrollOffset < 0) currentScrollOffset = 0;
+                if (currentScrollOffset > maxScroll) currentScrollOffset = maxScroll;
+
+                sliderTrack.style.transform = `translate3d(-${currentScrollOffset}px, 0, 0)`;
+            };
+
+            btnRight.addEventListener("click", () => slideTrack(1));
+            btnLeft.addEventListener("click", () => slideTrack(-1));
+
+            // --- GOOGLE MAP ROUTING EVENT HANDLER ---
+            const mapTrigger = document.getElementById("animated-map-trigger");
+            mapTrigger.addEventListener("click", () => {
+                const mapCover = document.getElementById("map-cover-layer");
+                mapCover.style.opacity = "0";
+                mapCover.style.pointerEvents = "none";
+                
+                setTimeout(() => {
+                    window.open("https://www.google.com/maps/place/322+Abell+Rd,+Melonba+NSW+2765/", "_blank");
+                }, 400);
+            });
+
+            // --- CORE GLOBAL INTERSECTION OBSERVER ---
+            const revealElements = document.querySelectorAll(".reveal");
+            const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -40px 0px" };
+
+            const elementObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("active");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            revealElements.forEach(el => elementObserver.observe(el));
+
+            // --- SCROLL ACTION HEADER PROGRESS ---
+            const header = document.getElementById("main-header");
+            const scrollProgressBar = document.getElementById("scroll-progress");
+
+            window.addEventListener("scroll", () => {
+                const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+                if (totalScroll > 0) {
+                    const scrolledPercentage = (window.scrollY / totalScroll) * 100;
+                    scrollProgressBar.style.width = `${scrolledPercentage}%`;
+                }
+                if (window.scrollY > 50) header.classList.add("scrolled");
+                else header.classList.remove("scrolled");
+            }, { passive: true });
+
+            // --- TIMELINE TRACKER ---
+            const processSection = document.getElementById("process");
+            const timelineIndicator = document.getElementById("timeline-indicator");
+            const timelineNodes = document.querySelectorAll(".timeline-item");
+
+            window.addEventListener("scroll", () => {
+                const sectionRect = processSection.getBoundingClientRect();
+                const currentVisibilityPosition = window.innerHeight - sectionRect.top;
+                
+                if (sectionRect.top < window.innerHeight && sectionRect.bottom > 0) {
+                    let pathProgressPercentage = (currentVisibilityPosition / (processSection.offsetHeight + window.innerHeight * 0.1)) * 100;
+                    pathProgressPercentage = Math.min(Math.max(pathProgressPercentage, 0), 100);
+                    timelineIndicator.style.height = `${pathProgressPercentage}%`;
+
+                    timelineNodes.forEach(node => {
+                        if (node.getBoundingClientRect().top < window.innerHeight * 0.7) {
+                            node.classList.add("active-node");
+                        } else {
+                            node.classList.remove("active-node");
+                        }
+                    });
+                }
+            }, { passive: true });
+
+            // --- MOBILE MENU TOGGLE ---
+            const burger = document.getElementById("menu-toggle");
+            const mobileMenu = document.getElementById("mobile-menu");
+            const mobLinks = document.querySelectorAll(".mob-link");
+
+            burger.addEventListener("click", () => {
+                const isOpen = mobileMenu.classList.toggle("open");
+                burger.setAttribute("aria-expanded", isOpen);
+            });
+
+            mobLinks.forEach(link => {
+                link.addEventListener("click", () => {
+                    mobileMenu.classList.remove("open");
+                    burger.setAttribute("aria-expanded", "false");
+                });
+            });
         });
-      });
-      if (eventCount === 0) eventHtml += `<div style="font-size: 13px; color: var(--text-muted);">No upcoming priority bookings.</div>`;
-      eventHtml += `</div>`;
-
-      let html = eventHtml + `<div class="section-title" style="margin-top:0;">☀️ Today's Active Tasks</div><div class="grid">`;
-      let activeTaskCount = 0;
-      Object.values(projects).forEach(project => {
-        evaluateDependencies(project.steps);
-        project.steps.forEach(step => {
-          if (step.status === 'READY TO START' || step.status === 'IN PROGRESS') {
-            html += generateTileHTML(step, project.id, project.name);
-            activeTaskCount++;
-          }
-        });
-      });
-      if (activeTaskCount === 0) html += `<div class="empty-state" style="grid-column: 1/-1;">You're all caught up! No active workflow tiles for today.</div>`;
-      html += `</div>`;
-      content.innerHTML = html;
-      return;
-    }
-
-    // --- RENDER PROJECT VIEW (Workspace) ---
-    if (!currentProjectId || !projects[currentProjectId]) return;
-    const project = projects[currentProjectId];
-    evaluateDependencies(project.steps);
-
-    const totalSteps = project.steps.length;
-    const completedSteps = project.steps.filter(s => s.status === 'COMPLETE').length;
-    const progressPercent = totalSteps === 0 ? 0 : Math.round((completedSteps / totalSteps) * 100);
-
-    const localToday = new Date();
-    const todayStr = localToday.getFullYear() + '-' + String(localToday.getMonth()+1).padStart(2,'0') + '-' + String(localToday.getDate()).padStart(2,'0');
-
-    // Build Header
-    workspaceHeader.innerHTML = `
-      <div class="header-top-row">
-        <div class="project-title-group">
-          <div class="workspace-title">${escapeHTML(project.name)}</div>
-          <button class="btn-icon" onclick="editProjectName()" title="Edit Name">✏️</button>
-        </div>
-        <div class="workspace-actions">
-          <button class="btn-outline" style="background: #e0e7ff; color: var(--primary); border-color: var(--primary);" onclick="openCalendarModal('${todayStr}', '${project.id}')">📅 Book Agenda</button>
-          <button id="sync-btn" class="btn-outline" onclick="manualSync()">🔄 Sync</button>
-          <button class="btn-outline" onclick="openProjectModal('COPY')">📋 Copy</button>
-          <button class="btn-outline" onclick="exportBackupData()">💾 Backup</button>
-          <button class="btn-danger-outline" onclick="deleteCurrentProject()">🗑️ Delete</button>
-        </div>
-      </div>
-      <div>
-        <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-          <div class="progress-text">${progressPercent}% Workflow Completed</div>
-        </div>
-        <div class="progress-wrapper"><div class="progress-fill" style="width: ${progressPercent}%;"></div></div>
-      </div>
-    `;
-
-    // Right Sidebar
-    rightSidebar.style.display = "flex";
-    let rightHtml = `
-      <div class="right-panel-section">
-        <div class="section-title" style="margin-top:0;">📍 Location</div>
-    `;
-    if (project.projectLocationLink) {
-      
-      let edgeLink = project.projectLocationLink;
-      if (!edgeLink.startsWith('microsoft-edge:')) {
-        edgeLink = 'microsoft-edge:' + edgeLink;
-      }
-
-      rightHtml += `
-        <div style="display: flex; gap: 8px; align-items: center;">
-          <a href="${escapeHTML(edgeLink)}" class="btn-primary" style="text-decoration: none; padding: 8px 12px; font-size: 12px; flex: 1; text-align: center;">🌍 Open in Edge</a>
-          <button class="btn-outline" style="padding: 8px; width: 34px;" onclick="updateField('${project.id}', 'locationLink', null, null, '')" title="Edit Link">✏️</button>
-        </div>
-      `;
-    } else {
-      rightHtml += `<input type="url" placeholder="Paste map or folder link..." onchange="updateField('${project.id}', 'locationLink', null, null, this.value)">`;
-    }
-    
-    rightHtml += `
-      </div>
-      <div class="right-panel-section" style="border-bottom:none;">
-        <div class="section-title" style="margin-top:0;">📋 Minor Tasks</div>
-        <input type="text" id="new-check-text" placeholder="Add task & press Enter..." style="margin-bottom: 12px;">
-        <div style="display: flex; flex-direction: column;">
-    `;
-    (project.checklist || []).forEach(item => {
-      const isDone = item.status === 'COMPLETED';
-      rightHtml += `
-        <div class="check-item" style="${isDone ? 'opacity: 0.5;' : ''}">
-           <input type="checkbox" ${isDone ? 'checked' : ''} onchange="updateChecklistStatus('${project.id}', ${item.id}, this.checked ? 'COMPLETED' : 'PENDING')">
-           <div class="check-text" style="${isDone ? 'text-decoration: line-through;' : ''}">${escapeHTML(item.text)}</div>
-           <button class="chk-del" onclick="deleteChecklistItem('${project.id}', ${item.id})">×</button>
-        </div>
-      `;
-    });
-    rightHtml += `</div></div>`;
-    rightSidebar.innerHTML = rightHtml;
-
-    // Center Content
-    let html = `
-      <details open>
-        <summary class="section-title" style="margin-top: 0;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span class="chevron">▼</span> PROJECT DIRECTORY / TRADES
-          </div>
-          <button class="btn-add-small" onclick="event.preventDefault(); openTradeModal();">+ Add Trade</button>
-        </summary>
-        
-        <div class="table-wrapper">
-          <table class="trades-table">
-            <thead>
-              <tr>
-                <th>Trade / Role</th>
-                <th>Company</th>
-                <th>Contact</th>
-                <th>Email</th>
-                <th style="width: 40px;"></th>
-              </tr>
-            </thead>
-            <tbody>
-    `;
-        
-    project.contractors.forEach((c, i) => {
-      html += `
-        <tr>
-          <td style="font-weight: 700; font-size: 11px; color: var(--text-muted); text-transform: uppercase;">${escapeHTML(c.trade)}</td>
-          <td><input type="text" list="rolodex-companies" placeholder="Company Name" value="${escapeHTML(c.company)}" oninput="updateField('${project.id}', 'contractor', ${i}, 'company', this.value)"></td>
-          <td><input type="text" placeholder="Contact Name" value="${escapeHTML(c.contact)}" oninput="updateField('${project.id}', 'contractor', ${i}, 'contact', this.value)"></td>
-          <td><input type="email" placeholder="Email Address" value="${escapeHTML(c.email)}" oninput="updateField('${project.id}', 'contractor', ${i}, 'email', this.value)"></td>
-          <td><button class="btn-danger-outline" style="padding: 4px 8px; font-size: 14px; font-weight: bold;" onclick="removeTrade(${i})" title="Remove Trade">×</button></td>
-        </tr>
-      `;
-    });
-    
-    html += `</tbody></table></div></details>
-      <details open>
-        <summary class="section-title" style="margin-top: 24px; border-top: 1px solid var(--border-soft); padding-top: 24px;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span class="chevron">▼</span> WORKFLOW SEQUENCE
-          </div>
-          <button class="btn-add-small" onclick="event.preventDefault(); openJobModal();">+ Add Job</button>
-        </summary>
-        <div class="grid">`;
-        
-    project.steps.forEach(step => { html += generateTileHTML(step, project.id); });
-    html += `</div></details>`;
-    
-    content.innerHTML = html;
-  }
-
-  // --- INITIALIZE APP ---
-  updateRolodexDatalist();
-  initCloudStatus();
-  render();
-  loadFromCloud();
-
-</script>
+    </script>
 </body>
 </html>
