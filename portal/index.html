@@ -240,7 +240,7 @@
     
     <!-- Add New Agenda -->
     <div style="font-size: 13px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">Add New Booking</div>
-    <select id="event-project-selector" style="font-weight: 600; background: var(--bg-page);"></select>
+    <select id="event-project-selector" style="font-weight: 600; background: var(--bg-page); border: 1px solid var(--border-soft); border-radius: 6px; padding: 8px;"></select>
     <div style="display: flex; gap: 8px;">
       <input type="date" id="event-date" style="width: 130px;" onchange="onCalendarDateChange(this.value)">
       <input type="text" id="event-text" style="flex: 1;" placeholder="Agenda details...">
@@ -310,10 +310,11 @@
     return value.trim().slice(0, maxLength);
   }
 
+  // URL VALIDATION UPDATED TO SUPPORT THE MICROSOFT EDGE PROTOCOL
   function validateURL(string) {
     try {
       const url = new URL(string);
-      return url.protocol === 'http:' || url.protocol === 'https:' || url.protocol === 'file:' || url.protocol === 'ftp:';
+      return url.protocol === 'http:' || url.protocol === 'https:' || url.protocol === 'file:' || url.protocol === 'ftp:' || url.protocol === 'microsoft-edge:';
     } catch (_) { return false; }
   }
 
@@ -393,8 +394,8 @@
     { id: 1, name: "CC / CDC Approval Received", owner: "Office", prereqs: [], status: "READY TO START", notes: "", date: "" }
   ];
 
-  let projects = JSON.parse(localStorage.getItem('karnel_data_final15')) || {};
-  let currentProjectId = localStorage.getItem('karnel_active_final15') || null;
+  let projects = JSON.parse(localStorage.getItem('karnel_data_final16')) || {};
+  let currentProjectId = localStorage.getItem('karnel_active_final16') || null;
   let rolodex = JSON.parse(localStorage.getItem('karnel_rolodex')) || [];
   let currentView = 'PROJECT'; 
   let draggedStepId = null;
@@ -413,8 +414,8 @@
       status.textContent = '💾 SAVING...';
     }
 
-    localStorage.setItem('karnel_data_final15', JSON.stringify(projects));
-    localStorage.setItem('karnel_active_final15', currentProjectId);
+    localStorage.setItem('karnel_data_final16', JSON.stringify(projects));
+    localStorage.setItem('karnel_active_final16', currentProjectId);
     localStorage.setItem('karnel_rolodex', JSON.stringify([...new Set(rolodex)])); 
     updateRolodexDatalist();
     
@@ -1052,7 +1053,7 @@
     const localToday = new Date();
     const todayStr = localToday.getFullYear() + '-' + String(localToday.getMonth()+1).padStart(2,'0') + '-' + String(localToday.getDate()).padStart(2,'0');
 
-    // Build Header (Added Calendar Button Here)
+    // Build Header
     workspaceHeader.innerHTML = `
       <div class="header-top-row">
         <div class="project-title-group">
@@ -1082,9 +1083,15 @@
         <div class="section-title" style="margin-top:0;">📍 Location</div>
     `;
     if (project.projectLocationLink) {
+      
+      let edgeLink = project.projectLocationLink;
+      if (!edgeLink.startsWith('microsoft-edge:')) {
+        edgeLink = 'microsoft-edge:' + edgeLink;
+      }
+
       rightHtml += `
         <div style="display: flex; gap: 8px; align-items: center;">
-          <a href="${escapeHTML(project.projectLocationLink)}" target="_blank" class="btn-primary" style="text-decoration: none; padding: 8px 12px; font-size: 12px; flex: 1; text-align: center;">🌍 Open Map</a>
+          <a href="${escapeHTML(edgeLink)}" class="btn-primary" style="text-decoration: none; padding: 8px 12px; font-size: 12px; flex: 1; text-align: center;">🌍 Open in Edge</a>
           <button class="btn-outline" style="padding: 8px; width: 34px;" onclick="updateField('${project.id}', 'locationLink', null, null, '')" title="Edit Link">✏️</button>
         </div>
       `;
