@@ -3,181 +3,286 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KARNEL HOMES - Site Portal</title>
+<title>KARNEL HOMES · Field Command</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-  /* MODERN, HIGH-CONTRAST SAAS PALETTE */
+  /* =========================================================
+     KARNEL HOMES — FIELD COMMAND / WARM INDUSTRIAL
+     Cleaned, Unified & Grid-Optimized CSS
+     ========================================================= */
   :root {
-    --nav-bg: #0f172a;
-    --nav-text: #94a3b8;
-    --nav-active: #ffffff;
-    --nav-hover: #1e293b;
-    --bg-page: #f8fafc;
-    --bg-card: #ffffff;
-    --text-main: #0f172a;
-    --text-muted: #64748b;
-    --primary: #4f46e5;
-    --primary-hover: #4338ca;
-    --border-soft: #e2e8f0;
-    --color-locked-bg: #f1f5f9;
-    --color-ready: #f59e0b;
-    --color-progress: #3b82f6;
-    --color-complete: #10b981;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+    --fc-bg: #F7F4EF;
+    --fc-surface: #FFFFFF;
+    --fc-nav: #111111;
+    --fc-orange: #E8561E;
+    --fc-navy: #1E3A5F;
+    --fc-green: #1A7A48;
+    --fc-amber: #D97706;
+    --fc-concrete: #8A8A8A;
+    --fc-border: #E4E0D8;
+    --fc-ink: #181818;
+    --fc-muted: #6E6A64;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-  body { background: var(--bg-page); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   
-  .app-layout { display: flex; flex: 1; overflow: hidden; }
-  
-  /* LEFT SIDEBAR */
-  .left-sidebar { width: 250px; background: var(--nav-bg); color: var(--nav-text); display: flex; flex-direction: column; border-right: 1px solid #1e293b; z-index: 10; }
-  .sidebar-header { padding: 20px 20px; font-size: 18px; font-weight: 800; color: #fff; letter-spacing: -0.5px; border-bottom: 1px solid #1e293b; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;}
-  .sidebar-section { padding: 16px; flex: 1; overflow-y: auto; }
-  .sidebar-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; color: #64748b; display: flex; justify-content: space-between; align-items: center;}
-  
-  .nav-item { padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; margin-bottom: 4px; color: var(--nav-text); }
-  .nav-item:hover { background: var(--nav-hover); color: var(--nav-active); }
-  .nav-item.active { background: var(--primary); color: #fff; }
-  
-  .project-item { padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
-  .project-item:hover { background: var(--nav-hover); color: var(--nav-active); }
-  .project-item.active { background: #1e293b; color: #fff; border-left: 3px solid var(--primary); }
+  html, body { background: var(--fc-bg); color: var(--fc-ink); height: 100vh; overflow: hidden; }
+  body { 
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; 
+  }
+  body:before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1;
+    background:
+      linear-gradient(rgba(17,17,17,.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(17,17,17,.018) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
 
-  /* Save & Status Indicators */
-  .save-indicator { font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 4px; letter-spacing: 0.5px; transition: all 0.3s; display: inline-block; }
-  .save-indicator.saving { background: #f59e0b; color: #fff; }
-  .save-indicator.saved { background: #10b981; color: #fff; }
+  /* TOP NAV */
+  .app-layout { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+  
+  .fc-topbar {
+    height: 64px; width: 100%; background: var(--fc-nav); color: #fff;
+    display: grid; grid-template-columns: 245px minmax(280px, 1fr) auto;
+    align-items: center; gap: 20px; padding: 0 24px; position: relative;
+    z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,.13); flex-shrink: 0;
+  }
 
-  /* CENTER WORKSPACE */
-  .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg-page); }
-  .workspace-header { background: #fff; padding: 20px 28px; border-bottom: 1px solid var(--border-soft); display: flex; flex-direction: column; gap: 12px; }
-  .header-top-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
-  .project-title-group { display: flex; align-items: center; gap: 12px; flex: 1; }
-  .workspace-title { font-size: 22px; font-weight: 800; color: var(--text-main); }
-  .btn-icon { background: #f1f5f9; border: none; border-radius: 6px; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: 0.2s; }
-  .btn-icon:hover { background: #e2e8f0; color: var(--text-main); }
-  
-  .workspace-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-  .workspace-scroll { flex: 1; overflow-y: auto; padding: 24px 28px; }
+  .fc-brand { display: flex; align-items: center; gap: 11px; min-width: 0; }
+  .fc-brand-mark {
+    width: 31px; height: 31px; border: 2px solid var(--fc-orange);
+    display: grid; place-items: center; font-weight: 950; font-size: 11px;
+    letter-spacing: -.08em; transform: skew(-8deg);
+  }
+  .fc-brand-copy { min-width: 0; }
+  .fc-brand-name { font-size: 12px; font-weight: 950; letter-spacing: .15em; line-height: 1; }
+  .fc-brand-sub {
+    margin-top: 5px; color: #858585; font-size: 7px; font-weight: 800;
+    letter-spacing: .15em; text-transform: uppercase;
+  }
 
-  /* RIGHT SIDEBAR */
-  .right-sidebar { width: 280px; background: #fff; border-left: 1px solid var(--border-soft); display: flex; flex-direction: column; overflow-y: auto; }
-  .right-panel-section { padding: 20px; border-bottom: 1px solid var(--border-soft); }
+  .fc-nav { height: 100%; display: flex; align-items: center; justify-content: center; gap: 4px; }
+  .fc-nav button {
+    height: 38px; padding: 0 14px; border: 0; background: transparent; color: #8d8d8d;
+    border-radius: 5px; font-size: 10px; font-weight: 850; letter-spacing: .05em;
+    text-transform: uppercase; position: relative; cursor: pointer; transition: 0.2s;
+  }
+  .fc-nav button:hover { color: #fff; background: #1d1d1d; }
+  .fc-nav button.active { color: #fff; }
+  .fc-nav button.active:after {
+    content: ""; position: absolute; left: 12px; right: 12px; bottom: 4px;
+    height: 2px; background: var(--fc-orange);
+  }
 
-  /* UI Elements */
-  input, select, textarea { font-size: 12px; padding: 8px 12px; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; outline: none; width: 100%; transition: 0.2s; }
-  input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
-  
-  button { padding: 6px 14px; border: none; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; transition: 0.2s; }
-  .btn-primary { background: var(--primary); color: #fff; }
-  .btn-primary:hover { background: var(--primary-hover); }
-  .btn-outline { background: transparent; border: 1px solid #cbd5e1; color: var(--text-main); }
-  .btn-outline:hover { background: #f1f5f9; }
-  .btn-danger-outline { background: transparent; color: #ef4444; padding: 6px 10px; }
-  .btn-danger-outline:hover { background: #fee2e2; }
-  
-  .btn-add-small { background: transparent; border: 1px solid var(--border-soft); border-radius: 6px; padding: 4px 12px; font-size: 11px; font-weight: 700; color: var(--primary); cursor: pointer; transition: 0.2s; }
-  .btn-add-small:hover { background: var(--primary); color: #fff; }
+  .fc-nav-right { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+  .fc-status {
+    padding: 6px 9px; border: 1px solid #303030; border-radius: 4px;
+    color: #aaa; font-size: 8px; font-weight: 850; letter-spacing: .07em; text-transform: uppercase;
+  }
+  .fc-status.live { color: #80c999; border-color: #285b3e; }
+  .fc-status.alert { color: #f1a46e; border-color: #714021; }
 
-  .card { background: var(--bg-card); border-radius: 10px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-soft); padding: 16px; }
-  
-  details > summary { list-style: none; cursor: pointer; user-select: none; outline: none; }
-  details > summary::-webkit-details-marker { display: none; }
-  .chevron { display: inline-block; transition: transform 0.2s; font-size: 10px; color: var(--text-muted); }
-  details:not([open]) .chevron { transform: rotate(-90deg); }
-  
-  .section-title { font-size: 13px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between; }
-  
-  .progress-wrapper { width: 100%; background: #f1f5f9; border-radius: 999px; height: 6px; overflow: hidden; margin-top: 6px; }
-  .progress-fill { height: 100%; background: var(--color-complete); transition: width 0.5s ease; }
-  .progress-text { font-size: 11px; font-weight: 700; color: var(--text-muted); }
+  .fc-project-select {
+    min-width: 185px; height: 36px; padding: 0 31px 0 11px;
+    color: #fff; background: #1d1d1d; border: 1px solid #363636; border-radius: 5px;
+    font-size: 10px; font-weight: 750; outline: none; cursor: pointer;
+  }
+  .fc-new-project {
+    width: 35px; height: 35px; padding: 0; background: var(--fc-orange); color: #fff;
+    font-size: 18px; border-radius: 5px; border: none; cursor: pointer; transition: 0.2s;
+  }
+  .fc-new-project:hover { background: #c24312; }
 
-  /* ENTERPRISE TRADES TABLE */
-  .table-wrapper { width: 100%; overflow-x: auto; background: #fff; border-radius: 8px; border: 1px solid var(--border-soft); box-shadow: var(--shadow-sm); margin-top: 8px; margin-bottom: 24px; }
+  /* MAIN CONTENT */
+  .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  
+  .workspace-header {
+    flex: none; padding: 25px 38px 22px; background: #fff;
+    border-bottom: 1px solid var(--fc-border); box-shadow: 0 2px 0 rgba(17,17,17,.015);
+  }
+  .workspace-header:before {
+    content: "PROJECT / LIVE BUILD"; display: block; margin-bottom: 8px;
+    color: var(--fc-orange); font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 8px; font-weight: 900; letter-spacing: .18em;
+  }
+  
+  .header-top-row { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; }
+  .project-title-group { display: flex; align-items: center; gap: 12px; }
+  .workspace-title { color: var(--fc-ink); font-size: 31px; font-weight: 900; letter-spacing: -.055em; line-height: 1; }
+  
+  .btn-icon { background: #f7f4ef; border: 1px solid var(--fc-border); border-radius: 4px; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #666; transition: 0.2s; }
+  .btn-icon:hover { background: #e4e0d8; }
+  
+  .workspace-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  .workspace-actions button {
+    border-radius: 4px; font-size: 9px; font-weight: 850; letter-spacing: .04em;
+    text-transform: uppercase; padding: 6px 14px; border: none; cursor: pointer; transition: 0.2s;
+  }
+  .workspace-actions .btn-outline { border: 1px solid #d9d4cc; background: #fff; color: #4c4842; }
+  .workspace-actions .btn-outline:hover { border-color: var(--fc-orange); color: var(--fc-orange); }
+  .workspace-actions .btn-danger-outline { border: 1px solid #ead4ce; background: transparent; color: #b83f1b; }
+  .workspace-actions .btn-danger-outline:hover { background: #fffaf9; }
+
+  .progress-text {
+    color: #77716a; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 8px; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; margin-top: 12px;
+  }
+  .progress-wrapper { height: 9px; margin-top: 8px; background: #eae6df; border-radius: 2px; overflow: hidden; }
+  .progress-fill {
+    height: 100%; background: var(--fc-orange); position: relative; transition: width 0.5s ease;
+  }
+  .progress-fill:after {
+    content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 18px;
+    background: rgba(255,255,255,.32); animation: fcProgress 1.6s ease-out both;
+  }
+  @keyframes fcProgress { from { width: 100%; opacity: 0; } to { width: 18px; opacity: 1; } }
+
+  .workspace-scroll { flex: 1; overflow: auto; padding: 26px 38px 45px; }
+
+  /* SPLIT LAYOUT PANELS */
+  .kh-main-split {
+    display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(280px, .7fr);
+    gap: 24px; align-items: start; margin-bottom: 26px;
+  }
+  .kh-side-stack { display: flex; flex-direction: column; gap: 16px; }
+  .kh-panel {
+    background: var(--fc-surface); border: 1px solid var(--fc-border);
+    border-radius: 8px; box-shadow: 0 8px 28px rgba(40,34,28,.045); overflow: hidden;
+  }
+  .kh-panel-head {
+    min-height: 54px; padding: 13px 16px; display: flex; align-items: center;
+    justify-content: space-between; border-bottom: 1px solid var(--fc-border); background: #fff;
+  }
+  .kh-panel-title { font-size: 13px; font-weight: 900; letter-spacing: -.02em; text-transform: uppercase; }
+  .kh-panel-body { padding: 16px; }
+  .kh-panel-body.no-pad { padding: 0; }
+
+  /* TABLES */
+  .table-wrapper { width: 100%; overflow-x: auto; }
   .trades-table { width: 100%; border-collapse: collapse; text-align: left; }
-  .trades-table th { background: #f8fafc; padding: 10px 14px; font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid var(--border-soft); }
-  .trades-table td { padding: 6px 14px; border-bottom: 1px solid var(--border-soft); vertical-align: middle; }
-  .trades-table tr:last-child td { border-bottom: none; }
-  .trades-table input { padding: 6px 8px; font-size: 12px; margin: 0; box-shadow: none; border: 1px solid transparent; background: transparent; }
-  .trades-table input:hover { border: 1px solid var(--border-soft); background: #f8fafc; }
-  .trades-table input:focus { border: 1px solid var(--primary); background: #fff; box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1); }
-
-  /* HIGH DENSITY TILES */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 12px; }
-  .tile { display: flex; flex-direction: column; gap: 8px; position: relative; transition: 0.2s; cursor: grab; background: #fff; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-soft); padding: 12px; }
+  .trades-table th {
+    background: #f4f1eb; color: #79736b; padding: 9px 12px; font-size: 8px;
+    letter-spacing: .12em; text-transform: uppercase; font-weight: 800; border-bottom: 1px solid #eeeae3;
+  }
+  .trades-table td { padding: 5px 12px; border-bottom: 1px solid #eeeae3; vertical-align: middle; }
+  .trades-table tr:hover td { background: #fcfaf7; }
   
-  .tile.status-locked { background: var(--color-locked-bg); opacity: 0.6; border: 1px dashed #cbd5e1; box-shadow: none; }
-  .tile.status-ready { border: 2px solid var(--color-ready); box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15); }
-  .tile.status-in { border: 2px solid var(--color-progress); box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15); }
-  .tile.status-complete { border: 1px solid #a7f3d0; background: #f0fdf4; }
+  /* INPUTS */
+  input, select, textarea {
+    font-size: 12px; padding: 8px 12px; border: 1px solid #d9d4cc; background: #fff;
+    border-radius: 4px; outline: none; width: 100%; transition: 0.2s; color: var(--fc-ink);
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--fc-orange); box-shadow: 0 0 0 2px rgba(232,86,30,.08); }
+  .trades-table input { border-color: transparent; }
 
-  .drag-over { border: 2px dashed var(--primary); background: #f0f9ff; transform: scale(1.02); transition: 0.2s; }
-
-  .tile-header { display: flex; justify-content: space-between; align-items: center; }
-  .step-badge { font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 999px; }
-  .bg-locked { background: #e2e8f0; color: #64748b; }
-  .bg-ready { background: #fef3c7; color: #b45309; }
-  .bg-progress { background: #dbeafe; color: #1d4ed8; }
-  .bg-complete { background: #d1fae5; color: #047857; }
-
-  .tile-title { font-size: 13px; font-weight: 700; line-height: 1.3; display: flex; gap: 6px; align-items: flex-start; }
-  .drag-handle { color: #cbd5e1; cursor: grab; font-size: 14px; transition: 0.2s; }
+  /* BUTTONS */
+  .btn-primary { background: var(--fc-navy); color: #fff; border: none; padding: 8px 14px; border-radius: 4px; font-weight: 700; font-size: 11px; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-block; text-align: center; }
+  .btn-primary:hover { background: #12253f; }
   
-  .tile-meta { display: flex; gap: 6px; }
-  .project-tag { font-size: 10px; font-weight: 700; color: var(--primary); background: #e0e7ff; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 4px; width: fit-content; }
-  
-  .tile textarea { height: 36px; padding: 6px 8px; font-size: 11px; resize: none; transition: height 0.2s ease; }
-  .tile textarea:focus { height: 70px; }
-  
-  .smart-btn { width: 100%; padding: 8px; margin-top: auto; font-size: 11px; font-weight: 700; border-radius: 6px; border: none; cursor: pointer; transition: 0.2s; }
-  .btn-locked { background: transparent; color: var(--text-muted); cursor: not-allowed; border: 1px dashed #cbd5e1; }
-  .btn-success { background: var(--color-complete); color: #fff; }
+  .btn-add-small {
+    border: 1px solid #d9d3ca; border-radius: 4px; background: #fff; color: var(--fc-orange);
+    font-size: 9px; font-weight: 900; letter-spacing: .04em; text-transform: uppercase;
+    padding: 6px 12px; cursor: pointer; transition: 0.2s;
+  }
+  .btn-add-small:hover { background: var(--fc-orange); color: #fff; }
 
-  /* Checklists */
-  .check-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f1f5f9; gap: 8px; }
-  .check-item input[type="checkbox"] { width: 14px; height: 14px; cursor: pointer; accent-color: var(--primary); }
-  .check-text { font-size: 12px; flex: 1; word-break: break-word; }
+  /* SIDEBAR ITEMS */
+  .fc-side-title {
+    display: flex; align-items: center; gap: 8px; color: #3c3935; font-size: 10px;
+    font-weight: 900; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 11px;
+  }
+  .fc-side-title:before { content: ""; width: 3px; height: 14px; background: var(--fc-orange); display: block; }
+  .check-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eeeae3; gap: 8px; }
+  .check-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--fc-orange); }
+  .check-text { font-size: 12px; flex: 1; word-break: break-word; font-weight: 500; }
   .chk-del { color: #ef4444; font-weight: bold; cursor: pointer; border: none; background: transparent; padding: 2px 6px; opacity: 0; transition: 0.2s; }
   .check-item:hover .chk-del { opacity: 1; }
 
-  /* Calendar */
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-  .cal-header-day { font-weight: 700; text-align: center; font-size: 11px; color: var(--text-muted); text-transform: uppercase; padding-bottom: 6px; }
-  .cal-cell { min-height: 90px; border-radius: 8px; padding: 8px; cursor: pointer; background: #fff; border: 1px solid var(--border-soft); display: flex; flex-direction: column; gap: 4px; transition: 0.2s; }
-  .cal-cell:hover { border-color: var(--primary); box-shadow: var(--shadow-md); transform: translateY(-2px); }
-  .cal-date-num { font-size: 13px; font-weight: 800; }
-  .cal-event { font-size: 10px; background: #e0e7ff; color: var(--primary); padding: 4px 6px; border-radius: 4px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .cal-event.completed { text-decoration: line-through; opacity: 0.6; background: #f1f5f9; color: var(--text-muted); }
+  /* WORKFLOW TILES */
+  .kh-workflow { margin-top: 2px; }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; align-items: stretch; }
+  .tile {
+    min-height: 242px; padding: 19px 18px 17px; border: 1px solid var(--fc-border);
+    border-left: 4px solid var(--fc-concrete); border-radius: 6px; background: #fff;
+    box-shadow: 0 9px 28px rgba(40,34,28,.05); cursor: grab; display: flex; flex-direction: column;
+    animation: fcTileIn .48s cubic-bezier(.2,.8,.2,1) both; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  }
+  @keyframes fcTileIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+  .tile:hover { transform: translateY(-4px); box-shadow: 0 16px 34px rgba(40,34,28,.10); }
+  
+  .tile.status-ready { border-left-color: var(--fc-orange); border-left-width: 6px; }
+  .tile.status-in { border-left-color: var(--fc-navy); border-left-width: 6px; }
+  .tile.status-complete { border-left-color: var(--fc-green); border-left-width: 6px; background: #fcfffd; }
+  .tile.status-locked { border-left-style: dashed; opacity: 0.68; background: #faf9f7; }
 
-  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); font-weight: 600; background: #fff; border-radius: 8px; border: 1px dashed #cbd5e1; margin-top: 16px; font-size: 13px; }
+  .tile-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 9px; }
+  .step-badge {
+    padding: 5px 8px; border-radius: 3px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 8px; letter-spacing: .09em; text-transform: uppercase; font-weight: 800;
+  }
+  .bg-ready { background: #fff0e9; color: #ba4416; }
+  .bg-progress { background: #e9eff6; color: var(--fc-navy); }
+  .bg-complete { background: #e7f4ec; color: var(--fc-green); }
+  .bg-locked { background: #eceae7; color: #77736d; }
 
-  /* Modals & Toasts */
-  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 200; }
-  .modal-content { background: #fff; width: 100%; max-width: 440px; padding: 24px; border-radius: 12px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-  .modal-title { font-weight: 800; font-size: 16px; margin-bottom: 4px; }
+  .tile-title { min-height: 50px; font-size: 18px; line-height: 1.12; font-weight: 900; letter-spacing: -.035em; }
+  .drag-handle { color: #cbd5e1; cursor: grab; font-size: 14px; margin-right: 4px; }
+  .tile-meta { margin-top: 2px; color: #8b857d; }
+  .tile textarea { height: 39px; border-color: #e8e3dc; background: #faf9f7; border-radius: 3px; resize: none; margin-top: 8px; }
+  .tile textarea:focus { height: 72px; }
+  
+  .smart-btn {
+    min-height: 38px; margin-top: auto; border-radius: 4px; font-weight: 900; border: none;
+    letter-spacing: .03em; text-transform: uppercase; font-size: 10px; cursor: pointer; transition: 0.2s; width: 100%;
+  }
+  .btn-success { background: var(--fc-green); color: #fff; }
+  .tile.status-ready .smart-btn { background: var(--fc-navy); color: #fff; }
+  .btn-locked { border: 1px dashed #bdb8b0; background: #f5f3ef; color: #77736d; cursor: not-allowed; }
+  .project-tag { font-size: 9px; font-weight: 800; padding: 2px 6px; background: #f4eee7; color: #8d4c2b; border-radius: 3px; display: inline-block; margin-bottom: 6px; }
+
+  /* CALENDAR / MY DAY CARDS */
+  .card, .cal-grid { border: 1px solid var(--fc-border); border-radius: 7px; box-shadow: 0 9px 30px rgba(40,34,28,.05); background: #fff; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--fc-border); }
+  .cal-header-day { font-weight: 800; text-align: center; font-size: 10px; color: var(--fc-muted); text-transform: uppercase; padding: 8px; background: #fff; }
+  .cal-cell { min-height: 90px; padding: 8px; cursor: pointer; background: #fff; display: flex; flex-direction: column; gap: 4px; transition: 0.2s; }
+  .cal-cell:hover { background: #faf9f7; }
+  .cal-date-num { font-size: 13px; font-weight: 900; }
+  .cal-event { font-size: 10px; background: #e9eff6; color: var(--fc-navy); padding: 4px 6px; border-radius: 4px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cal-event.completed { text-decoration: line-through; opacity: 0.6; background: #f1f1f1; color: var(--fc-concrete); }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--fc-muted); font-weight: 700; background: #fff; border-radius: 8px; border: 1px dashed var(--fc-border); margin-top: 16px; font-size: 13px; }
+
+  /* MODALS & TOASTS */
+  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17,17,17,.58); backdrop-filter: blur(3px); display: none; align-items: center; justify-content: center; z-index: 200; }
+  .modal-content { background: #fff; width: 100%; max-width: 440px; padding: 24px; border-radius: 7px; border: 1px solid #ded8cf; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 30px 80px rgba(0,0,0,.22); animation: fcModal .22s ease-out both; }
+  @keyframes fcModal { from { opacity: 0; transform: scale(.96) translateY(7px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+  .modal-title { font-weight: 900; font-size: 16px; margin-bottom: 4px; }
   .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
 
-  .toast { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; z-index: 999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: slideIn 0.3s ease; }
+  .toast { position: fixed; bottom: 20px; right: 20px; background: #111; color: #fff; padding: 12px 20px; border-radius: 4px; border-left: 3px solid var(--fc-orange); font-size: 13px; font-weight: 600; z-index: 999; box-shadow: 0 4px 12px rgba(0,0,0,.3); animation: slideIn 0.3s ease; }
   @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-  /* Responsive fixes */
-  @media (max-width: 900px) {
-    .app-layout { flex-direction: column; overflow: auto; }
-    .left-sidebar { width: 100%; height: auto; flex: none; border-right: none; border-bottom: 1px solid #1e293b; }
-    .right-sidebar { width: 100%; border-left: none; border-top: 1px solid var(--border-soft); }
-    .workspace-scroll { padding: 16px; }
+  /* RESPONSIVE */
+  @media (max-width: 1050px) {
+    .fc-topbar { grid-template-columns: auto 1fr auto; gap: 10px; padding: 0 14px; }
+    .fc-nav { justify-content: flex-start; }
+    .fc-project-select { min-width: 150px; }
+    .kh-main-split { grid-template-columns: 1fr; }
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .workspace-scroll { padding: 22px 22px 38px; }
   }
-  @media (max-width: 600px) {
-    .workspace-header { padding: 12px 16px; }
-    .workspace-scroll { padding: 12px 16px; }
-    .grid { grid-template-columns: 1fr; }
+  @media (max-width: 700px) {
+    .fc-topbar { height: auto; min-height: 64px; grid-template-columns: 1fr auto; grid-template-rows: auto auto; padding: 10px 12px; }
+    .fc-brand { grid-column: 1; }
+    .fc-nav-right { grid-column: 2; grid-row: 1; }
+    .fc-nav { grid-column: 1/-1; grid-row: 2; justify-content: flex-start; overflow-x: auto; height: 35px; }
+    .fc-nav button { flex: 0 0 auto; }
+    .fc-status { display: none; }
+    .workspace-header { padding: 20px 17px 17px; }
+    .workspace-title { font-size: 25px; }
     .header-top-row { flex-direction: column; align-items: stretch; }
-    .workspace-actions { flex-wrap: wrap; }
-    .workspace-title { font-size: 18px; }
+    .grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -192,7 +297,7 @@
     <input type="text" id="project-address-input" placeholder="Enter Project Address (e.g. 12 Smith St)">
     <div class="modal-actions">
       <button class="btn-outline" onclick="closeModals()">Cancel</button>
-      <button class="btn-primary" onclick="submitProjectModal()">Save Project</button>
+      <button class="btn-primary" style="background: var(--fc-navy);" onclick="submitProjectModal()">Save Project</button>
     </div>
   </div>
 </div>
@@ -205,11 +310,11 @@
       <option value="Site">Owner: Site</option>
       <option value="Office">Owner: Office</option>
     </select>
-    <div style="font-size: 11px; font-weight: 600; color: var(--text-muted); margin-top: 4px;">Activate After:</div>
+    <div style="font-size: 11px; font-weight: 700; color: var(--fc-muted); margin-top: 4px;">Activate After:</div>
     <select id="new-job-prereq"></select>
     <div class="modal-actions">
       <button class="btn-outline" onclick="closeModals()">Cancel</button>
-      <button class="btn-primary" onclick="addJob()">Add Job</button>
+      <button class="btn-primary" style="background: var(--fc-navy);" onclick="addJob()">Add Job</button>
     </div>
   </div>
 </div>
@@ -223,32 +328,25 @@
     <input type="email" id="new-trade-email" placeholder="Email Address">
     <div class="modal-actions">
       <button class="btn-outline" onclick="closeModals()">Cancel</button>
-      <button class="btn-primary" onclick="addTrade()">Add Trade</button>
+      <button class="btn-primary" style="background: var(--fc-navy);" onclick="addTrade()">Add Trade</button>
     </div>
   </div>
 </div>
 
-<!-- Day Planner Modal -->
 <div class="modal-overlay" id="modal-event">
   <div class="modal-content">
     <div class="modal-title" id="event-modal-title">Bookings & Agendas</div>
-    
-    <!-- Dynamic List of Existing Agendas -->
     <div id="event-list-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; padding-right: 4px;"></div>
-    
-    <div style="border-top: 1px solid var(--border-soft); margin: 8px 0;"></div>
-    
-    <!-- Add New Agenda -->
-    <div style="font-size: 13px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">Add New Booking</div>
-    <select id="event-project-selector" style="font-weight: 600; background: var(--bg-page); border: 1px solid var(--border-soft); border-radius: 6px; padding: 8px;"></select>
+    <div style="border-top: 1px solid var(--fc-border); margin: 8px 0;"></div>
+    <div style="font-size: 11px; font-weight: 900; color: var(--fc-ink); margin-bottom: 2px; text-transform: uppercase;">Add New Booking</div>
+    <select id="event-project-selector" style="font-weight: 600;"></select>
     <div style="display: flex; gap: 8px;">
       <input type="date" id="event-date" style="width: 130px;" onchange="onCalendarDateChange(this.value)">
       <input type="text" id="event-text" style="flex: 1;" placeholder="Agenda details...">
     </div>
-    
     <div class="modal-actions">
       <button class="btn-outline" onclick="closeModals()">Done</button>
-      <button class="btn-primary" onclick="addCalendarEvent()">+ Add</button>
+      <button class="btn-primary" style="background: var(--fc-navy);" onclick="addCalendarEvent()">+ Add</button>
     </div>
   </div>
 </div>
@@ -256,33 +354,10 @@
 <!-- Main App Shell -->
 <div class="app-layout">
   
-  <!-- LEFT NAV MENU -->
-  <aside class="left-sidebar">
-    <div class="sidebar-header">
-      <span>KARNEL HOMES</span>
-      <div style="display: flex; gap: 4px; align-items: center;">
-        <span id="save-status" class="save-indicator saved">💾 SAVED</span>
-        <span id="cloud-sync-status" class="save-indicator" style="background: #f59e0b; color: #fff;">⚠️ OFFLINE</span>
-      </div>
-    </div>
-    
-    <div class="sidebar-section" style="border-bottom: 1px solid #1e293b; padding-bottom: 16px; flex: none;">
-      <div class="sidebar-title">Main Views</div>
-      <div class="nav-item active" id="nav-project" onclick="setView('PROJECT')">🏢 Project Board</div>
-      <div class="nav-item" id="nav-day" onclick="setView('DAY')">☀️ My Day</div>
-      <div class="nav-item" id="nav-calendar" onclick="setView('CALENDAR')">📅 Calendar</div>
-    </div>
-
-    <div class="sidebar-section" style="display: flex; flex-direction: column;">
-      <div class="sidebar-title">
-        Active Projects
-        <button style="background: transparent; border: none; color: var(--primary); cursor: pointer; font-size: 16px; padding: 0;" onclick="openProjectModal('NEW')" title="New Project">＋</button>
-      </div>
-      <div id="project-list-container" style="flex: 1; overflow-y: auto;">
-        <!-- Project list renders here -->
-      </div>
-    </div>
-  </aside>
+  <!-- NATIVE TOP NAV -->
+  <nav class="fc-topbar" id="fc-topbar">
+    <!-- Rendered via JS -->
+  </nav>
 
   <!-- CENTER WORKSPACE -->
   <main class="main-content">
@@ -290,8 +365,6 @@
     <div class="workspace-scroll" id="portal-content"></div>
   </main>
 
-  <!-- RIGHT CONTEXT PANEL -->
-  <aside class="right-sidebar" id="right-sidebar-content"></aside>
 </div>
 
 <script>
@@ -300,9 +373,7 @@
   // ==========================================
   function escapeHTML(str) {
     if (!str) return '';
-    return String(str).replace(/[&<>'"]/g, match => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-    }[match]));
+    return String(str).replace(/[&<>'"]/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[match]));
   }
 
   function validateInput(value, maxLength = 200) {
@@ -310,7 +381,6 @@
     return value.trim().slice(0, maxLength);
   }
 
-  // URL VALIDATION UPDATED TO SUPPORT THE MICROSOFT EDGE PROTOCOL
   function validateURL(string) {
     try {
       const url = new URL(string);
@@ -332,8 +402,7 @@
     const toast = document.createElement('div');
     toast.className = 'toast';
     toast.textContent = message;
-    if (isError) toast.style.borderLeft = '4px solid #ef4444';
-    else toast.style.borderLeft = '4px solid #10b981';
+    if (isError) toast.style.borderLeft = '3px solid #ef4444';
     document.body.appendChild(toast);
     setTimeout(() => {
       toast.style.opacity = '0';
@@ -342,16 +411,9 @@
     }, 3000);
   }
 
-  // Global Keypress Delegates
   document.addEventListener('keypress', function(e) {
-    if (e.target && e.target.id === 'new-check-text' && e.key === 'Enter') {
-      e.preventDefault();
-      addChecklistItem();
-    }
-    if (e.target && e.target.id === 'event-text' && e.key === 'Enter') {
-      e.preventDefault();
-      addCalendarEvent();
-    }
+    if (e.target && e.target.id === 'new-check-text' && e.key === 'Enter') { e.preventDefault(); addChecklistItem(); }
+    if (e.target && e.target.id === 'event-text' && e.key === 'Enter') { e.preventDefault(); addCalendarEvent(); }
   });
 
   // ==========================================
@@ -364,20 +426,11 @@
   let supabaseChannel = null;
 
   try {
-    if (SUPABASE_URL.startsWith('http')) {
-      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    }
+    if (SUPABASE_URL.startsWith('http')) supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   } catch(e) { console.error("Supabase error:", e); }
 
   function initCloudStatus() {
-    const statusEl = document.getElementById('cloud-sync-status');
-    if (supabaseClient) {
-      statusEl.textContent = '☁️ LIVE';
-      statusEl.style.background = '#10b981';
-    } else {
-      statusEl.textContent = '⚠️ OFFLINE';
-      statusEl.style.background = '#f59e0b';
-    }
+    renderTopbar();
   }
 
   // ==========================================
@@ -403,17 +456,15 @@
   let calMonth = new Date().getMonth();
   let calYear = new Date().getFullYear();
   let activeModalDate = null;
+  let isSaving = false;
 
   // ==========================================
   // 3. CLOUD SYNC & LOCAL STORAGE LOGIC
   // ==========================================
   async function saveState() {
-    const status = document.getElementById('save-status');
-    if (status) {
-      status.className = 'save-indicator saving';
-      status.textContent = '💾 SAVING...';
-    }
-
+    isSaving = true;
+    renderTopbar();
+    
     localStorage.setItem('karnel_data_final16', JSON.stringify(projects));
     localStorage.setItem('karnel_active_final16', currentProjectId);
     localStorage.setItem('karnel_rolodex', JSON.stringify([...new Set(rolodex)])); 
@@ -421,10 +472,8 @@
     
     await syncToSupabase();
     
-    if (status) {
-      status.className = 'save-indicator saved';
-      status.textContent = '💾 SAVED';
-    }
+    isSaving = false;
+    renderTopbar();
   }
 
   const debouncedSave = debounce(saveState, 500);
@@ -433,12 +482,8 @@
     if (!supabaseClient || !currentProjectId || !projects[currentProjectId]) return;
     try {
       await supabaseClient.from('karnel_projects').upsert({ id: currentProjectId, name: projects[currentProjectId].name, data: projects[currentProjectId] });
-      initCloudStatus(); 
     } catch (e) {
       console.warn("Cloud sync failed - saving locally only");
-      const statusEl = document.getElementById('cloud-sync-status');
-      statusEl.textContent = '⚠️ OFFLINE';
-      statusEl.style.background = '#f59e0b';
       showToast("Cloud sync failed. Data saved locally.", true);
     }
   }
@@ -446,9 +491,7 @@
   async function loadFromCloud() {
     if (!supabaseClient) return;
     try {
-      if (supabaseChannel) {
-        supabaseClient.removeChannel(supabaseChannel);
-      }
+      if (supabaseChannel) supabaseClient.removeChannel(supabaseChannel);
 
       const { data } = await supabaseClient.from('karnel_projects').select('*');
       if (data && data.length > 0) {
@@ -468,7 +511,6 @@
           }
       }).subscribe();
     } catch (e) {
-      console.warn("Failed to load initial data from Supabase.");
       showToast("Failed to load initial data from server.", true);
     }
   }
@@ -477,7 +519,7 @@
     const btn = document.getElementById('sync-btn');
     if (btn) {
       const originalText = btn.textContent;
-      btn.textContent = '⏳ Syncing...';
+      btn.textContent = 'SYNCING...';
       btn.disabled = true;
       try {
         await loadFromCloud();
@@ -494,9 +536,7 @@
   }
 
   window.addEventListener('beforeunload', () => {
-    if (supabaseClient && supabaseChannel) {
-      supabaseClient.removeChannel(supabaseChannel);
-    }
+    if (supabaseClient && supabaseChannel) supabaseClient.removeChannel(supabaseChannel);
   });
 
   // ==========================================
@@ -527,12 +567,11 @@
     const validName = validateInput(newName);
     if (validName && validName !== "") {
       projects[currentProjectId].name = validName;
-      await saveState();
       render();
+      saveState();
     }
   }
 
-  /* PROJECT MODALS */
   function openProjectModal(mode) {
     if (mode === 'COPY' && (!currentProjectId || !projects[currentProjectId])) return alert("No active project to copy.");
     projectModalMode = mode;
@@ -558,9 +597,9 @@
       currentProjectId = newId;
     }
     setView('PROJECT');
-    await saveState();
     closeModals();
     render();
+    saveState();
     showToast("Project created successfully.");
   }
 
@@ -568,35 +607,26 @@
     if (!currentProjectId) return;
     const projectName = projects[currentProjectId]?.name || 'this project';
     if (confirm(`⚠️ Are you sure you want to delete "${projectName}"? This action cannot be undone!`)) {
-      if(supabaseClient) await supabaseClient.from('karnel_projects').delete().eq('id', currentProjectId);
+      if(supabaseClient) supabaseClient.from('karnel_projects').delete().eq('id', currentProjectId);
       delete projects[currentProjectId];
       currentProjectId = Object.keys(projects)[0] || null;
-      
-      if (!currentProjectId) {
-        currentView = 'PROJECT';
-        document.querySelectorAll('.nav-item').forEach(el => el.className = 'nav-item');
-        document.getElementById('nav-project').className = 'nav-item active';
-      }
-      
-      await saveState();
+      if (!currentProjectId) { currentView = 'PROJECT'; }
       render();
+      saveState();
       showToast("Project deleted.");
     }
   }
 
-  async function switchProject(id) { currentProjectId = id; currentView = 'PROJECT'; await saveState(); render(); }
+  function switchProject(id) { 
+    currentProjectId = id; 
+    currentView = 'PROJECT'; 
+    render(); 
+    saveState(); 
+  }
   
-  function setView(viewMode) {
-    currentView = viewMode;
-    document.getElementById('nav-project').className = `nav-item ${viewMode === 'PROJECT' ? 'active' : ''}`;
-    document.getElementById('nav-day').className = `nav-item ${viewMode === 'DAY' ? 'active' : ''}`;
-    document.getElementById('nav-calendar').className = `nav-item ${viewMode === 'CALENDAR' ? 'active' : ''}`;
-    render();
-  }
-
-  function closeModals() {
-    document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none');
-  }
+  function setView(viewMode) { currentView = viewMode; render(); }
+  
+  function closeModals() { document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none'); }
 
   /* JOBS & TRADES */
   function openJobModal() {
@@ -608,7 +638,7 @@
     document.getElementById('modal-job').style.display = 'flex';
   }
 
-  async function addJob() {
+  function addJob() {
     const name = validateInput(document.getElementById('new-job-name').value);
     const owner = document.getElementById('new-job-owner').value;
     const prereqId = parseInt(document.getElementById('new-job-prereq').value);
@@ -618,19 +648,19 @@
     const prereqs = prereqId === 0 ? [] : [prereqId];
     project.steps.push({ id: newId, name: name, owner: owner, prereqs: prereqs, status: "LOCKED", notes: "", date: "" });
     evaluateDependencies(project.steps);
-    await saveState();
     closeModals();
     render();
+    saveState();
   }
 
-  async function removeJob(projectId, stepId) {
+  function removeJob(projectId, stepId) {
     if (confirm("Are you sure you want to delete this job?")) {
       const project = projects[projectId];
       project.steps = project.steps.filter(s => s.id !== stepId);
       project.steps.forEach(s => { s.prereqs = s.prereqs.filter(id => id !== stepId); });
       evaluateDependencies(project.steps);
-      await saveState();
       render();
+      saveState();
     }
   }
 
@@ -639,7 +669,7 @@
     document.getElementById('modal-trade').style.display = 'flex';
   }
 
-  async function addTrade() {
+  function addTrade() {
     const trade = validateInput(document.getElementById('new-trade-role').value);
     const company = validateInput(document.getElementById('new-trade-company').value);
     const contact = validateInput(document.getElementById('new-trade-contact').value);
@@ -647,20 +677,20 @@
     
     if (!trade) return alert("Please enter a Trade / Role");
     projects[currentProjectId].contractors.push({ trade, company, contact, email });
-    await saveState();
     closeModals();
     render();
+    saveState();
   }
 
-  async function removeTrade(index) {
+  function removeTrade(index) {
     if (confirm("Remove this trade?")) {
       projects[currentProjectId].contractors.splice(index, 1);
-      await saveState();
       render();
+      saveState();
     }
   }
 
-  async function updateField(projectId, type, id, field, value) {
+  function updateField(projectId, type, id, field, value) {
     const project = projects[projectId];
     if (!project) return;
     
@@ -676,18 +706,15 @@
         if (field === 'status') evaluateDependencies(project.steps);
       }
     } else if (type === 'locationLink') {
-      if (value && !validateURL(value)) {
-        alert('Please enter a valid URL (include http:// or https://)');
-        return;
-      }
+      if (value && !validateURL(value)) return alert('Please enter a valid URL (include http:// or https://)');
       project.projectLocationLink = value;
     }
     
     if (field === 'notes' || field === 'company' || field === 'contact' || field === 'email') {
       debouncedSave();
     } else {
-      await saveState();
       render(); 
+      saveState();
     }
   }
 
@@ -700,7 +727,7 @@
   }
   function dragOver(event, el) { event.preventDefault(); el.classList.add('drag-over'); }
   function dragLeave(event, el) { el.classList.remove('drag-over'); }
-  async function drop(event, targetId, el) {
+  function drop(event, targetId, el) {
     event.preventDefault();
     el.classList.remove('drag-over');
     
@@ -714,12 +741,12 @@
     
     const movedStep = project.steps.splice(fromIndex, 1)[0];
     project.steps.splice(toIndex, 0, movedStep);
-    await saveState();
     render();
+    saveState();
   }
 
   /* CHECKLIST */
-  async function addChecklistItem() {
+  function addChecklistItem() {
     const input = document.getElementById('new-check-text');
     if(!input) return;
     const text = validateInput(input.value);
@@ -728,17 +755,19 @@
     projects[currentProjectId].checklist = projects[currentProjectId].checklist || [];
     projects[currentProjectId].checklist.push({ id: Date.now(), text: text, status: "PENDING" });
     input.value = '';
-    await saveState();
     render();
+    saveState();
   }
-  async function updateChecklistStatus(projectId, id, status) {
+  
+  function updateChecklistStatus(projectId, id, status) {
     const item = projects[projectId].checklist.find(i => i.id === id);
-    if(item) { item.status = status; await saveState(); render(); }
+    if(item) { item.status = status; render(); saveState(); }
   }
-  async function deleteChecklistItem(projectId, id) {
+  
+  function deleteChecklistItem(projectId, id) {
     projects[projectId].checklist = projects[projectId].checklist.filter(i => i.id !== id);
-    await saveState();
     render();
+    saveState();
   }
 
   /* ENHANCED CALENDAR / PLANNER LOGIC */
@@ -762,13 +791,13 @@
           count++;
           const isDone = ev.status === 'COMPLETED';
           html += `
-            <div class="card" style="padding: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; ${isDone ? 'opacity: 0.6; background: #f8fafc;' : 'border-left: 3px solid var(--primary);'}">
+            <div class="card" style="padding: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; border:none; ${isDone ? 'opacity: 0.6; background: #f8fafc;' : 'border-left: 3px solid var(--fc-orange);'}">
               <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleEventStatusModal('${project.id}', ${ev.id})" style="width: 16px; height: 16px; cursor: pointer;">
               <div style="flex: 1;">
                 <div style="font-size: 13px; font-weight: 700; ${isDone ? 'text-decoration: line-through;' : ''}">${escapeHTML(ev.text)}</div>
-                <div style="font-size: 10px; color: var(--text-muted); font-weight: 700; margin-top: 4px;">📍 ${escapeHTML(project.name)}</div>
+                <div style="font-size: 10px; color: var(--fc-muted); font-weight: 700; margin-top: 4px;">📍 ${escapeHTML(project.name)}</div>
               </div>
-              <button class="btn-danger-outline" style="padding: 4px 8px; font-size:14px; font-weight:bold;" onclick="deleteEventModal('${project.id}', ${ev.id})" title="Delete Agenda">×</button>
+              <button class="btn-danger-outline" style="border:none; padding: 4px 8px; font-size:14px; font-weight:bold;" onclick="deleteEventModal('${project.id}', ${ev.id})" title="Delete Agenda">×</button>
             </div>
           `;
         }
@@ -776,7 +805,7 @@
     });
     
     if (count === 0) {
-      html = `<div style="text-align: center; color: var(--text-muted); font-size: 12px; padding: 20px 0; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">No agendas for this date.</div>`;
+      html = `<div style="text-align: center; color: var(--fc-muted); font-size: 12px; padding: 20px 0; background: #fcfcfc; border-radius: 4px; border: 1px dashed var(--fc-border);">No agendas for this date.</div>`;
     }
     listContainer.innerHTML = html;
   }
@@ -801,13 +830,12 @@
     });
 
     refreshEventList(dateStr);
-
     document.getElementById('event-text').value = '';
     document.getElementById('modal-event').style.display = 'flex';
     setTimeout(() => document.getElementById('event-text').focus(), 100);
   }
 
-  async function addCalendarEvent() {
+  function addCalendarEvent() {
     const text = validateInput(document.getElementById('event-text').value);
     const date = document.getElementById('event-date').value;
     const projId = document.getElementById('event-project-selector').value;
@@ -819,32 +847,34 @@
     project.events = project.events || [];
     project.events.push({ id: Date.now(), date: date, text: text, status: "PENDING" });
     
-    await saveState();
-    
     document.getElementById('event-text').value = '';
     activeModalDate = date; 
+    
+    // UI update instantly, save behind scenes
     refreshEventList(date);
     render();
+    saveState();
     
-    document.getElementById('event-text').focus();
+    // Retain focus for multi-entry
+    setTimeout(() => document.getElementById('event-text').focus(), 50);
   }
 
-  async function toggleEventStatusModal(projectId, eventId) {
+  function toggleEventStatusModal(projectId, eventId) {
     const ev = projects[projectId].events.find(e => e.id === eventId);
     if (ev) { 
       ev.status = ev.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED'; 
-      await saveState(); 
       refreshEventList(activeModalDate);
       render(); 
+      saveState();
     }
   }
 
-  async function deleteEventModal(projectId, eventId) {
+  function deleteEventModal(projectId, eventId) {
     if(confirm("Delete this agenda?")) {
       projects[projectId].events = projects[projectId].events.filter(e => e.id !== eventId);
-      await saveState();
       refreshEventList(activeModalDate);
       render();
+      saveState();
     }
   }
 
@@ -862,9 +892,9 @@
     let badgeClass = "bg-" + statusClass.split('-')[1];
 
     let smartButton = '';
-    if (step.status === 'READY TO START') smartButton = `<button class="smart-btn btn-primary" onclick="updateField('${projectId}', 'step', ${step.id}, 'status', 'IN PROGRESS')">Start Work ▶</button>`;
+    if (step.status === 'READY TO START') smartButton = `<button class="smart-btn" style="background: var(--fc-navy); color: #fff;" onclick="updateField('${projectId}', 'step', ${step.id}, 'status', 'IN PROGRESS')">Start Work ▶</button>`;
     else if (step.status === 'IN PROGRESS') smartButton = `<button class="smart-btn btn-success" onclick="updateField('${projectId}', 'step', ${step.id}, 'status', 'COMPLETE')">Mark Complete ✓</button>`;
-    else if (step.status === 'COMPLETE') smartButton = `<button class="smart-btn" style="background:#f1f5f9; color:#64748b;" onclick="updateField('${projectId}', 'step', ${step.id}, 'status', 'IN PROGRESS')">↺ Reopen Task</button>`;
+    else if (step.status === 'COMPLETE') smartButton = `<button class="smart-btn" style="background:#f1f1f1; color:#888;" onclick="updateField('${projectId}', 'step', ${step.id}, 'status', 'IN PROGRESS')">↺ Reopen Task</button>`;
     else smartButton = `<button class="smart-btn btn-locked" disabled>🔒 Locked</button>`;
 
     let projectTagHtml = projectName ? `<div class="project-tag">📍 ${escapeHTML(projectName)}</div>` : '';
@@ -876,46 +906,77 @@
         <div class="tile-header">
           <span class="step-badge ${badgeClass}">${step.status}</span>
           <div style="display:flex; gap:6px; align-items:center;">
-            <span style="font-size:10px; font-weight:700; color:var(--text-muted);">${escapeHTML(step.owner)}</span>
-            <button class="btn-danger-outline" style="padding: 2px 6px; font-size:14px; font-weight:bold;" onclick="removeJob('${projectId}', ${step.id})" title="Delete Job">×</button>
+            <span style="font-size:10px; font-weight:800; color:var(--fc-concrete); text-transform:uppercase;">${escapeHTML(step.owner)}</span>
+            <button class="btn-danger-outline" style="border:none; padding: 2px 6px; font-size:14px; font-weight:bold;" onclick="removeJob('${projectId}', ${step.id})" title="Delete Job">×</button>
           </div>
         </div>
         <div class="tile-title"><span class="drag-handle" title="Drag to reorder">⋮⋮</span> ${escapeHTML(step.name)}</div>
-        <div class="tile-meta"><input type="date" value="${step.date}" onchange="updateField('${projectId}', 'step', ${step.id}, 'date', this.value)"></div>
+        <div class="tile-meta"><input type="date" value="${step.date}" onchange="updateField('${projectId}', 'step', ${step.id}, 'date', this.value)" style="background:transparent; border:none; border-bottom:1px solid #ccc; border-radius:0; padding:4px 0; margin-top:8px;"></div>
         <textarea placeholder="Quick notes..." oninput="updateField('${projectId}', 'step', ${step.id}, 'notes', this.value)">${escapeHTML(step.notes)}</textarea>
         ${smartButton}
       </div>
     `;
   }
 
+  // --- NATIVE RENDERERS ---
+  function renderTopbar() {
+    const bar = document.getElementById('fc-topbar');
+    if (!bar) return;
+
+    const projectOptions = Object.values(projects || {}).map(p =>
+      `<option value="${escapeHTML(p.id)}" ${p.id === currentProjectId ? 'selected' : ''}>${escapeHTML(p.name)}</option>`
+    ).join('');
+
+    const project = currentProjectId && projects[currentProjectId] ? projects[currentProjectId] : null;
+    const steps = project ? (project.steps || []) : [];
+    const done = steps.filter(s => s.status === 'COMPLETE').length;
+    const pct = steps.length ? Math.round(done / steps.length * 100) : 0;
+
+    let cloudStatus = '';
+    if (isSaving) {
+      cloudStatus = `<span class="fc-status alert">💾 Saving...</span>`;
+    } else if (supabaseClient) {
+      cloudStatus = `<span class="fc-status live">● Live Sync</span>`;
+    } else {
+      cloudStatus = `<span class="fc-status alert">⚠️ Offline</span>`;
+    }
+
+    bar.innerHTML = `
+      <div class="fc-brand">
+        <div class="fc-brand-mark">KH</div>
+        <div class="fc-brand-copy">
+          <div class="fc-brand-name">KARNEL HOMES</div>
+          <div class="fc-brand-sub">Field Command · Build Operations</div>
+        </div>
+      </div>
+      <nav class="fc-nav">
+        <button class="${currentView === 'PROJECT' ? 'active' : ''}" onclick="setView('PROJECT')">Project Board</button>
+        <button class="${currentView === 'DAY' ? 'active' : ''}" onclick="setView('DAY')">My Day</button>
+        <button class="${currentView === 'CALENDAR' ? 'active' : ''}" onclick="setView('CALENDAR')">Calendar</button>
+      </nav>
+      <div class="fc-nav-right">
+        ${project ? `<span class="fc-status">${pct}% Complete</span>` : ''}
+        ${cloudStatus}
+        <select class="fc-project-select" aria-label="Switch project"
+          onchange="switchProject(this.value)">${projectOptions || '<option>No projects</option>'}</select>
+        <button class="fc-new-project" onclick="openProjectModal('NEW')" title="New project">+</button>
+      </div>
+    `;
+  }
+
   function render() {
-    const listContainer = document.getElementById("project-list-container");
+    renderTopbar();
     const workspaceHeader = document.getElementById("workspace-header");
     const content = document.getElementById("portal-content");
-    const rightSidebar = document.getElementById("right-sidebar-content");
-
-    // --- LEFT SIDEBAR (Projects) ---
-    let listHtml = '';
-    if (Object.keys(projects).length === 0) {
-      listHtml = `<div style="font-size:12px; color:var(--nav-text); padding: 0 12px;">No active projects.</div>`;
-    } else {
-      Object.values(projects).forEach(p => {
-        const isActive = p.id === currentProjectId && currentView !== 'DAY' && currentView !== 'CALENDAR';
-        listHtml += `<div class="project-item ${isActive ? 'active' : ''}" onclick="switchProject('${p.id}')">${escapeHTML(p.name)}</div>`;
-      });
-    }
-    listContainer.innerHTML = listHtml;
 
     if (Object.keys(projects).length === 0) {
-      workspaceHeader.innerHTML = `<div class="workspace-title">Welcome to Karnel Homes</div>`;
-      content.innerHTML = `<div class="empty-state">No Active Projects.<br><br>Click the <b>+ New Project</b> button on the left menu to begin.</div>`;
-      rightSidebar.style.display = "none";
+      workspaceHeader.innerHTML = `<div class="workspace-title">Welcome to Field Command</div>`;
+      content.innerHTML = `<div class="empty-state">No Active Projects.<br><br>Click the <b>+</b> button in the top right to begin.</div>`;
       return;
     }
 
     // --- RENDER CALENDAR VIEW ---
     if (currentView === 'CALENDAR') {
-      rightSidebar.style.display = "none";
       workspaceHeader.innerHTML = `
         <div class="header-top-row">
             <div class="workspace-title">📅 Global Calendar</div>
@@ -930,9 +991,9 @@
       let calHtml = `
         <div class="card" style="padding: 24px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-            <button class="btn-outline" onclick="changeMonth(-1)">◀ Previous</button>
-            <div style="font-size: 18px; font-weight: 800; text-transform: uppercase; color: var(--primary);">${monthName} ${calYear}</div>
-            <button class="btn-outline" onclick="changeMonth(1)">Next ▶</button>
+            <button class="btn-outline" style="border: 1px solid var(--fc-border); padding: 8px 16px; border-radius: 4px; cursor: pointer; background: #fff;" onclick="changeMonth(-1)">◀ Prev</button>
+            <div style="font-size: 18px; font-weight: 900; text-transform: uppercase; color: var(--fc-ink); letter-spacing:-0.02em;">${monthName} ${calYear}</div>
+            <button class="btn-outline" style="border: 1px solid var(--fc-border); padding: 8px 16px; border-radius: 4px; cursor: pointer; background: #fff;" onclick="changeMonth(1)">Next ▶</button>
           </div>
           <div class="cal-grid">
       `;
@@ -943,7 +1004,7 @@
       for (let day = 1; day <= daysInMonth; day++) {
         const dateStr = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         const isToday = (day === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear());
-        let bgStyle = isToday ? 'background: #f0f9ff; border: 2px solid var(--primary);' : '';
+        let bgStyle = isToday ? 'background: #fff5f0; box-shadow: inset 0 0 0 2px var(--fc-orange);' : '';
         
         let dayEvents = '';
         Object.values(projects).forEach(project => {
@@ -968,14 +1029,13 @@
             <div class="workspace-title">☀️ My Day Overview</div>
             <div class="workspace-actions"><button id="sync-btn" class="btn-outline" onclick="manualSync()">🔄 Sync</button></div>
         </div>`;
-      rightSidebar.style.display = "flex";
       
-      let sideHtml = `<div class="right-panel-section"><div class="section-title">📋 Global Minor Tasks</div>`;
+      let sideHtml = `<div class="kh-panel"><div class="kh-panel-head"><div class="kh-panel-title">📋 Global Minor Tasks</div></div><div class="kh-panel-body">`;
       let pendingCount = 0;
       Object.values(projects).forEach(project => {
         const pending = (project.checklist || []).filter(i => i.status === 'PENDING');
         if(pending.length > 0) {
-          sideHtml += `<div style="font-size: 11px; font-weight: 700; color: var(--primary); margin-top: 12px; margin-bottom: 6px; background: #e0e7ff; padding: 4px 8px; border-radius: 4px; display: inline-block;">📍 ${escapeHTML(project.name)}</div>`;
+          sideHtml += `<div class="fc-side-title" style="margin-top: 12px; margin-bottom: 6px;">📍 ${escapeHTML(project.name)}</div>`;
           pending.forEach(item => {
             pendingCount++;
             sideHtml += `
@@ -987,13 +1047,11 @@
           });
         }
       });
-      if(pendingCount === 0) sideHtml += `<div style="font-size: 12px; color: var(--text-muted); margin-top: 10px;">All minor tasks are clear!</div>`;
-      sideHtml += `</div>`;
-      rightSidebar.innerHTML = sideHtml;
+      if(pendingCount === 0) sideHtml += `<div style="font-size: 12px; color: var(--fc-muted); margin-top: 10px;">All minor tasks are clear!</div>`;
+      sideHtml += `</div></div>`;
 
-      let eventHtml = `<div class="section-title" style="margin-top:0;">📅 Priority Bookings (Due within 48 Hrs)</div><div style="display:flex; flex-direction:column; gap:12px; margin-bottom: 24px;">`;
+      let eventHtml = `<div class="kh-panel-title" style="margin-bottom: 12px; margin-top:24px;">📅 Priority Bookings (Due within 48 Hrs)</div><div style="display:flex; flex-direction:column; gap:12px; margin-bottom: 32px;">`;
       let eventCount = 0;
-      
       const today = new Date();
       const twoDaysLater = new Date(today);
       twoDaysLater.setDate(twoDaysLater.getDate() + 2);
@@ -1001,30 +1059,35 @@
       Object.values(projects).forEach(project => {
         (project.events || []).forEach(ev => {
           if (ev.status === 'COMPLETED') return; 
-          
           const evDate = new Date(ev.date + 'T00:00:00'); 
-          
           if (evDate <= twoDaysLater) {
             eventCount++;
             const dateString = evDate.toLocaleDateString('en-AU', { weekday: 'short', month: 'short', day: 'numeric' });
             eventHtml += `
-              <div class="card" style="padding:12px; display:flex; align-items:flex-start; gap:12px; border-left: 4px solid var(--color-ready);">
-                <input type="checkbox" onchange="toggleEventStatus('${project.id}', ${ev.id})" style="width:16px; height:16px; flex-shrink:0; margin-top:2px;">
+              <div class="card" style="padding:16px; display:flex; align-items:flex-start; gap:12px; border-left: 4px solid var(--fc-orange);">
+                <input type="checkbox" onchange="toggleEventStatus('${project.id}', ${ev.id})" style="width:18px; height:18px; flex-shrink:0; margin-top:2px;">
                 <div style="flex:1;">
-                  <div style="font-size:13px; font-weight:700;">${escapeHTML(ev.text)}</div>
-                  <div style="font-size:11px; color:var(--text-muted); margin-top:4px; display:flex; align-items:center; gap:6px;">
-                    <span style="background: #fef3c7; color: #b45309; padding: 2px 6px; border-radius: 999px; font-weight:700;">🗓️ ${dateString}</span> 
-                    📍 <span style="color:var(--primary); font-weight:700;">${escapeHTML(project.name)}</span>
+                  <div style="font-size:14px; font-weight:900;">${escapeHTML(ev.text)}</div>
+                  <div style="font-size:11px; color:var(--fc-muted); margin-top:6px; display:flex; align-items:center; gap:6px;">
+                    <span style="background: #fff0e9; color: #ba4416; padding: 2px 6px; border-radius: 3px; font-weight:800; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; text-transform:uppercase;">🗓️ ${dateString}</span> 
+                    📍 <span style="color:var(--fc-navy); font-weight:800;">${escapeHTML(project.name)}</span>
                   </div>
                 </div>
               </div>`;
           }
         });
       });
-      if (eventCount === 0) eventHtml += `<div style="font-size: 13px; color: var(--text-muted);">No upcoming priority bookings.</div>`;
+      if (eventCount === 0) eventHtml += `<div style="font-size: 13px; color: var(--fc-muted);">No upcoming priority bookings.</div>`;
       eventHtml += `</div>`;
 
-      let html = eventHtml + `<div class="section-title" style="margin-top:0;">☀️ Today's Active Tasks</div><div class="grid">`;
+      // Structure inside left column for My Day 
+      let html = `<div class="kh-main-split">
+                    <div class="kh-left-stack" style="display: flex; flex-direction: column; gap: 24px; min-width: 0;">
+                      <div>` + eventHtml + `</div>
+                      <div class="kh-workflow">
+                        <div class="kh-panel-title" style="margin-bottom: 16px;">☀️ Today's Active Tasks</div>
+                        <div class="grid">`;
+                        
       let activeTaskCount = 0;
       Object.values(projects).forEach(project => {
         evaluateDependencies(project.steps);
@@ -1036,8 +1099,15 @@
         });
       });
       if (activeTaskCount === 0) html += `<div class="empty-state" style="grid-column: 1/-1;">You're all caught up! No active workflow tiles for today.</div>`;
-      html += `</div>`;
+      
+      html += `</div></div></div>
+               <div class="kh-side-stack">${sideHtml}</div>
+             </div>`;
+      
       content.innerHTML = html;
+      
+      // Stagger animations
+      content.querySelectorAll('.tile').forEach((tile, i) => { tile.style.setProperty('--fc-i', Math.min(i, 14)); });
       return;
     }
 
@@ -1061,7 +1131,7 @@
           <button class="btn-icon" onclick="editProjectName()" title="Edit Name">✏️</button>
         </div>
         <div class="workspace-actions">
-          <button class="btn-outline" style="background: #e0e7ff; color: var(--primary); border-color: var(--primary);" onclick="openCalendarModal('${todayStr}', '${project.id}')">📅 Book Agenda</button>
+          <button class="btn-outline" style="border-color: var(--fc-navy); color: var(--fc-navy);" onclick="openCalendarModal('${todayStr}', '${project.id}')">📅 Book Agenda</button>
           <button id="sync-btn" class="btn-outline" onclick="manualSync()">🔄 Sync</button>
           <button class="btn-outline" onclick="openProjectModal('COPY')">📋 Copy</button>
           <button class="btn-outline" onclick="exportBackupData()">💾 Backup</button>
@@ -1069,46 +1139,93 @@
         </div>
       </div>
       <div>
-        <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-          <div class="progress-text">${progressPercent}% Workflow Completed</div>
-        </div>
+        <div class="progress-text">${progressPercent}% Workflow Completed</div>
         <div class="progress-wrapper"><div class="progress-fill" style="width: ${progressPercent}%;"></div></div>
       </div>
     `;
 
-    // Right Sidebar
-    rightSidebar.style.display = "flex";
-    let rightHtml = `
-      <div class="right-panel-section">
-        <div class="section-title" style="margin-top:0;">📂 File Location</div>
+    // Center Content - Layout Fix: Nest Directory and Workflow inside Left Column
+    let html = `<div class="kh-main-split">`;
+    
+    // LEFT COLUMN: Directory + Workflow
+    html += `<div class="kh-left-stack" style="display: flex; flex-direction: column; gap: 24px; min-width: 0;">`;
+    
+    // --> Top of Left Column: Trades Table
+    html += `
+      <div class="kh-directory kh-panel">
+        <div class="kh-panel-head">
+          <div class="kh-panel-title">Directory / Trades</div>
+          <button class="btn-add-small" onclick="event.preventDefault(); openTradeModal();">+ Add Trade</button>
+        </div>
+        <div class="kh-panel-body no-pad">
+          <div class="table-wrapper">
+            <table class="trades-table">
+              <thead>
+                <tr>
+                  <th>Trade / Role</th>
+                  <th>Company</th>
+                  <th>Contact</th>
+                  <th>Email</th>
+                  <th style="width: 40px;"></th>
+                </tr>
+              </thead>
+              <tbody>
     `;
-    if (project.projectLocationLink) {
-      
-      let edgeLink = project.projectLocationLink;
-      if (!edgeLink.startsWith('microsoft-edge:')) {
-        edgeLink = 'microsoft-edge:' + edgeLink;
-      }
+    project.contractors.forEach((c, i) => {
+      html += `
+        <tr>
+          <td style="font-weight: 800; font-size: 11px; color: var(--fc-ink); text-transform: uppercase;">${escapeHTML(c.trade)}</td>
+          <td><input type="text" list="rolodex-companies" placeholder="Company Name" value="${escapeHTML(c.company)}" oninput="updateField('${project.id}', 'contractor', ${i}, 'company', this.value)"></td>
+          <td><input type="text" placeholder="Contact Name" value="${escapeHTML(c.contact)}" oninput="updateField('${project.id}', 'contractor', ${i}, 'contact', this.value)"></td>
+          <td><input type="email" placeholder="Email Address" value="${escapeHTML(c.email)}" oninput="updateField('${project.id}', 'contractor', ${i}, 'email', this.value)"></td>
+          <td><button class="btn-danger-outline" style="border:none; padding: 4px 8px; font-size: 14px; font-weight: bold;" onclick="removeTrade(${i})" title="Remove Trade">×</button></td>
+        </tr>
+      `;
+    });
+    html += `</tbody></table></div></div></div>`;
 
-      rightHtml += `
-        <div style="display: flex; gap: 8px; align-items: center;">
-          <a href="${escapeHTML(edgeLink)}" class="btn-primary" style="text-decoration: none; padding: 8px 12px; font-size: 12px; flex: 1; text-align: center;">🌍 Open in Edge</a>
-          <button class="btn-outline" style="padding: 8px; width: 34px;" onclick="updateField('${project.id}', 'locationLink', null, null, '')" title="Edit Link">✏️</button>
+    // --> Bottom of Left Column: Workflow Section
+    html += `
+      <div class="kh-workflow">
+        <div class="kh-panel-head" style="background:transparent; border:none; padding:0 0 16px;">
+          <div class="kh-panel-title" style="font-size: 16px;">WORKFLOW SEQUENCE</div>
+          <button class="btn-add-small" onclick="event.preventDefault(); openJobModal();">+ Add Job</button>
+        </div>
+        <div class="grid">
+    `;
+    project.steps.forEach(step => { html += generateTileHTML(step, project.id); });
+    html += `</div></div></div>`; // Close Left Column
+
+    // RIGHT COLUMN: File Link + Minor Tasks
+    html += `<div class="kh-side-stack">`;
+    
+    // --> File Panel
+    html += `<div class="kh-panel"><div class="kh-panel-body pad"><div class="fc-side-title">📂 File Location</div>`;
+    if (project.projectLocationLink) {
+      let edgeLink = project.projectLocationLink;
+      if (!edgeLink.startsWith('microsoft-edge:')) edgeLink = 'microsoft-edge:' + edgeLink;
+      html += `
+        <div style="display: flex; gap: 8px; align-items: center; margin-top: 12px;">
+          <a href="${escapeHTML(edgeLink)}" class="btn-primary" style="flex: 1;">🌍 Open in Edge</a>
+          <button class="btn-icon" style="flex:none;" onclick="updateField('${project.id}', 'locationLink', null, null, '')" title="Edit Link">✏️</button>
         </div>
       `;
     } else {
-      rightHtml += `<input type="url" placeholder="Paste map or folder link..." onchange="updateField('${project.id}', 'locationLink', null, null, this.value)">`;
+      html += `<input type="url" placeholder="Paste map or folder link..." onchange="updateField('${project.id}', 'locationLink', null, null, this.value)">`;
     }
-    
-    rightHtml += `
-      </div>
-      <div class="right-panel-section" style="border-bottom:none;">
-        <div class="section-title" style="margin-top:0;">📋 Minor Tasks</div>
-        <input type="text" id="new-check-text" placeholder="Add task & press Enter..." style="margin-bottom: 12px;">
-        <div style="display: flex; flex-direction: column;">
+    html += `</div></div>`;
+
+    // --> Minor Tasks Panel
+    html += `
+      <div class="kh-panel">
+        <div class="kh-panel-body pad">
+          <div class="fc-side-title">📋 Minor Tasks</div>
+          <input type="text" id="new-check-text" placeholder="Add task & press Enter..." style="margin-bottom: 12px; background: #faf9f7;">
+          <div style="display: flex; flex-direction: column;">
     `;
     (project.checklist || []).forEach(item => {
       const isDone = item.status === 'COMPLETED';
-      rightHtml += `
+      html += `
         <div class="check-item" style="${isDone ? 'opacity: 0.5;' : ''}">
            <input type="checkbox" ${isDone ? 'checked' : ''} onchange="updateChecklistStatus('${project.id}', ${item.id}, this.checked ? 'COMPLETED' : 'PENDING')">
            <div class="check-text" style="${isDone ? 'text-decoration: line-through;' : ''}">${escapeHTML(item.text)}</div>
@@ -1116,59 +1233,14 @@
         </div>
       `;
     });
-    rightHtml += `</div></div>`;
-    rightSidebar.innerHTML = rightHtml;
+    html += `</div></div></div></div></div>`; // Close Right Column & Split Layout
 
-    // Center Content
-    let html = `
-      <details open>
-        <summary class="section-title" style="margin-top: 0;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span class="chevron">▼</span> PROJECT DIRECTORY / TRADES
-          </div>
-          <button class="btn-add-small" onclick="event.preventDefault(); openTradeModal();">+ Add Trade</button>
-        </summary>
-        
-        <div class="table-wrapper">
-          <table class="trades-table">
-            <thead>
-              <tr>
-                <th>Trade / Role</th>
-                <th>Company</th>
-                <th>Contact</th>
-                <th>Email</th>
-                <th style="width: 40px;"></th>
-              </tr>
-            </thead>
-            <tbody>
-    `;
-        
-    project.contractors.forEach((c, i) => {
-      html += `
-        <tr>
-          <td style="font-weight: 700; font-size: 11px; color: var(--text-muted); text-transform: uppercase;">${escapeHTML(c.trade)}</td>
-          <td><input type="text" list="rolodex-companies" placeholder="Company Name" value="${escapeHTML(c.company)}" oninput="updateField('${project.id}', 'contractor', ${i}, 'company', this.value)"></td>
-          <td><input type="text" placeholder="Contact Name" value="${escapeHTML(c.contact)}" oninput="updateField('${project.id}', 'contractor', ${i}, 'contact', this.value)"></td>
-          <td><input type="email" placeholder="Email Address" value="${escapeHTML(c.email)}" oninput="updateField('${project.id}', 'contractor', ${i}, 'email', this.value)"></td>
-          <td><button class="btn-danger-outline" style="padding: 4px 8px; font-size: 14px; font-weight: bold;" onclick="removeTrade(${i})" title="Remove Trade">×</button></td>
-        </tr>
-      `;
-    });
-    
-    html += `</tbody></table></div></details>
-      <details open>
-        <summary class="section-title" style="margin-top: 24px; border-top: 1px solid var(--border-soft); padding-top: 24px;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span class="chevron">▼</span> WORKFLOW SEQUENCE
-          </div>
-          <button class="btn-add-small" onclick="event.preventDefault(); openJobModal();">+ Add Job</button>
-        </summary>
-        <div class="grid">`;
-        
-    project.steps.forEach(step => { html += generateTileHTML(step, project.id); });
-    html += `</div></details>`;
-    
     content.innerHTML = html;
+
+    // Stagger animation delay based on grid order
+    content.querySelectorAll('.tile').forEach((tile, i) => {
+      tile.style.setProperty('--fc-i', Math.min(i, 14));
+    });
   }
 
   // --- INITIALIZE APP ---
