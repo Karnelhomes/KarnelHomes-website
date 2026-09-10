@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>KARNEL HOMES · Field Command</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- Softer, warmer fonts imported here -->
+<!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800;6..12,900&display=swap" rel="stylesheet">
@@ -30,11 +30,10 @@
     --fc-muted: #6E6A64;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   
   html, body { background: var(--fc-bg); color: var(--fc-ink); height: 100vh; overflow: hidden; }
   
-  /* Replaced sharp system fonts with Nunito Sans */
   body { 
     font-family: 'Nunito Sans', ui-sans-serif, system-ui, -apple-system, sans-serif !important; 
   }
@@ -97,12 +96,13 @@
   .fc-project-select {
     min-width: 185px; height: 36px; padding: 0 31px 0 11px;
     color: #fff; background: #1d1d1d; border: 1px solid #363636; border-radius: 5px;
-    font-size: 11px; font-weight: 700; outline: none; cursor: pointer;
+    font-size: 12px; font-weight: 700; outline: none; cursor: pointer;
     font-family: 'Nunito Sans', sans-serif;
   }
   .fc-new-project {
     width: 35px; height: 35px; padding: 0; background: var(--fc-orange); color: #fff;
     font-size: 18px; border-radius: 5px; border: none; cursor: pointer; transition: 0.2s;
+    display: flex; align-items: center; justify-content: center;
   }
   .fc-new-project:hover { background: #c24312; }
 
@@ -123,14 +123,14 @@
   .project-title-group { display: flex; align-items: center; gap: 12px; }
   .workspace-title { color: var(--fc-ink); font-size: 32px; font-weight: 900; letter-spacing: -.03em; line-height: 1; }
   
-  .btn-icon { background: #f7f4ef; border: 1px solid var(--fc-border); border-radius: 4px; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #666; transition: 0.2s; }
+  .btn-icon { background: #f7f4ef; border: 1px solid var(--fc-border); border-radius: 4px; min-width: 36px; min-height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #666; transition: 0.2s; }
   .btn-icon:hover { background: #e4e0d8; }
   
   .workspace-actions { display: flex; gap: 6px; flex-wrap: wrap; }
   .workspace-actions button {
-    border-radius: 4px; font-size: 10px; font-weight: 800; letter-spacing: .04em;
-    text-transform: uppercase; padding: 6px 14px; border: none; cursor: pointer; transition: 0.2s;
-    font-family: 'Nunito Sans', sans-serif;
+    border-radius: 4px; font-size: 11px; font-weight: 800; letter-spacing: .04em;
+    text-transform: uppercase; padding: 10px 14px; border: none; cursor: pointer; transition: 0.2s;
+    font-family: 'Nunito Sans', sans-serif; min-height: 38px;
   }
   .workspace-actions .btn-outline { border: 1px solid #d9d4cc; background: #fff; color: #4c4842; }
   .workspace-actions .btn-outline:hover { border-color: var(--fc-orange); color: var(--fc-orange); }
@@ -184,8 +184,8 @@
   .kpi-value { font-size: 38px; font-weight: 900; color: var(--fc-ink); margin-top: 8px; letter-spacing: -0.03em; }
 
   /* TABLES */
-  .table-wrapper { width: 100%; overflow-x: auto; }
-  .trades-table { width: 100%; border-collapse: collapse; text-align: left; }
+  .table-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .trades-table { width: 100%; border-collapse: collapse; text-align: left; min-width: 500px; }
   .trades-table th {
     background: #f4f1eb; color: #79736b; padding: 10px 12px; font-size: 9px;
     letter-spacing: .12em; text-transform: uppercase; font-weight: 800; border-bottom: 1px solid #eeeae3;
@@ -193,10 +193,10 @@
   .trades-table td { padding: 6px 12px; border-bottom: 1px solid #eeeae3; vertical-align: middle; }
   .trades-table tr:hover td { background: #fcfaf7; }
   
-  /* INPUTS */
+  /* INPUTS - 16px on mobile prevents auto-zoom */
   input, select, textarea {
     font-family: 'Nunito Sans', sans-serif;
-    font-size: 13px; padding: 8px 12px; border: 1px solid #d9d4cc; background: #fff;
+    font-size: 14px; padding: 10px 12px; border: 1px solid #d9d4cc; background: #fff;
     border-radius: 4px; outline: none; width: 100%; transition: 0.2s; color: var(--fc-ink);
   }
   input:focus, select:focus, textarea:focus { border-color: var(--fc-orange); box-shadow: 0 0 0 2px rgba(232,86,30,.08); }
@@ -205,15 +205,15 @@
   /* BUTTONS */
   .btn-primary { 
     font-family: 'Nunito Sans', sans-serif; background: var(--fc-navy); color: #fff; border: none; 
-    padding: 8px 14px; border-radius: 4px; font-weight: 800; font-size: 12px; cursor: pointer; 
-    transition: 0.2s; text-decoration: none; display: inline-block; text-align: center; 
+    padding: 10px 16px; border-radius: 4px; font-weight: 800; font-size: 12px; cursor: pointer; 
+    transition: 0.2s; text-decoration: none; display: inline-block; text-align: center; min-height: 38px;
   }
   .btn-primary:hover { background: #12253f; }
   
   .btn-add-small {
     font-family: 'Nunito Sans', sans-serif; border: 1px solid #d9d3ca; border-radius: 4px; background: #fff; color: var(--fc-orange);
-    font-size: 10px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
-    padding: 6px 12px; cursor: pointer; transition: 0.2s;
+    font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
+    padding: 8px 12px; cursor: pointer; transition: 0.2s; min-height: 36px;
   }
   .btn-add-small:hover { background: var(--fc-orange); color: #fff; }
 
@@ -223,10 +223,10 @@
     font-weight: 800; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 11px;
   }
   .fc-side-title:before { content: ""; width: 3px; height: 14px; background: var(--fc-orange); display: block; border-radius: 2px;}
-  .check-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eeeae3; gap: 8px; }
-  .check-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--fc-orange); }
+  .check-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eeeae3; gap: 8px; }
+  .check-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; accent-color: var(--fc-orange); flex-shrink: 0; }
   .check-text { font-size: 13px; flex: 1; word-break: break-word; font-weight: 600; }
-  .chk-del { color: #ef4444; font-weight: bold; cursor: pointer; border: none; background: transparent; padding: 2px 6px; opacity: 0; transition: 0.2s; }
+  .chk-del { color: #ef4444; font-weight: bold; cursor: pointer; border: none; background: transparent; padding: 6px 10px; font-size: 16px; transition: 0.2s; opacity: 0.7; }
   .check-item:hover .chk-del { opacity: 1; }
 
   /* WORKFLOW TILES */
@@ -257,13 +257,13 @@
   .bg-locked { background: #eceae7; color: #77736d; }
 
   .tile-title { min-height: 50px; font-size: 18px; line-height: 1.2; font-weight: 800; letter-spacing: -.02em; }
-  .drag-handle { color: #cbd5e1; cursor: grab; font-size: 14px; margin-right: 4px; }
+  .drag-handle { color: #cbd5e1; cursor: grab; font-size: 16px; margin-right: 4px; padding: 4px; }
   .tile-meta { margin-top: 2px; color: #8b857d; }
-  .tile textarea { height: 39px; border-color: #e8e3dc; background: #faf9f7; border-radius: 4px; resize: none; margin-top: 8px; }
+  .tile textarea { height: 42px; border-color: #e8e3dc; background: #faf9f7; border-radius: 4px; resize: none; margin-top: 8px; }
   .tile textarea:focus { height: 72px; }
   
   .smart-btn {
-    min-height: 38px; margin-top: auto; border-radius: 4px; font-weight: 800; border: none;
+    min-height: 42px; margin-top: auto; border-radius: 4px; font-weight: 800; border: none;
     letter-spacing: .03em; text-transform: uppercase; font-size: 11px; cursor: pointer; transition: 0.2s; width: 100%;
     font-family: 'Nunito Sans', sans-serif;
   }
@@ -285,7 +285,7 @@
   .empty-state { text-align: center; padding: 60px 20px; color: var(--fc-muted); font-weight: 700; background: #fff; border-radius: 8px; border: 1px dashed var(--fc-border); margin-top: 16px; font-size: 14px; }
 
   /* MODALS & TOASTS */
-  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17,17,17,.58); backdrop-filter: blur(3px); display: none; align-items: center; justify-content: center; z-index: 200; }
+  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17,17,17,.58); backdrop-filter: blur(3px); display: none; align-items: center; justify-content: center; z-index: 200; padding: 16px; }
   .modal-content { background: #fff; width: 100%; max-width: 440px; padding: 24px; border-radius: 8px; border: 1px solid #ded8cf; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 30px 80px rgba(0,0,0,.22); animation: fcModal .22s ease-out both; }
   @keyframes fcModal { from { opacity: 0; transform: scale(.96) translateY(7px); } to { opacity: 1; transform: scale(1) translateY(0); } }
   .modal-title { font-weight: 800; font-size: 18px; margin-bottom: 4px; }
@@ -294,26 +294,39 @@
   .toast { position: fixed; bottom: 20px; right: 20px; background: #111; color: #fff; padding: 12px 20px; border-radius: 6px; border-left: 3px solid var(--fc-orange); font-size: 14px; font-weight: 600; z-index: 999; box-shadow: 0 4px 12px rgba(0,0,0,.3); animation: slideIn 0.3s ease; }
   @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-  /* RESPONSIVE */
+  /* RESPONSIVE & MOBILE POLISH */
   @media (max-width: 1050px) {
     .fc-topbar { grid-template-columns: auto 1fr auto; gap: 10px; padding: 0 14px; }
     .fc-nav { justify-content: flex-start; }
     .fc-project-select { min-width: 150px; }
     .kh-main-split { grid-template-columns: 1fr; }
     .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .workspace-scroll { padding: 22px 22px 38px; }
+    .workspace-scroll { padding: 22px 18px 38px; }
   }
-  @media (max-width: 700px) {
-    .fc-topbar { height: auto; min-height: 64px; grid-template-columns: 1fr auto; grid-template-rows: auto auto; padding: 10px 12px; }
+  
+  @media (max-width: 768px) {
+    /* Set mobile input font size to 16px to prevent iOS Auto-Zoom */
+    input, select, textarea { font-size: 16px !important; }
+
+    .fc-topbar { height: auto; min-height: 60px; grid-template-columns: 1fr auto; grid-template-rows: auto auto; padding: 10px 14px; gap: 10px; }
     .fc-brand { grid-column: 1; }
     .fc-nav-right { grid-column: 2; grid-row: 1; }
-    .fc-nav { grid-column: 1/-1; grid-row: 2; justify-content: flex-start; overflow-x: auto; height: 35px; }
-    .fc-nav button { flex: 0 0 auto; }
+    .fc-nav { grid-column: 1/-1; grid-row: 2; justify-content: flex-start; overflow-x: auto; height: 38px; padding-bottom: 4px; scrollbar-width: none; }
+    .fc-nav::-webkit-scrollbar { display: none; }
+    .fc-nav button { flex: 0 0 auto; padding: 0 12px; }
     .fc-status { display: none; }
-    .workspace-header { padding: 20px 17px 17px; }
-    .workspace-title { font-size: 26px; }
-    .header-top-row { flex-direction: column; align-items: stretch; }
+    
+    .workspace-header { padding: 16px; }
+    .workspace-title { font-size: 22px; }
+    .workspace-scroll { padding: 16px; }
+    .header-top-row { flex-direction: column; align-items: stretch; gap: 12px; }
+    .project-title-group { width: 100%; justify-content: space-between; }
+    .workspace-actions { justify-content: flex-start; }
+    .workspace-actions button { flex: 1 1 auto; text-align: center; }
+
     .grid { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .chk-del { opacity: 1; } /* Always visible on mobile touchscreens */
   }
 </style>
 </head>
@@ -482,7 +495,7 @@
   let currentProjectId = localStorage.getItem('karnel_active_final16') || null;
   let rolodex = JSON.parse(localStorage.getItem('karnel_rolodex')) || [];
   
-  // Default to Dashboard on load
+  // Default view setting
   let currentView = localStorage.getItem('karnel_view_final16') || 'DASHBOARD'; 
   
   let draggedStepId = null;
@@ -527,24 +540,46 @@
     try {
       if (supabaseChannel) supabaseClient.removeChannel(supabaseChannel);
 
-      const { data } = await supabaseClient.from('karnel_projects').select('*');
-      if (data && data.length > 0) {
-        data.forEach(row => { projects[row.id] = row.data; });
+      const { data, error } = await supabaseClient.from('karnel_projects').select('*');
+      if (error) throw error;
+
+      if (data) {
+        // Build clean project state from Supabase to remove any deleted rows locally
+        const cloudProjects = {};
+        data.forEach(row => { cloudProjects[row.id] = row.data; });
+        projects = cloudProjects;
+        
+        localStorage.setItem('karnel_data_final16', JSON.stringify(projects));
         updateRolodexDatalist();
-        if (!currentProjectId || !projects[currentProjectId]) currentProjectId = data[0].id;
+        
+        if (!currentProjectId || !projects[currentProjectId]) {
+          currentProjectId = Object.keys(projects)[0] || null;
+        }
         render();
       }
       
       supabaseChannel = supabaseClient.channel('karnel-live');
       supabaseChannel.on('postgres_changes', { event: '*', schema: 'public', table: 'karnel_projects' }, payload => {
-          projects[payload.new.id] = payload.new.data;
+          if (payload.eventType === 'DELETE') {
+            if (payload.old && payload.old.id) {
+              delete projects[payload.old.id];
+              if (currentProjectId === payload.old.id) {
+                currentProjectId = Object.keys(projects)[0] || null;
+              }
+            }
+          } else if (payload.new && payload.new.id) {
+            projects[payload.new.id] = payload.new.data;
+          }
+          
+          localStorage.setItem('karnel_data_final16', JSON.stringify(projects));
           const activeEl = document.activeElement;
           const isEditing = activeEl && ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl.tagName);
-          if (!isEditing && (payload.new.id === currentProjectId || currentView === 'DAY' || currentView === 'CALENDAR' || currentView === 'DASHBOARD')) {
-              render();
+          if (!isEditing) {
+            render();
           }
       }).subscribe();
     } catch (e) {
+      console.warn("Failed to load initial data from Supabase:", e);
       showToast("Failed to load initial data from server.", true);
     }
   }
@@ -639,12 +674,26 @@
 
   async function deleteCurrentProject() {
     if (!currentProjectId) return;
-    const projectName = projects[currentProjectId]?.name || 'this project';
+    const projectToDelete = currentProjectId;
+    const projectName = projects[projectToDelete]?.name || 'this project';
+    
     if (confirm(`⚠️ Are you sure you want to delete "${projectName}"? This action cannot be undone!`)) {
-      if(supabaseClient) supabaseClient.from('karnel_projects').delete().eq('id', currentProjectId);
-      delete projects[currentProjectId];
+      if (supabaseClient) {
+        try {
+          const { error } = await supabaseClient.from('karnel_projects').delete().eq('id', projectToDelete);
+          if (error) console.error("Supabase delete error:", error);
+        } catch (e) {
+          console.error("Failed to delete from Supabase:", e);
+        }
+      }
+      
+      delete projects[projectToDelete];
       currentProjectId = Object.keys(projects)[0] || null;
-      if (!currentProjectId) { currentView = 'DASHBOARD'; }
+      
+      if (!currentProjectId) { 
+        currentView = 'DASHBOARD'; 
+      }
+      
       render();
       saveState();
       showToast("Project deleted.");
