@@ -321,8 +321,6 @@ details > summary::-webkit-details-marker { display: none; }
   .page-shell { padding: 0 16px 40px; }
   .top-nav { padding: 0 16px; overflow-x: auto; flex-wrap: nowrap; }
   .nav-brand { margin-right: 16px; }
-  .nav-links { flex: 0 0 auto; margin-right: 16px; }
-  .nav-right { flex: 0 0 auto; margin-left: auto; }
   .project-name { font-size: 22px; }
   .workflow-grid { grid-template-columns: 1fr; }
   .cal-grid { gap: 3px; }
@@ -612,11 +610,12 @@ details > summary::-webkit-details-marker { display: none; }
 
     try {
       const payloads = projectsToSync.map(p => {
-        const { _needsSync, ...cleanData } = p; // Strip internal flags
+        const { _needsSync, ...cleanData } = p; // Strip internal flags before transit
         return {
           id: p.id,
           name: p.name,
-          data: cleanData
+          data: cleanData,
+          updated_at: new Date().toISOString() // Explicit mapping required for proper UPSERT without missing constraints
         };
       });
       
@@ -644,9 +643,13 @@ details > summary::-webkit-details-marker { display: none; }
       if (data) {
         const cloudKeys = new Set();
         data.forEach(row => {
-          if (!row.data) return;
+          let cloudData = row.data;
+          if (typeof cloudData === 'string') {
+              try { cloudData = JSON.parse(cloudData); } catch (err) { return; }
+          }
+          if (!cloudData) return;
+            
           cloudKeys.add(row.id);
-          const cloudData = row.data;
           const localData = projects[row.id];
           
           const cloudTime = new Date(cloudData.updated_at || 0).getTime();
@@ -818,7 +821,7 @@ details > summary::-webkit-details-marker { display: none; }
     showToast("Project created.");
   }
 
-  async function deleteCurrentProject() {
+  function deleteCurrentProject() {
     if (!currentProjectId) return;
     const projectToDelete = currentProjectId;
     const pn = projects[projectToDelete]?.name || 'this project';
@@ -872,6 +875,7 @@ details > summary::-webkit-details-marker { display: none; }
     document.body.appendChild(a); a.click(); a.remove();
     showToast("Backup exported.");
   }
+
 
   // ==========================================
   // WORKFLOW & TILES (DOM In-Place Updates)
@@ -937,7 +941,7 @@ details > summary::-webkit-details-marker { display: none; }
   function syncTilesToState(projectId) {
      const p = projects[projectId]; if(!p) return;
      
-     p.steps.forEach(step => {
+     (p.steps || []).forEach(step => {
          const tileEl = document.getElementById(`tile-${projectId}-${step.id}`);
          if (tileEl) {
              const mapping = STATUS_MAP[step.status] || STATUS_MAP["LOCKED"];
@@ -949,8 +953,8 @@ details > summary::-webkit-details-marker { display: none; }
          }
      });
 
-     const total = p.steps.length;
-     const done = p.steps.filter(s => s.status === 'COMPLETE').length;
+     const total = p.steps ? p.steps.length : 0;
+     const done = p.steps ? p.steps.filter(s => s.status === 'COMPLETE').length : 0;
      const pct = total === 0 ? 0 : Math.round((done / total) * 100);
 
      const numEl = document.getElementById('progress-number-val');
@@ -1003,7 +1007,7 @@ details > summary::-webkit-details-marker { display: none; }
     if (!currentProjectId) return alert("Create a project first!");
     const sel = document.getElementById('new-job-prereq');
     sel.innerHTML = '<option value="0">None (start immediately)</option>';
-    projects[currentProjectId].steps.forEach(s => { sel.innerHTML += `<option value="${s.id}">After: ${escapeHTML(s.name)}</option>`; });
+    (projects[currentProjectId].steps || []).forEach(s => { sel.innerHTML += `<option value="${s.id}">After: ${escapeHTML(s.name)}</option>`; });
     document.getElementById('new-job-name').value = '';
     document.getElementById('modal-job').style.display = 'flex';
     setTimeout(() => document.getElementById('new-job-name').focus(), 80);
@@ -1016,6 +1020,7 @@ details > summary::-webkit-details-marker { display: none; }
     if (!name) return showToast("Please enter a job title.", true);
     const p = projects[currentProjectId]; if(!p) return;
     
+    p.steps = p.steps || [];
     const newId = generateUUID();
     const prereqs = prereqId === "0" ? [] : [prereqId];
     p.steps.push({ id: newId, name, owner, prereqs: prereqs, status: "LOCKED", notes: "", date: "" });
@@ -1028,7 +1033,7 @@ details > summary::-webkit-details-marker { display: none; }
   function removeJob(projectId, stepId) {
     if (!confirm("Delete this job?")) return;
     const p = projects[projectId]; if(!p) return;
-    p.steps = p.steps.filter(s => String(s.id) !== String(stepId));
+    p.steps = (p.steps || []).filter(s => String(s.id) !== String(stepId));
     p.steps.forEach(s => { s.prereqs = s.prereqs.filter(id => String(id) !== String(stepId)); });
     
     evaluateDependencies(p);
@@ -1043,7 +1048,7 @@ details > summary::-webkit-details-marker { display: none; }
     e.preventDefault(); el.classList.remove('drag-over');
     const draggedId = e.dataTransfer.getData('text/plain');
     if (!draggedId || String(draggedId) === String(targetId) || currentView !== 'PROJECT') return;
-    const p = projects[currentProjectId]; if(!p) return;
+    const p = projects[currentProjectId]; if(!p || !p.steps) return;
     
     const fi = p.steps.findIndex(s => String(s.id) === String(draggedId));
     const ti = p.steps.findIndex(s => String(s.id) === String(targetId));
@@ -1075,6 +1080,7 @@ details > summary::-webkit-details-marker { display: none; }
     if (!trade) return showToast("Please enter a Trade / Role.", true);
     const p = projects[currentProjectId]; if(!p) return;
     
+    p.contractors = p.contractors || [];
     p.contractors.push({ trade, company, contact, email });
     markProjectUpdated(currentProjectId);
     closeModals(); render(); 
@@ -1083,7 +1089,7 @@ details > summary::-webkit-details-marker { display: none; }
   function removeTrade(index) {
     if (!confirm("Remove this trade?")) return;
     const p = projects[currentProjectId]; if(!p) return;
-    if(!p.contractors[index]) return;
+    if(!p.contractors || !p.contractors[index]) return;
     p.contractors.splice(index, 1);
     markProjectUpdated(currentProjectId);
     render(); 
@@ -1105,7 +1111,7 @@ details > summary::-webkit-details-marker { display: none; }
   }
   
   function updateChecklistStatus(event, projectId, id, status) {
-    const p = projects[projectId]; if(!p) return;
+    const p = projects[projectId]; if(!p || !p.checklist) return;
     const item = p.checklist.find(i => String(i.id) === String(id));
     if (item) { 
         item.status = status; 
@@ -1127,7 +1133,7 @@ details > summary::-webkit-details-marker { display: none; }
   }
   
   function deleteChecklistItem(projectId, id) {
-    const p = projects[projectId]; if(!p) return;
+    const p = projects[projectId]; if(!p || !p.checklist) return;
     p.checklist = p.checklist.filter(i => String(i.id) !== String(id));
     markProjectUpdated(projectId);
     renderChecklist(projectId);
@@ -1182,6 +1188,7 @@ details > summary::-webkit-details-marker { display: none; }
 
   function refreshEventList(dateStr) {
     const lc = document.getElementById('event-list-container');
+    if (!lc) return;
     let html = ''; let count = 0;
     const activeProjects = Object.values(projects).filter(p => !p._deleted);
     
@@ -1246,7 +1253,7 @@ details > summary::-webkit-details-marker { display: none; }
 
   function deleteEventModal(projectId, eventId) {
     if (!confirm("Delete this agenda?")) return;
-    const p = projects[projectId]; if(!p) return;
+    const p = projects[projectId]; if(!p || !p.events) return;
     p.events = p.events.filter(e => String(e.id) !== String(eventId));
     markProjectUpdated(projectId);
     
@@ -1256,7 +1263,7 @@ details > summary::-webkit-details-marker { display: none; }
   }
 
   function toggleEventStatusDOM(event, projectId, eventId) {
-    const p = projects[projectId]; if(!p) return;
+    const p = projects[projectId]; if(!p || !p.events) return;
     const ev = p.events.find(e => String(e.id) === String(eventId));
     if (ev) { 
         ev.status = ev.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED'; 
@@ -1307,6 +1314,7 @@ details > summary::-webkit-details-marker { display: none; }
       if (el) el.className = 'nav-link' + (currentView === k ? ' active' : '');
     });
 
+    // Ensure defensive defaults exist before proceeding
     const activeProjects = Object.values(projects).filter(p => !p._deleted);
 
     // Empty state failsafe
@@ -1329,11 +1337,11 @@ details > summary::-webkit-details-marker { display: none; }
 
       activeProjects.forEach(p => {
         let steps = p.steps || [];
-        let done = steps.filter(s => s.status === 'COMPLETE').length;
+        let done = steps.filter(s => s?.status === 'COMPLETE').length;
         let pct = steps.length ? Math.round((done / steps.length) * 100) : 0;
-        let active = steps.filter(s => s.status === 'IN PROGRESS' || s.status === 'READY TO START').length;
-        let blocked = steps.filter(s => s.status === 'LOCKED').length;
-        let minor = (p.checklist || []).filter(c => c.status === 'PENDING').length;
+        let active = steps.filter(s => s?.status === 'IN PROGRESS' || s?.status === 'READY TO START').length;
+        let blocked = steps.filter(s => s?.status === 'LOCKED').length;
+        let minor = (p.checklist || []).filter(c => c?.status === 'PENDING').length;
 
         totalActive += active;
         totalBlocked += blocked;
@@ -1439,7 +1447,7 @@ details > summary::-webkit-details-marker { display: none; }
       let checklist = `<div class="panel"><div class="panel-header"><div class="panel-title">Global Minor Tasks</div></div><div class="panel-body" style="padding:12px 16px;">`;
       let tc = 0;
       activeProjects.forEach(p => {
-        const pending = (p.checklist||[]).filter(i => i.status==='PENDING');
+        const pending = (p.checklist||[]).filter(i => i?.status==='PENDING');
         if (pending.length) {
           checklist += `<div style="font-size:10px;font-weight:800;color:var(--bark);background:var(--bark-lt);padding:3px 8px;border-radius:4px;border:1px solid #DFC8A8;display:inline-block;margin-bottom:6px;margin-top:8px;">📍 ${escapeHTML(p.name)}</div>`;
           pending.forEach(it => { tc++; checklist += `<div class="check-row"><input type="checkbox" onchange="updateChecklistStatus(event, '${p.id}','${it.id}','COMPLETED')"><div class="check-text">${escapeHTML(it.text)}</div></div>`; });
@@ -1449,7 +1457,7 @@ details > summary::-webkit-details-marker { display: none; }
       checklist += '</div></div>';
 
       let tiles = ''; let ac = 0;
-      activeProjects.forEach(p => { evaluateDependencies(p); p.steps.forEach((s,i) => { if (s.status==='READY TO START'||s.status==='IN PROGRESS') { tiles += generateTileHTML(s, p.id, p.name, ac++); } }); });
+      activeProjects.forEach(p => { (p.steps || []).forEach((s,i) => { if (s?.status==='READY TO START'||s?.status==='IN PROGRESS') { tiles += generateTileHTML(s, p.id, p.name, ac++); } }); });
 
       content.innerHTML = `<div class="day-sections">
         <div>
@@ -1470,10 +1478,13 @@ details > summary::-webkit-details-marker { display: none; }
     if (!currentProjectId) return;
 
     const p = projects[currentProjectId];
-    evaluateDependencies(p);
+    p.steps = p.steps || [];
+    p.contractors = p.contractors || [];
+    p.checklist = p.checklist || [];
+    p.events = p.events || [];
 
     const total = p.steps.length;
-    const done  = p.steps.filter(s => s.status === 'COMPLETE').length;
+    const done  = p.steps.filter(s => s?.status === 'COMPLETE').length;
     const pct   = total === 0 ? 0 : Math.round((done / total) * 100);
     const todayStr = new Date().toISOString().split('T')[0];
 
@@ -1567,7 +1578,6 @@ details > summary::-webkit-details-marker { display: none; }
         </div>
       </div>`;
 
-      // Render independent modules safely without nuking focus loop
       renderChecklist(currentProjectId);
       renderLocationLink(currentProjectId);
   }
