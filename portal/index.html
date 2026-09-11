@@ -189,7 +189,7 @@ button { font-family: inherit; cursor: pointer; transition: 0.18s var(--ease); }
   transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), border-color 0.2s; overflow: hidden; animation: tileUp 0.35s var(--ease) both;
 }
 @keyframes tileUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-.tile::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 999px 0 0 999px; background: var(--border-dark); transition: background 0.3s; }
+.tile::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 999px 0 0 999px; background: var(--border-dark); transition: width 0.2s var(--ease); }
 .tile:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
 .tile:hover::before { width: 5px; }
 
@@ -321,6 +321,8 @@ details > summary::-webkit-details-marker { display: none; }
   .page-shell { padding: 0 16px 40px; }
   .top-nav { padding: 0 16px; overflow-x: auto; flex-wrap: nowrap; }
   .nav-brand { margin-right: 16px; }
+  .nav-links { flex: 0 0 auto; margin-right: 16px; }
+  .nav-right { flex: 0 0 auto; margin-left: auto; }
   .project-name { font-size: 22px; }
   .workflow-grid { grid-template-columns: 1fr; }
   .cal-grid { gap: 3px; }
@@ -488,6 +490,13 @@ details > summary::-webkit-details-marker { display: none; }
     setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 3000);
   }
 
+  function updateRolodexDatalist() {
+    const list = document.getElementById('rolodex-companies');
+    if (!list) return;
+    list.innerHTML = '';
+    rolodex.forEach(c => { if(c.trim()) list.innerHTML += `<option value="${escapeHTML(c)}">`; });
+  }
+
   // Keyboard Shortcuts (Escape handles close; Form submissions handle Enter)
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') closeModals();
@@ -538,7 +547,10 @@ details > summary::-webkit-details-marker { display: none; }
   // SUPABASE CONFIG & SYNC
   // ==========================================
   const SUPABASE_URL = 'https://giovxsxgkdilawyxuiqb.supabase.co';
+  
+  // NOTE: You must place your valid 'anon public' key here (starts with eyJ...)
   const SUPABASE_KEY = 'sb_publishable_k9sU8tyILCmQTxAI36ufWQ__JsPNSRY';
+  
   let supabaseClient = null, supabaseChannel = null;
   try { if (SUPABASE_URL.startsWith('http')) supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); }
   catch(e) { console.error("Supabase init error:", e); }
@@ -557,7 +569,6 @@ details > summary::-webkit-details-marker { display: none; }
     }
   }
 
-  // Ensures project flags are met, sets timestamp, flags for sync
   function markProjectUpdated(projectId) {
     if (!projects[projectId]) return;
     projects[projectId].updated_at = new Date().toISOString();
@@ -565,7 +576,6 @@ details > summary::-webkit-details-marker { display: none; }
     debouncedSave();
   }
 
-  // Guaranteed save logic
   async function saveState() {
     hasPendingSave = false;
     updateCloudStatusChip('saving');
@@ -589,11 +599,10 @@ details > summary::-webkit-details-marker { display: none; }
     saveTimeout = setTimeout(saveState, 500);
   }
 
-  // Flush pending saves cleanly on exit
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden' && hasPendingSave) {
         clearTimeout(saveTimeout);
-        saveState(); // Trigger local cache immediately 
+        saveState(); 
     }
   });
   window.addEventListener('beforeunload', () => { if (supabaseClient && supabaseChannel) supabaseClient.removeChannel(supabaseChannel); });
@@ -601,7 +610,6 @@ details > summary::-webkit-details-marker { display: none; }
   async function syncToSupabase() {
     if (!supabaseClient) { updateCloudStatusChip('offline'); return; }
     
-    // Only push projects that have changed locally
     const projectsToSync = Object.values(projects).filter(p => p._needsSync);
     if (projectsToSync.length === 0) {
         updateCloudStatusChip('live');
@@ -610,12 +618,12 @@ details > summary::-webkit-details-marker { display: none; }
 
     try {
       const payloads = projectsToSync.map(p => {
-        const { _needsSync, ...cleanData } = p; // Strip internal flags before transit
+        const { _needsSync, ...cleanData } = p; 
         return {
           id: p.id,
           name: p.name,
           data: cleanData,
-          updated_at: new Date().toISOString() // Explicit mapping required for proper UPSERT without missing constraints
+          updated_at: new Date().toISOString() 
         };
       });
       
@@ -631,7 +639,6 @@ details > summary::-webkit-details-marker { display: none; }
     }
   }
 
-  // Merge logic based on internal data timestamps to avoid data loss
   async function loadFromCloud() {
     if (!supabaseClient) { updateCloudStatusChip('offline'); return false; }
     try {
@@ -655,18 +662,15 @@ details > summary::-webkit-details-marker { display: none; }
           const cloudTime = new Date(cloudData.updated_at || 0).getTime();
           const localTime = new Date(localData?.updated_at || 0).getTime();
 
-          // Standard Conflict Resolution: Latest timestamp wins.
           if (!localData || cloudTime > localTime) {
               projects[row.id] = cloudData;
               hasUpdates = true;
           } else if (localTime > cloudTime) {
-              // Local is newer — force back to cloud.
               projects[row.id]._needsSync = true;
               debouncedSave(); 
           }
         });
         
-        // Push any local projects to cloud that don't exist in cloud yet
         Object.keys(projects).forEach(localId => {
             if (!cloudKeys.has(localId) && projects[localId].updated_at) {
                 projects[localId]._needsSync = true;
@@ -676,7 +680,6 @@ details > summary::-webkit-details-marker { display: none; }
         
         updateRolodexDatalist();
         
-        // If current project is deleted, redirect
         const activeKeys = Object.keys(projects).filter(k => !projects[k]._deleted);
         if (!currentProjectId || !projects[currentProjectId] || projects[currentProjectId]._deleted) { 
             currentProjectId = activeKeys[0] || null; 
@@ -688,7 +691,6 @@ details > summary::-webkit-details-marker { display: none; }
         }
       }
       
-      // Setup Realtime with debounced rendering
       let realtimeRenderTimer;
       supabaseChannel = supabaseClient.channel('karnel-live');
       supabaseChannel.on('postgres_changes', { event:'*', schema:'public', table:'karnel_projects' }, payload => {
@@ -698,13 +700,11 @@ details > summary::-webkit-details-marker { display: none; }
             const cloudTime = new Date(newData.updated_at || 0).getTime();
             const localTime = new Date(oldData?.updated_at || 0).getTime();
             
-            // Avoid echoing our own saves back on top of local mid-types
             if (cloudTime > localTime || !oldData) {
                 projects[payload.new.id] = newData;
             }
         }
         
-        // Debounce Realtime Renders so active typing isn't interrupted frequently
         clearTimeout(realtimeRenderTimer);
         realtimeRenderTimer = setTimeout(() => {
             const ae = document.activeElement;
@@ -817,7 +817,7 @@ details > summary::-webkit-details-marker { display: none; }
     currentView = 'PROJECT';
     closeModals();
     render();
-    saveState(); // Trigger hard save immediately
+    saveState(); 
     showToast("Project created.");
   }
 
@@ -827,7 +827,6 @@ details > summary::-webkit-details-marker { display: none; }
     const pn = projects[projectToDelete]?.name || 'this project';
     if (!confirm(`Delete "${pn}"? This cannot be undone.`)) return;
     
-    // Soft-delete tombstone prevents cloud from resurrecting it.
     projects[projectToDelete]._deleted = true;
     projects[projectToDelete].updated_at = new Date().toISOString();
     projects[projectToDelete]._needsSync = true;
@@ -857,6 +856,7 @@ details > summary::-webkit-details-marker { display: none; }
     localStorage.setItem('karnel_active_final16', currentProjectId); 
     setView('PROJECT'); 
   }
+  
   function closeModals() { 
       document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none'); 
       activeModalDate = null;
@@ -923,7 +923,7 @@ details > summary::-webkit-details-marker { display: none; }
           
           if (field === 'status') {
               evaluateDependencies(p);
-              syncTilesToState(projectId); // Update DOM safely
+              syncTilesToState(projectId);
           } 
       }
     } 
@@ -1247,7 +1247,11 @@ details > summary::-webkit-details-marker { display: none; }
     document.getElementById('event-text').value = '';
     activeModalDate = date; 
     refreshEventList(date); 
-    if (currentView === 'DAY' || currentView === 'CALENDAR') render();
+    
+    if (currentView === 'DAY' || currentView === 'CALENDAR') {
+        render(); 
+        document.getElementById('modal-event').style.display = 'flex';
+    }
     setTimeout(() => document.getElementById('event-text').focus(), 50);
   }
 
@@ -1314,7 +1318,6 @@ details > summary::-webkit-details-marker { display: none; }
       if (el) el.className = 'nav-link' + (currentView === k ? ' active' : '');
     });
 
-    // Ensure defensive defaults exist before proceeding
     const activeProjects = Object.values(projects).filter(p => !p._deleted);
 
     // Empty state failsafe
@@ -1578,6 +1581,7 @@ details > summary::-webkit-details-marker { display: none; }
         </div>
       </div>`;
 
+      // Render independent modules safely without nuking focus loop
       renderChecklist(currentProjectId);
       renderLocationLink(currentProjectId);
   }
