@@ -1308,7 +1308,7 @@ details > summary::-webkit-details-marker { display: none; }
         let el = p.projectLocationLink;
         if (!el.startsWith('microsoft-edge:') && !el.startsWith('http')) el = 'https://' + el;
         container.innerHTML = `<div style="display:flex;gap:8px;align-items:center;margin-top:12px;">
-            <a href="${escapeHTML(el)}" class="btn btn-primary" target="_blank" style="flex:1;">🌍 Open Link</a>
+            <a href="${escapeHTML(el)}" class="btn btn-primary" target="_blank" style="flex:1;text-decoration:none;">🌍 Open Link</a>
             <button class="btn-icon" style="flex:none;" onclick="updateField('${p.id}','locationLink',null,null,'')" title="Clear Link">🗑️</button>
         </div>`;
       } else {
