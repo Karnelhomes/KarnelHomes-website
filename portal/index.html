@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>KARNEL HOMES — Site Portal</title>
-<!-- Force the absolute latest Supabase SDK to support sb_publishable keys -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
-<!-- Fallback if jsdelivr is blocked by strict firewalls -->
 <script>if(!window.supabase){document.write('<script src="https://unpkg.com/@supabase/supabase-js@2"><\/script>');}</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -236,16 +234,36 @@ input::placeholder, textarea::placeholder { color: var(--text-stone); font-weigh
 .tile input[type="date"] { padding: 5px 9px; }
 .trades-table input { border-color: transparent; }
 
-/* SMART BUTTONS */
-.smart-btn { width: 100%; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 800; letter-spacing: 0.04em; border: none; margin-top: 2px; transition: 0.18s var(--ease); }
-.smart-btn:not(:disabled):hover { transform: translateY(-1px); }
+/* SMART DROPDOWNS */
+.smart-btn { 
+    width: 100%; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 800; 
+    letter-spacing: 0.04em; border: none; margin-top: 2px; transition: 0.18s var(--ease); 
+    font-family: 'Nunito Sans', sans-serif;
+}
+select.smart-dropdown {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+    padding-right: 30px;
+    text-align: left;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+select.smart-dropdown.smart-complete {
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
+}
+select.smart-dropdown:not(:disabled):hover { transform: translateY(-1px); }
+
 .smart-start { background: var(--gold-lt); color: var(--gold); border: 1px solid #DEC070; }
 .smart-start:hover { background: #F0DFA0; }
-.smart-complete { background: var(--forest); color: #fff; }
+.smart-progress { background: #E9EFF6; color: var(--fc-navy); border: 1px solid #B0C4DE; }
+.smart-progress:hover { background: #D5E1F0; }
+.smart-complete { background: var(--forest); color: #fff; border: 1px solid var(--moss); }
 .smart-complete:hover { background: var(--moss); box-shadow: 0 4px 12px rgba(45,84,64,0.28); }
-.smart-reopen { background: var(--surface-alt); color: var(--text-stone); border: 1px solid var(--border); }
-.smart-reopen:hover { background: var(--border); color: var(--text-main); }
-.smart-locked { background: var(--stone-lt); color: var(--stone); cursor: not-allowed; border: 1px dashed var(--border-dark); }
+.smart-locked { background: var(--stone-lt); color: var(--stone); cursor: not-allowed; border: 1px dashed var(--border-dark); text-align: center; }
 
 /* LISTS & PANELS */
 .info-col { display: flex; flex-direction: column; gap: 16px; }
@@ -278,14 +296,14 @@ details > summary::-webkit-details-marker { display: none; }
 .cal-cell.today .cal-date-num { color: var(--forest); }
 .cal-event-chip {
   font-size: 11px; background: var(--forest-lt); color: var(--forest); border: 1px solid var(--forest-mid);
-  padding: 4px 6px; border-radius: 4px; font-weight: 700; white-space: nowrap; overflow: hidden;
+  padding: 5px 8px; border-radius: 4px; font-weight: 700; white-space: nowrap; overflow: hidden;
   text-overflow: ellipsis; transition: 0.2s; cursor: grab; margin-bottom: 2px; flex-shrink: 0;
 }
 .cal-event-chip.completed { text-decoration: line-through; background: var(--stone-lt); color: var(--stone); border-color: var(--border); opacity: 0.6; }
 
 /* MY DAY VIEW */
 .day-sections { display: grid; grid-template-columns: 1fr 300px; gap: 24px; align-items: start; }
-.priority-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px; box-shadow: var(--shadow-sm); border-left: 4px solid var(--gold); margin-bottom: 10px; transition: 0.18s; }
+.priority-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; display: flex; align-items: flex-start; gap: 12px; box-shadow: var(--shadow-sm); border-left: 4px solid var(--gold); margin-bottom: 12px; transition: 0.18s; }
 .priority-card:hover { transform: translateX(2px); box-shadow: var(--shadow-md); }
 .event-text { font-size: 14px; font-weight: 800; color: var(--text-dark); transition: 0.2s; }
 
@@ -304,8 +322,8 @@ details > summary::-webkit-details-marker { display: none; }
 @keyframes slideUp { from { transform: translateY(12px) translateX(100%); opacity: 0; } to { transform: translateY(0) translateX(0); opacity: 1; } }
 
 /* VIEW HEADER */
-.view-header { padding: 28px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 28px; display: flex; align-items: center; justify-content: space-between; }
-.view-title { font-family: 'Inter', sans-serif; font-size: 28px; font-weight: 900; color: var(--text-dark); letter-spacing: -0.03em; }
+.view-header { padding: 32px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 28px; display: flex; align-items: center; justify-content: space-between; }
+.view-title { font-family: 'Inter', sans-serif; font-size: 32px; font-weight: 900; color: var(--text-dark); letter-spacing: -0.03em; }
 
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -349,7 +367,7 @@ details > summary::-webkit-details-marker { display: none; }
 <datalist id="rolodex-companies"></datalist>
 
 <!-- ============================================================
-     MODALS (Native forms for Enter/Esc & Tab indexing)
+     MODALS
 ============================================================ -->
 <div class="modal-overlay" id="modal-project">
   <form class="modal-content" onsubmit="submitProjectModal(); return false;" autocomplete="off">
@@ -362,7 +380,6 @@ details > summary::-webkit-details-marker { display: none; }
   </form>
 </div>
 
-<!-- Replaced prompt() with native modal -->
 <div class="modal-overlay" id="modal-edit-project">
   <form class="modal-content" onsubmit="submitEditProject(); return false;" autocomplete="off">
     <div class="modal-title">Edit Project Name</div>
@@ -563,6 +580,13 @@ details > summary::-webkit-details-marker { display: none; }
     "LOCKED":         { bg: "bg-locked", tile: "status-locked" }
   };
 
+  function getDisplayStatus(status) {
+    if (status === 'READY TO START') return 'NOT STARTED';
+    if (status === 'IN PROGRESS') return 'IN PROGRESS';
+    if (status === 'COMPLETE') return 'COMPLETED';
+    return 'LOCKED';
+  }
+
   // ==========================================
   // STATE MANAGEMENT
   // ==========================================
@@ -589,7 +613,6 @@ details > summary::-webkit-details-marker { display: none; }
   let saveTimeout;
   let showCompletedChecklist = false;
 
-  // Calendar Drag tracking
   let isDragging = false;
 
   // Initial State Sanitization
@@ -930,29 +953,40 @@ details > summary::-webkit-details-marker { display: none; }
   // ==========================================
   // WORKFLOW & TILES (DOM In-Place Updates)
   // ==========================================
+  
+  // Revised engine: Cascades locks dynamically down the chain 
+  // if an upstream task is pulled from COMPLETE to IN PROGRESS
   function evaluateDependencies(project) {
-    let changed = false;
+    let anyChange = false;
+    let passChanged = false;
     if (!project || !project.steps) return false;
-    
-    project.steps.forEach(step => {
-      if (step.status === "COMPLETE" || step.status === "READY TO START" || step.status === "IN PROGRESS") return;
-      
-      const met = step.prereqs.every(rId => {
-          const pre = project.steps.find(s => String(s.id) === String(rId));
-          return pre && pre.status === "COMPLETE";
-      });
-      if (met && step.status === "LOCKED") { 
-          step.status = "READY TO START"; 
-          changed = true; 
-      }
-    });
-    
-    if (changed) {
+
+    do {
+        passChanged = false;
+        project.steps.forEach(step => {
+            const met = step.prereqs.length === 0 || step.prereqs.every(rId => {
+                const pre = project.steps.find(s => String(s.id) === String(rId));
+                return pre && pre.status === "COMPLETE";
+            });
+
+            if (met && step.status === "LOCKED") {
+                step.status = "READY TO START";
+                passChanged = true;
+                anyChange = true;
+            } else if (!met && step.status !== "LOCKED") {
+                step.status = "LOCKED";
+                passChanged = true;
+                anyChange = true;
+            }
+        });
+    } while (passChanged);
+
+    if (anyChange) {
         project.updated_at = new Date().toISOString();
         project._needsSync = true;
-        debouncedSave(); 
+        debouncedSave();
     }
-    return changed;
+    return anyChange;
   }
 
   function updateField(projectId, type, id, field, value) {
@@ -996,7 +1030,7 @@ details > summary::-webkit-details-marker { display: none; }
              const mapping = STATUS_MAP[step.status] || STATUS_MAP["LOCKED"];
              tileEl.className = `tile ${mapping.tile}`;
              const badge = tileEl.querySelector('.step-badge');
-             if(badge) { badge.className = `step-badge ${mapping.bg}`; badge.textContent = step.status; }
+             if(badge) { badge.className = `step-badge ${mapping.bg}`; badge.textContent = getDisplayStatus(step.status); }
              const btnContainer = tileEl.querySelector('.smart-btn-container');
              if(btnContainer) { btnContainer.innerHTML = generateSmartButton(step, projectId); }
          }
@@ -1032,7 +1066,7 @@ details > summary::-webkit-details-marker { display: none; }
       ondragstart="dragStart(event,'${step.id}')" ondragover="dragOver(event,this)" ondragleave="dragLeave(event,this)" ondrop="drop(event,'${step.id}',this)">
       ${tag}
       <div class="tile-header">
-        <span class="step-badge ${mapping.bg}">${step.status}</span>
+        <span class="step-badge ${mapping.bg}">${getDisplayStatus(step.status)}</span>
         <div style="display:flex;gap:6px;align-items:center;">
           <span class="tile-owner">${escapeHTML(step.owner)}</span>
           <button class="btn-danger" style="padding:2px 6px;font-size:13px;" onclick="removeJob('${projectId}','${step.id}')">×</button>
@@ -1046,10 +1080,25 @@ details > summary::-webkit-details-marker { display: none; }
   }
 
   function generateSmartButton(step, projectId) {
-    if (step.status === 'READY TO START') return `<button class="smart-btn smart-start"    onclick="updateField('${projectId}','step','${step.id}','status','IN PROGRESS')">Start Work ▶</button>`;
-    if (step.status === 'IN PROGRESS')  return `<button class="smart-btn smart-complete" onclick="updateField('${projectId}','step','${step.id}','status','COMPLETE')">Mark Complete ✓</button>`;
-    if (step.status === 'COMPLETE')      return `<button class="smart-btn smart-reopen"   onclick="updateField('${projectId}','step','${step.id}','status','IN PROGRESS')">↺ Reopen</button>`;
-    return `<button class="smart-btn smart-locked" disabled>🔒 Locked</button>`;
+    if (step.status === 'LOCKED') {
+        return `<select class="smart-btn smart-locked" disabled><option>🔒 Locked</option></select>`;
+    }
+
+    const isReady = step.status === 'READY TO START' ? 'selected' : '';
+    const isInProg = step.status === 'IN PROGRESS' ? 'selected' : '';
+    const isComp = step.status === 'COMPLETE' ? 'selected' : '';
+
+    let colorClass = 'smart-start';
+    if (step.status === 'IN PROGRESS') colorClass = 'smart-progress';
+    if (step.status === 'COMPLETE') colorClass = 'smart-complete';
+
+    return `
+    <select class="smart-btn ${colorClass} smart-dropdown" onchange="updateField('${projectId}','step','${step.id}','status',this.value)">
+        <option value="READY TO START" ${isReady}>Not Started</option>
+        <option value="IN PROGRESS" ${isInProg}>In Progress</option>
+        <option value="COMPLETE" ${isComp}>Completed</option>
+    </select>
+    `;
   }
 
   function openJobModal() {
@@ -1085,7 +1134,6 @@ details > summary::-webkit-details-marker { display: none; }
     p.steps = (p.steps || []).filter(s => String(s.id) !== String(stepId));
     p.steps.forEach(s => { s.prereqs = s.prereqs.filter(id => String(id) !== String(stepId)); });
     
-    // Unlock orphans whose prereq was just deleted
     evaluateDependencies(p);
     markProjectUpdated(projectId);
     render();
@@ -1098,7 +1146,9 @@ details > summary::-webkit-details-marker { display: none; }
       e.dataTransfer.setData('text/plain', String(stepId)); 
   }
   function dragOver(e, el) { e.preventDefault(); el.classList.add('drag-over'); }
-  function dragLeave(e, el) { if (!el.contains(e.relatedTarget)) el.classList.remove('drag-over'); }
+  function dragLeave(e, el) { 
+      if (!el.contains(e.relatedTarget)) el.classList.remove('drag-over'); 
+  }
   function drop(e, targetId, el) {
     e.preventDefault(); el.classList.remove('drag-over');
     isDragging = false;
@@ -1197,8 +1247,6 @@ details > summary::-webkit-details-marker { display: none; }
                 if(text) text.style.textDecoration = 'none';
             }
         }
-        
-        // Let it reorganize naturally on next render/toggle
     }
   }
   
@@ -1260,7 +1308,7 @@ details > summary::-webkit-details-marker { display: none; }
         let el = p.projectLocationLink;
         if (!el.startsWith('microsoft-edge:') && !el.startsWith('http')) el = 'https://' + el;
         container.innerHTML = `<div style="display:flex;gap:8px;align-items:center;margin-top:12px;">
-            <a href="${escapeHTML(el)}" class="btn btn-primary" target="_blank" style="flex:1;text-decoration:none;">🌍 Open Link</a>
+            <a href="${escapeHTML(el)}" class="btn btn-primary" target="_blank" style="flex:1;">🌍 Open Link</a>
             <button class="btn-icon" style="flex:none;" onclick="updateField('${p.id}','locationLink',null,null,'')" title="Clear Link">🗑️</button>
         </div>`;
       } else {
@@ -1361,7 +1409,8 @@ details > summary::-webkit-details-marker { display: none; }
   }
 
   function toggleEventStatusDOM(event, projectId, eventId) {
-    if (isDragging) return; 
+    if (isDragging) return; // Prevent accidental toggles mid-drag
+    
     const p = projects[projectId]; if(!p || !p.events) return;
     const ev = p.events.find(e => String(e.id) === String(eventId));
     if (ev) { 
@@ -1378,7 +1427,8 @@ details > summary::-webkit-details-marker { display: none; }
             
             if (ev.status === 'COMPLETED') {
                 row.style.opacity = '0.5';
-                row.style.borderLeft = '1px solid var(--border)';
+                if(row.classList.contains('priority-card')) row.style.borderLeft = '1px solid var(--border)';
+                else row.style.borderLeft = '1px solid var(--border)';
                 if(text) text.style.textDecoration = 'line-through';
                 if(row.classList.contains('cal-event-chip')) row.classList.add('completed');
             } else {
@@ -1436,6 +1486,11 @@ details > summary::-webkit-details-marker { display: none; }
   // RENDER ENGINE
   // ==========================================
   function render() {
+    // Failsafe for invalid view state
+    if (!['DASHBOARD','PROJECT','DAY','CALENDAR'].includes(currentView)) {
+        currentView = 'DASHBOARD';
+    }
+
     const header  = document.getElementById('portal-header');
     const content = document.getElementById('portal-content');
 
@@ -1448,6 +1503,7 @@ details > summary::-webkit-details-marker { display: none; }
 
     const activeProjects = Object.values(projects).filter(p => !p._deleted);
 
+    // Empty state failsafe
     if (activeProjects.length === 0) {
       header.innerHTML = `<div class="view-header"><div class="view-title">Welcome to Field Command</div></div>`;
       content.innerHTML = `<div class="empty-state" style="margin-top:40px;">No active projects.<br><br>Click <b>+ New</b> in the sidebar to begin.</div>`;
@@ -1676,8 +1732,8 @@ details > summary::-webkit-details-marker { display: none; }
                   <tbody>
                     ${p.contractors.map((c,i) => `<tr>
                       <td><span class="trade-role">${escapeHTML(c.trade)}</span></td>
-                      <td><input type="text" list="rolodex-companies" placeholder="Company" value="${escapeHTML(c.company)}" onchange="updateField('${p.id}','contractor',${i},'company',this.value)"></td>
-                      <td><input type="text" placeholder="Contact" value="${escapeHTML(c.contact)}" onchange="updateField('${p.id}','contractor',${i},'contact',this.value)"></td>
+                      <td><input type="text" list="rolodex-companies" placeholder="Company" value="${escapeHTML(c.company)}" oninput="updateField('${p.id}','contractor',${i},'company',this.value)"></td>
+                      <td><input type="text" placeholder="Contact" value="${escapeHTML(c.contact)}" oninput="updateField('${p.id}','contractor',${i},'contact',this.value)"></td>
                       <td><input type="email" placeholder="Email" value="${escapeHTML(c.email)}" onchange="validateEmailInline(this, '${p.id}', ${i})"></td>
                       <td><button class="btn-danger" style="padding:3px 7px;font-size:13px;" onclick="removeTrade(${i})">×</button></td>
                     </tr>`).join('')}
