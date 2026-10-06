@@ -2,1792 +2,356 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>KARNEL HOMES — Site Portal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Karnel Homes — Projects</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
-<script>if(!window.supabase){document.write('<script src="https://unpkg.com/@supabase/supabase-js@2"><\/script>');}</script>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800;6..12,900&display=swap" rel="stylesheet">
-
+<script>window.supabase||document.write('<script src="https://unpkg.com/@supabase/supabase-js@2"><\/script>')</script>
 <style>
-/* ============================================================
-   DESIGN TOKENS — KARNEL HOMES  |  EARTHY PROFESSIONAL
-============================================================ */
-:root {
-  --base:        #EFEBE3;
-  --surface:     #FAF8F4;
-  --surface-alt: #F2EDE4;
-  --nav:         #221C12;
-  --nav-text:    #A89880;
-  --nav-active:  #FFFFFF;
-
-  --forest:      #3D6B4F;
-  --forest-lt:   #EBF2EE;
-  --forest-mid:  #C4D8CC;
-  --moss:        #2D5440;
-  --bark:        #7A5C3A;
-  --bark-lt:     #F2EBE0;
-  --gold:        #A07828;
-  --gold-lt:     #F5EDDA;
-  --stone:       #8C8278;
-  --stone-lt:    #F0EDE8;
-
-  --text-dark:   #1A1410;
-  --text-main:   #3A3028;
-  --text-muted:  #6E6258;
-  --text-stone:  #9C8E82;
-
-  --border:      #DDD6CC;
-  --border-dark: #C8BEB4;
-
-  --radius-sm:   6px;
-  --radius-md:   10px;
-  --radius-lg:   14px;
-  --radius-xl:   18px;
-
-  --shadow-sm:   0 1px 3px rgba(60,40,20,0.08);
-  --shadow-md:   0 4px 16px rgba(60,40,20,0.10);
-  --shadow-lg:   0 12px 40px rgba(60,40,20,0.14);
-
-  --ease:        cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body {
-  font-family: 'Nunito Sans', ui-sans-serif, system-ui, -apple-system, sans-serif !important;
-  background: var(--base);
-  color: var(--text-main);
-  min-height: 100vh;
-  overflow: hidden;
-}
-
-/* ============================================================
-   APP LAYOUT (SIDEBAR + MAIN CONTENT)
-============================================================ */
-.app-wrapper { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
-
-/* LEFT SIDEBAR */
-.left-sidebar {
-  width: 260px; background: var(--nav); display: flex; flex-direction: column; flex-shrink: 0;
-  border-right: 1px solid rgba(255,255,255,0.06); z-index: 200; transition: transform 0.3s var(--ease);
-}
-
-.sidebar-header { padding: 24px 20px 20px; display: flex; flex-direction: column; border-bottom: 1px solid rgba(255,255,255,0.06); }
-.sidebar-brand-name { font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 900; color: #fff; letter-spacing: 0.08em; line-height: 1; }
-.sidebar-brand-sub { font-size: 10px; font-weight: 600; color: var(--nav-text); letter-spacing: 0.12em; margin-top: 5px; }
-
-.sidebar-section { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; gap: 6px; }
-.sidebar-section.scrollable { flex: 1; overflow-y: auto; border-bottom: none; }
-.sidebar-section.scrollable::-webkit-scrollbar { width: 4px; }
-.sidebar-section.scrollable::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
-
-.sidebar-label {
-  font-size: 10px; font-weight: 800; color: var(--nav-text); letter-spacing: 0.1em;
-  text-transform: uppercase; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
-}
-
-.nav-link {
-  display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: var(--radius-sm);
-  font-size: 13px; font-weight: 700; color: var(--nav-text); cursor: pointer;
-  transition: background 0.18s var(--ease), color 0.18s var(--ease); border: 1px solid transparent;
-}
-.nav-link:hover { background: rgba(255,255,255,0.07); color: #fff; }
-.nav-link.active { background: var(--forest); color: #fff; border-color: rgba(255,255,255,0.12); }
-
-.project-link {
-  padding: 10px 14px; font-size: 13px; font-weight: 600; color: var(--nav-text); cursor: pointer;
-  transition: 0.15s; border-radius: var(--radius-sm); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-left: 3px solid transparent;
-}
-.project-link:hover { background: rgba(255,255,255,0.07); color: #fff; }
-.project-link.active { background: rgba(255,255,255,0.05); color: #fff; border-left-color: var(--forest); font-weight: 800; }
-
-/* MAIN COLUMN */
-.main-column { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--base); }
-
-/* TOP NAVIGATION BAR */
-.top-nav {
-  height: 60px; display: flex; align-items: center; justify-content: space-between;
-  padding: 0 28px; gap: 16px; position: relative; z-index: 90;
-  background: var(--surface); border-bottom: 1px solid var(--border); box-shadow: 0 2px 0 rgba(17,17,17,.015);
-}
-
-.mobile-menu-btn { display: none; background: transparent; border: none; font-size: 24px; color: var(--text-dark); cursor: pointer; padding: 4px; }
-.top-nav-right { display: flex; align-items: center; gap: 12px; margin-left: auto; }
-
-.status-chip { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 800; padding: 5px 10px; border-radius: 999px; letter-spacing: 0.07em; transition: 0.3s; white-space: nowrap; }
-.status-chip.saved  { background: rgba(61,107,79,0.15); color: var(--forest); border: 1px solid rgba(61,107,79,0.3); }
-.status-chip.saving { background: rgba(160,120,40,0.15); color: var(--gold); border: 1px solid rgba(160,120,40,0.3); }
-.status-chip.live   { background: rgba(61,107,79,0.12); color: var(--forest); border: 1px solid rgba(61,107,79,0.3); }
-.status-chip.offline{ background: rgba(160,120,40,0.12);color: var(--gold); border: 1px solid rgba(160,120,40,0.3); }
-.status-chip.error  { background: rgba(181,64,64,0.12); color: #B54040; border: 1px solid rgba(181,64,64,0.3); }
-
-/* PAGE SHELL */
-.page-shell { flex: 1; overflow-y: auto; padding: 0 32px 60px; }
-
-/* DASHBOARD */
-.kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 32px; }
-.kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); }
-.kpi-label { font-size: 11px; font-weight: 800; color: var(--text-stone); text-transform: uppercase; letter-spacing: 0.06em; }
-.kpi-val { font-size: 36px; font-weight: 900; color: var(--forest); margin-top: 8px; line-height: 1; letter-spacing: -0.02em; }
-.dashboard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
-.dash-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease); cursor: pointer; }
-.dash-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--border-dark); }
-.dash-title { font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 800; color: var(--text-dark); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; letter-spacing: -0.02em; }
-.dash-pct { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 800; color: var(--forest); background: var(--forest-lt); padding: 4px 10px; border-radius: 999px; }
-.dash-stats { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--text-stone); margin-top: 16px; }
-
-/* HEADERS */
-.project-hero { padding: 32px 0 24px; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
-.project-hero-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
-.project-name-group { display: flex; align-items: center; gap: 10px; }
-.project-name { font-family: 'Inter', sans-serif; font-size: 32px; font-weight: 900; color: var(--text-dark); letter-spacing: -0.03em; line-height: 1.1; }
-.project-hero-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-
-.progress-section { margin-top: 18px; display: flex; align-items: center; gap: 20px; }
-.progress-number { font-size: 36px; font-weight: 900; color: var(--forest); letter-spacing: -0.04em; line-height: 1; flex-shrink: 0; }
-.progress-detail { flex: 1; }
-.progress-label { font-size: 11px; font-weight: 800; color: var(--text-stone); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
-.progress-track { width: 100%; max-width: 480px; background: var(--border); border-radius: 999px; height: 7px; overflow: hidden; }
-.progress-bar { height: 100%; background: linear-gradient(90deg, var(--forest), var(--moss)); border-radius: 999px; transition: width 0.7s var(--ease); }
-
-.content-grid { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
-
-/* BUTTONS */
-button { font-family: inherit; cursor: pointer; transition: 0.18s var(--ease); }
-.btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 800; border: 1px solid transparent; }
-.btn-primary { background: var(--forest); color: #fff; border-color: var(--moss); }
-.btn-primary:hover { background: var(--moss); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(45,84,64,0.3); }
-.btn-outline { background: var(--surface); border-color: var(--border); color: var(--text-main); }
-.btn-outline:hover { background: var(--surface-alt); border-color: var(--border-dark); }
-.btn-ghost { background: transparent; border-color: transparent; color: var(--text-muted); padding: 6px 10px; }
-.btn-ghost:hover { background: var(--surface-alt); color: var(--text-main); }
-.btn-danger { background: transparent; border: 1px solid transparent; color: #B54040; padding: 8px 12px; font-weight: 800;}
-.btn-danger:hover { background: #FBEAEA; border-color: #F0C0C0; }
-.btn-icon { background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 34px; min-height: 34px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 14px; }
-.btn-icon:hover { background: var(--border); color: var(--text-main); }
-.btn-add { background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 14px; font-size: 11px; font-weight: 800; color: var(--forest); }
-.btn-add:hover { background: var(--forest-lt); border-color: var(--forest-mid); }
-
-/* PANELS / TABLES */
-.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden; }
-.panel-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--surface); }
-.panel-title { font-size: 12px; font-weight: 800; color: var(--text-stone); letter-spacing: 0.09em; text-transform: uppercase; }
-.panel-body { padding: 20px; }
-.trades-table { width: 100%; border-collapse: collapse; min-width: 500px; }
-.trades-table th { padding: 10px 16px; font-size: 10px; font-weight: 800; color: var(--text-stone); letter-spacing: 0.09em; text-transform: uppercase; background: var(--surface-alt); border-bottom: 1px solid var(--border); text-align: left; }
-.trades-table td { padding: 6px 16px; border-bottom: 1px solid rgba(0,0,0,0.04); vertical-align: middle; }
-.trades-table tr:last-child td { border-bottom: none; }
-.trades-table tr:hover td { background: var(--surface-alt); }
-.trade-role { font-size: 12px; font-weight: 800; color: var(--bark); letter-spacing: 0.04em; text-transform: uppercase; }
-.table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-
-/* TILES */
-.workflow-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 16px; }
-.tile {
-  background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm);
-  display: flex; flex-direction: column; gap: 10px; padding: 16px 16px 14px; position: relative; cursor: grab;
-  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), border-color 0.2s; overflow: hidden; animation: tileUp 0.35s var(--ease) both;
-}
-@keyframes tileUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-.tile::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 999px 0 0 999px; background: var(--border-dark); transition: background 0.3s; }
-.tile:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
-.tile:hover::before { width: 5px; }
-
-/* Statuses */
-.tile.status-locked { opacity: 0.58; }
-.tile.status-locked::before { background: var(--border-dark); }
-.tile.status-ready::before  { background: var(--gold); }
-.tile.status-in::before     { background: var(--forest); }
-.tile.status-complete::before { background: var(--moss); }
-.tile.status-ready   { border-color: #E8D8A0; background: #FDFAF2; }
-.tile.status-in      { border-color: var(--forest-mid); background: #F4FAF6; }
-.tile.status-complete{ border-color: #B8D4C0; background: #F2F9F5; }
-.drag-over { border: 2px dashed var(--forest) !important; background: var(--forest-lt) !important; transform: scale(1.01) !important; }
-
-.tile-header { display: flex; justify-content: space-between; align-items: center; }
-.step-badge { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 4px; letter-spacing: 0.06em; text-transform: uppercase; transition: 0.2s; }
-.bg-locked   { background: var(--stone-lt); color: var(--stone); border: 1px solid transparent; }
-.bg-ready    { background: var(--gold-lt);  color: var(--gold); border: 1px solid #E8C878; }
-.bg-progress { background: var(--forest-lt); color: var(--forest); border: 1px solid var(--forest-mid); }
-.bg-complete { background: #DCF0E4; color: var(--moss); border: 1px solid #AADABB; }
-
-.tile-name { font-size: 15px; font-weight: 800; color: var(--text-dark); line-height: 1.3; display: flex; gap: 7px; align-items: flex-start; letter-spacing: -0.01em; }
-.drag-handle { color: var(--border-dark); font-size: 13px; cursor: grab; flex-shrink: 0; margin-top: 1px; transition: color 0.15s; padding: 2px; }
-.tile:hover .drag-handle { color: var(--stone); }
-.tile-owner { font-size: 10px; font-weight: 800; color: var(--text-stone); letter-spacing: 0.05em; text-transform: uppercase; }
-.project-tag { font-size: 10px; font-weight: 800; color: var(--bark); background: var(--bark-lt); padding: 3px 9px; border-radius: var(--radius-sm); border: 1px solid #DFC8A8; display: inline-block; width: fit-content; margin-bottom: 2px; }
-
-/* INPUTS */
-.tile input[type="date"], .tile textarea,
-input:not([type="checkbox"]):not([type="date"]):not([type="radio"]), select, textarea {
-  font-size: 13px; padding: 8px 11px; border: 1px solid var(--border); background: var(--surface);
-  border-radius: var(--radius-sm); outline: none; width: 100%; color: var(--text-main);
-  font-family: inherit; transition: 0.15s; font-weight: 600;
-}
-input:not([type="checkbox"]):not([type="date"]):not([type="radio"]):focus, select:focus, textarea:focus,
-.tile input[type="date"]:focus { border-color: var(--forest); box-shadow: 0 0 0 3px var(--forest-lt); }
-.tile textarea { resize: none; height: 36px; line-height: 1.5; transition: height 0.2s var(--ease), border-color 0.15s; }
-.tile textarea:focus { height: 66px; color: var(--text-main); }
-input::placeholder, textarea::placeholder { color: var(--text-stone); font-weight: 500; }
-.tile input[type="date"] { padding: 5px 9px; }
-.trades-table input { border-color: transparent; }
-
-/* SMART DROPDOWNS */
-.smart-btn { 
-    width: 100%; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 800; 
-    letter-spacing: 0.04em; border: none; margin-top: 2px; transition: 0.18s var(--ease); 
-    font-family: 'Nunito Sans', sans-serif;
-}
-select.smart-dropdown {
-    appearance: none;
-    -webkit-appearance: none;
-    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    background-size: 12px;
-    padding-right: 30px;
-    text-align: left;
-    cursor: pointer;
-    text-transform: uppercase;
-}
-select.smart-dropdown.smart-complete {
-    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
-}
-select.smart-dropdown:not(:disabled):hover { transform: translateY(-1px); }
-
-.smart-start { background: var(--gold-lt); color: var(--gold); border: 1px solid #DEC070; }
-.smart-start:hover { background: #F0DFA0; }
-.smart-progress { background: #E9EFF6; color: var(--fc-navy); border: 1px solid #B0C4DE; }
-.smart-progress:hover { background: #D5E1F0; }
-.smart-complete { background: var(--forest); color: #fff; border: 1px solid var(--moss); }
-.smart-complete:hover { background: var(--moss); box-shadow: 0 4px 12px rgba(45,84,64,0.28); }
-.smart-locked { background: var(--stone-lt); color: var(--stone); cursor: not-allowed; border: 1px dashed var(--border-dark); text-align: center; }
-
-/* LISTS & PANELS */
-.info-col { display: flex; flex-direction: column; gap: 16px; }
-.file-panel .panel-body { padding: 16px; }
-.checklist-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
-.check-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); transition: opacity 0.2s; }
-.check-row:last-child { border-bottom: none; }
-.check-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--forest); flex-shrink: 0; cursor: pointer; }
-.check-text { font-size: 13px; flex: 1; word-break: break-word; color: var(--text-main); transition: text-decoration 0.2s; }
-.chk-del { background: transparent; border: none; color: #B54040; font-weight: bold; cursor: pointer; padding: 2px 5px; opacity: 1; transition: opacity 0.15s; font-size: 16px; }
-
-.section-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-.section-label { font-size: 12px; font-weight: 800; color: var(--text-stone); letter-spacing: 0.09em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
-.section-label .chevron { font-size: 10px; transition: transform 0.2s; }
-details:not([open]) .section-label .chevron { transform: rotate(-90deg); }
-details > summary { list-style: none; cursor: pointer; user-select: none; outline: none; }
-details > summary::-webkit-details-marker { display: none; }
-
-/* CALENDAR VIEW */
-.cal-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); overflow-x: auto;}
-.cal-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.cal-month { font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 900; color: var(--text-dark); letter-spacing: -0.02em; }
-.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; min-width: 800px; }
-.cal-day-label { font-size: 11px; font-weight: 800; color: var(--text-stone); letter-spacing: 0.08em; text-transform: uppercase; text-align: center; padding-bottom: 8px; }
-.cal-cell { height: 120px; border-radius: var(--radius-sm); padding: 8px; cursor: pointer; background: var(--surface-alt); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px; transition: 0.18s; overflow-y: auto; scrollbar-width: none;}
-.cal-cell::-webkit-scrollbar { display: none; }
-.cal-cell:hover { border-color: var(--forest); box-shadow: 0 2px 8px rgba(61,107,79,0.12); transform: translateY(-1px); }
-.cal-date-num { font-size: 14px; font-weight: 800; color: var(--text-main); flex-shrink: 0;}
-.cal-cell.today { border-color: var(--forest); background: var(--forest-lt); }
-.cal-cell.today .cal-date-num { color: var(--forest); }
-.cal-event-chip {
-  font-size: 11px; background: var(--forest-lt); color: var(--forest); border: 1px solid var(--forest-mid);
-  padding: 5px 8px; border-radius: 4px; font-weight: 700; white-space: nowrap; overflow: hidden;
-  text-overflow: ellipsis; transition: 0.2s; cursor: grab; margin-bottom: 2px; flex-shrink: 0;
-}
-.cal-event-chip.completed { text-decoration: line-through; background: var(--stone-lt); color: var(--stone); border-color: var(--border); opacity: 0.6; }
-
-/* MY DAY VIEW */
-.day-sections { display: grid; grid-template-columns: 1fr 300px; gap: 24px; align-items: start; }
-.priority-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; display: flex; align-items: flex-start; gap: 12px; box-shadow: var(--shadow-sm); border-left: 4px solid var(--gold); margin-bottom: 12px; transition: 0.18s; }
-.priority-card:hover { transform: translateX(2px); box-shadow: var(--shadow-md); }
-.event-text { font-size: 14px; font-weight: 800; color: var(--text-dark); transition: 0.2s; }
-
-/* EMPTY STATE */
-.empty-state { text-align: center; padding: 56px 20px; color: var(--text-stone); font-weight: 600; background: var(--surface); border-radius: var(--radius-lg); border: 1px dashed var(--border-dark); font-size: 14px; }
-
-/* MODALS */
-.modal-overlay { position: fixed; inset: 0; background: rgba(25,18,10,0.55); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 300; padding: 16px; }
-.modal-content { background: var(--surface); width: 100%; max-width: 440px; padding: 28px; border-radius: var(--radius-xl); display: flex; flex-direction: column; gap: 12px; box-shadow: var(--shadow-lg), 0 0 0 1px var(--border); animation: modalIn 0.22s var(--ease); }
-@keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-.modal-title { font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 900; color: var(--text-dark); letter-spacing: -0.02em; margin-bottom: 4px; }
-.modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
-
-/* TOASTS */
-.toast { position: fixed; bottom: 24px; right: 24px; background: var(--nav); color: var(--nav-active); padding: 13px 20px; border-radius: var(--radius-md); font-size: 14px; font-weight: 700; z-index: 9999; box-shadow: var(--shadow-lg); animation: slideUp 0.28s var(--ease); }
-@keyframes slideUp { from { transform: translateY(12px) translateX(100%); opacity: 0; } to { transform: translateY(0) translateX(0); opacity: 1; } }
-
-/* VIEW HEADER */
-.view-header { padding: 32px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 28px; display: flex; align-items: center; justify-content: space-between; }
-.view-title { font-family: 'Inter', sans-serif; font-size: 32px; font-weight: 900; color: var(--text-dark); letter-spacing: -0.03em; }
-
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 3px; }
-
-/* MOBILE SIDEBAR OVERLAY */
-.sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 150; opacity: 0; transition: opacity 0.3s; }
-.sidebar-backdrop.open { display: block; opacity: 1; }
-
-/* RESPONSIVE & MOBILE OPTIMIZATIONS */
-@media (max-width: 1024px) {
-  .left-sidebar {
-    position: fixed; top: 0; bottom: 0; left: 0;
-    transform: translateX(-100%); box-shadow: var(--shadow-lg);
-  }
-  .left-sidebar.open { transform: translateX(0); }
-  .mobile-menu-btn { display: block; }
-  .top-nav { padding: 0 20px; }
-  .content-grid { grid-template-columns: 1fr; }
-  .day-sections { grid-template-columns: 1fr; }
-  .info-col { flex-direction: row; flex-wrap: wrap; }
-  .info-col .panel { flex: 1; min-width: 240px; }
-}
-@media (max-width: 768px) {
-  input:not([type="checkbox"]):not([type="date"]):not([type="radio"]), 
-  select, textarea { font-size: 16px !important; }
-
-  .page-shell { padding: 0 16px 40px; }
-  .top-nav { padding: 0 16px; }
-  .project-name { font-size: 24px; }
-  .workflow-grid { grid-template-columns: 1fr; }
-  .progress-number { font-size: 28px; }
-  .kpi-row { grid-template-columns: 1fr 1fr; }
-  .project-hero-top { flex-direction: column; align-items: stretch; gap: 16px; }
-  .project-hero-actions { justify-content: flex-start; }
-}
+:root{--n:#172B4D;--sub:#626F86;--bd:#DCDFE4;--bg:#F7F8F9;--blue:#0C66E4;--blue-d:#0055CC;--blue-bg:#E9F2FF;--green:#1F845A;--red:#C9372C;--r:3px}
+*{box-sizing:border-box;margin:0}
+body{font:14px/20px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--n);background:#fff}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+.top{height:52px;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid var(--bd);background:#fff;position:sticky;top:0;z-index:20}
+.logo{width:28px;height:28px;border-radius:6px;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:800}
+.bn{font-weight:700;font-size:15px}.sp{flex:1}.chip{font-size:12px;color:var(--sub)}
+.btn{border:0;background:#091E420F;border-radius:var(--r);padding:0 12px;font-weight:500;height:32px;white-space:nowrap}
+.btn:hover{background:#091E4224}.btn.p{background:var(--blue);color:#fff}.btn.p:hover{background:var(--blue-d)}
+.btn.d{color:var(--red)}.btn.s{height:28px;padding:0 10px;font-size:13px}
+.err{display:none;background:#FFEDEB;color:#AE2E24;padding:8px 16px;font-size:13px}
+.app{display:grid;grid-template-columns:240px minmax(0,1fr);height:calc(100vh - 52px)}
+.side{background:var(--bg);border-right:1px solid var(--bd);padding:12px 8px;overflow:auto}
+.sh{display:flex;justify-content:space-between;align-items:center;padding:4px 8px 8px;font-size:12px;font-weight:700;color:var(--sub)}
+.sh button{background:none;border:0;font-size:18px;line-height:1;color:var(--sub);border-radius:var(--r);width:24px;height:24px}
+.sh button:hover{background:#091E4224}
+.pi{display:flex;gap:10px;align-items:center;width:100%;background:none;border:0;text-align:left;padding:7px 8px;border-radius:var(--r)}
+.pi:hover{background:#091E420F}.pi.on{background:var(--blue-bg);color:var(--blue-d);font-weight:600}
+.pi span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.av{width:24px;height:24px;border-radius:4px;color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;flex-shrink:0}
+main{overflow:auto;padding:20px 32px 48px}
+.bc{font-size:12px;color:var(--sub)}
+.th{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-top:6px}
+h1{font-size:24px;line-height:28px;font-weight:600}.meta{color:var(--sub);margin-top:2px}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--bd);margin:16px 0 18px}
+.tab{background:none;border:0;padding:8px 12px;margin-bottom:-2px;border-bottom:2px solid transparent;font-weight:600;color:var(--sub)}
+.tab.on{color:var(--blue);border-bottom-color:var(--blue)}.tab:hover{color:var(--blue-d)}
+.tb{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.in{border:1px solid #8590A2;border-radius:var(--r);padding:0 8px;height:32px;background:#fff;min-width:0}
+.tb .in{width:220px}
+.board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:start}
+.col{background:var(--bg);border-radius:6px;padding:8px;min-height:260px}
+.ch{font-size:12px;font-weight:700;color:var(--sub);padding:4px 6px 8px}
+.cnt{background:#091E4214;border-radius:10px;padding:0 6px;margin-left:4px}
+.card{background:#fff;border-radius:var(--r);box-shadow:0 1px 1px #091E4240,0 0 1px #091E424f;padding:10px;margin-bottom:8px}
+.card[draggable=true]{cursor:grab}.card.lk{background:#F1F2F4;color:var(--sub)}
+.ct{margin-bottom:8px;word-break:break-word}
+.cm{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.ep{font-size:12px;font-weight:600;background:#DFD8FD;color:#5E4DB2;padding:0 6px;border-radius:3px}
+.due{font-size:12px;color:var(--sub)}.due.od{color:var(--red);font-weight:600}
+.cf{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;color:var(--sub)}
+.cf select{height:24px;font-size:12px;border:0;background:#091E420F;border-radius:3px;padding:0 4px}
+.x{background:none;border:0;color:var(--sub);font-size:16px;line-height:1;padding:2px 6px;border-radius:3px}.x:hover{background:#091E4224;color:var(--red)}
+.lz{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;text-transform:uppercase;padding:1px 6px;border-radius:3px;background:#DCDFE4;color:#44546F}
+.lz.open{background:#F8E6A0;color:#7F5F01}.lz.done{background:#BAF3DB;color:#216E4E}
+.pb{height:8px;background:#DCDFE4;border-radius:4px;overflow:hidden;margin:6px 0 20px;max-width:420px}.pb i{display:block;height:100%;background:var(--green)}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;font-size:12px;font-weight:600;color:var(--sub);padding:8px 10px;border-bottom:2px solid var(--bd)}
+.tbl td{padding:10px;border-bottom:1px solid var(--bd);vertical-align:middle}
+.tbl tr:hover td{background:var(--bg)}.tbl tr.lk td:first-child+td{color:var(--sub)}
+.nm{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#091E4214;font-size:12px;font-weight:600;margin-right:10px}
+.ib{display:flex;gap:2px;justify-content:flex-end}
+.ib button{background:none;border:0;color:var(--sub);padding:2px 7px;border-radius:3px}.ib button:hover{background:#091E4224;color:var(--n)}
+.sa{display:flex;gap:6px}
+.addrow{display:flex;gap:8px;margin-top:14px}.addrow .in{flex:1;max-width:360px}
+.none{color:var(--sub);padding:12px 4px}
+.empty{max-width:420px;margin:12vh auto;text-align:center}.empty h1{margin-bottom:8px}.empty p{color:var(--sub);margin-bottom:16px}
+.ovl{position:fixed;inset:0;background:#091E4270;display:none;place-items:start center;padding-top:9vh;z-index:50}.ovl.on{display:grid}
+.md{background:#fff;border-radius:6px;padding:24px;width:min(480px,92vw);box-shadow:0 8px 12px #091E4226,0 0 1px #091E424f}
+.md h2{font-size:20px;line-height:24px;font-weight:500;margin-bottom:6px}
+.md label{display:block;font-size:12px;font-weight:600;color:var(--sub);margin:14px 0 4px}.md .in{width:100%}
+.dr{display:flex;gap:8px;justify-content:flex-end;margin-top:22px}
+.bdg{background:var(--red);color:#fff;border-radius:10px;font-size:11px;font-weight:700;padding:0 6px;margin-left:6px}
+.ban{display:none;background:#FFF7D6;border-bottom:1px solid #F8E6A0;color:#7F5F01;padding:6px 16px;font-size:13px;align-items:center;gap:12px}
+.cal{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:24px;align-items:start}
+.cg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--bd);border-left:1px solid var(--bd)}
+.dh{padding:6px;font-size:12px;font-weight:600;color:var(--sub);border-right:1px solid var(--bd);border-bottom:1px solid var(--bd);background:var(--bg)}
+.dc{min-height:96px;padding:4px;border-right:1px solid var(--bd);border-bottom:1px solid var(--bd);cursor:pointer;overflow:hidden}
+.dc:hover{background:var(--bg)}.dc.off{background:#FAFBFC;color:#8590A2}
+.dn{font-size:12px;font-weight:600;display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:11px;margin-bottom:2px}
+.dc.td .dn{background:var(--blue);color:#fff}
+.chp{display:block;width:100%;text-align:left;border:0;border-radius:3px;padding:0 5px;margin-bottom:2px;font-size:12px;line-height:18px;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chp.tk{background:#fff;border:1px dashed currentColor}.chp.dn2{opacity:.45;text-decoration:line-through}
+.more{font-size:11px;color:var(--sub);padding-left:4px}
+.agh{font-size:12px;font-weight:700;color:var(--sub);margin:14px 0 4px}.agh.red{color:var(--red)}
+.ai{display:grid;grid-template-columns:52px 1fr auto;gap:8px;padding:8px;border-radius:3px;cursor:pointer;border-left:3px solid transparent;align-items:start}
+.ai:hover{background:var(--bg)}.ai.soon{border-left-color:#F5CD47;background:#FFFCF0}.ai.od{border-left-color:var(--red);background:#FFF5F4}
+.at{font-size:12px;color:var(--sub);padding-top:1px}.ai .meta{font-size:12px}
+.lz.bk{background:#CFE1FD;color:#0055CC}.lz.rm{background:#DFD8FD;color:#5E4DB2}
+.ck{display:flex;gap:8px;align-items:center;margin-top:14px;font-weight:500}
+@media(max-width:1100px){.cal{grid-template-columns:1fr}}
+@media(max-width:900px){.board{grid-template-columns:1fr}.tbl .hide{display:none}}
+@media(max-width:700px){.app{grid-template-columns:1fr;height:auto}.side{display:flex;gap:6px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--bd)}.sh{display:none}.pi{width:auto;white-space:nowrap}main{padding:16px}}
 </style>
 </head>
 <body>
+<header class="top"><div class="logo">K</div><div class="bn">Karnel Homes</div><div class="sp"></div><div class="chip" id="chip">Starting…</div><button class="btn" onclick="openNotif()" aria-label="Alerts">Alerts<span class="bdg" id="bdg" style="display:none">0</span></button><button class="btn p" onclick="openCreate()">Create</button></header>
+<div class="ban" id="ban"></div><div class="err" id="err"></div>
+<div class="app"><aside class="side" id="side"></aside><main id="main"></main></div>
+<div class="ovl" id="ovl" onclick="if(event.target===this)closeM()"><div class="md" id="md"></div></div>
 
-<datalist id="rolodex-companies"></datalist>
-
-<!-- ============================================================
-     MODALS
-============================================================ -->
-<div class="modal-overlay" id="modal-project">
-  <form class="modal-content" onsubmit="submitProjectModal(); return false;" autocomplete="off">
-    <div class="modal-title" id="modal-project-title">New Project</div>
-    <input type="text" id="project-address-input" required placeholder="Enter project address (e.g. 12 Smith St)">
-    <div class="modal-actions">
-      <button type="button" class="btn btn-outline" onclick="closeModals()">Cancel</button>
-      <button type="submit" class="btn btn-primary">Save Project</button>
-    </div>
-  </form>
-</div>
-
-<div class="modal-overlay" id="modal-edit-project">
-  <form class="modal-content" onsubmit="submitEditProject(); return false;" autocomplete="off">
-    <div class="modal-title">Edit Project Name</div>
-    <input type="text" id="edit-project-name-input" required placeholder="Enter project address">
-    <div class="modal-actions">
-      <button type="button" class="btn btn-outline" onclick="closeModals()">Cancel</button>
-      <button type="submit" class="btn btn-primary">Save Changes</button>
-    </div>
-  </form>
-</div>
-
-<div class="modal-overlay" id="modal-job">
-  <form class="modal-content" onsubmit="addJob(); return false;" autocomplete="off">
-    <div class="modal-title">Add Job</div>
-    <input type="text" id="new-job-name" required placeholder="Job title (e.g. Pool Excavation)">
-    <select id="new-job-owner">
-      <option value="Site">Owner: Site</option>
-      <option value="Office">Owner: Office</option>
-    </select>
-    <div style="font-size:11px;font-weight:700;color:var(--text-stone);margin-top:4px;">Activate After:</div>
-    <select id="new-job-prereq"></select>
-    <div class="modal-actions">
-      <button type="button" class="btn btn-outline" onclick="closeModals()">Cancel</button>
-      <button type="submit" class="btn btn-primary">Add Job</button>
-    </div>
-  </form>
-</div>
-
-<div class="modal-overlay" id="modal-trade">
-  <form class="modal-content" onsubmit="addTrade(); return false;" autocomplete="off">
-    <div class="modal-title">Add Trade</div>
-    <input type="text" id="new-trade-role" required placeholder="Trade / Role (e.g. Concreter)">
-    <input type="text" id="new-trade-company" placeholder="Company Name">
-    <input type="text" id="new-trade-contact" placeholder="Contact Name">
-    <input type="email" id="new-trade-email" placeholder="Email Address">
-    <div class="modal-actions">
-      <button type="button" class="btn btn-outline" onclick="closeModals()">Cancel</button>
-      <button type="submit" class="btn btn-primary">Add Trade</button>
-    </div>
-  </form>
-</div>
-
-<div class="modal-overlay" id="modal-event">
-  <form class="modal-content" onsubmit="addCalendarEvent(); return false;" autocomplete="off">
-    <div class="modal-title" id="event-modal-title">Bookings & Agendas</div>
-    <div id="event-list-container" style="display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;padding-right:2px;"></div>
-    <div style="border-top:1px solid var(--border);margin:4px 0;"></div>
-    <div style="font-size:13px;font-weight:800;color:var(--text-dark);">Add New Booking</div>
-    <select id="event-project-selector"></select>
-    <div style="display:flex;gap:8px;">
-      <input type="date" id="event-date" required style="width:140px;" onchange="onCalendarDateChange(this.value)">
-      <input type="text" id="event-text" required style="flex:1;" placeholder="Agenda details...">
-    </div>
-    <div class="modal-actions">
-      <button type="button" class="btn btn-outline" onclick="closeModals()">Done</button>
-      <button type="submit" class="btn btn-primary">+ Add</button>
-    </div>
-  </form>
-</div>
-
-<!-- ============================================================
-     APP LAYOUT
-============================================================ -->
-<div class="app-wrapper">
-
-  <!-- LEFT SIDEBAR -->
-  <aside class="left-sidebar" id="left-sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-brand-name">KARNEL HOMES</div>
-      <div class="sidebar-brand-sub">SITE PORTAL</div>
-    </div>
-    
-    <div class="sidebar-section">
-      <div class="sidebar-label">Main Views</div>
-      <div style="display:flex; flex-direction:column; gap:6px;">
-        <div class="nav-link active" id="nav-dashboard" onclick="setView('DASHBOARD')">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          Dashboard
-        </div>
-        <div class="nav-link" id="nav-project" onclick="setView('PROJECT')">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-          Project Board
-        </div>
-        <div class="nav-link" id="nav-day" onclick="setView('DAY')">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-          My Day
-        </div>
-        <div class="nav-link" id="nav-calendar" onclick="setView('CALENDAR')">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-          Calendar
-        </div>
-      </div>
-    </div>
-
-    <div class="sidebar-section scrollable">
-      <div class="sidebar-label">
-        Active Projects
-        <button class="btn-ghost" style="padding:0; color:var(--gold); font-size:12px;" onclick="openProjectModal('NEW')" title="New Project">+ New</button>
-      </div>
-      <div id="sidebar-project-list" style="display:flex; flex-direction:column; gap:2px; margin-top:4px;">
-        <!-- JS injected -->
-      </div>
-    </div>
-  </aside>
-
-  <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
-
-  <!-- MAIN COLUMN -->
-  <div class="main-column">
-    
-    <!-- TOP NAV (Slim) -->
-    <nav class="top-nav" id="fc-topbar">
-      <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
-      <div class="top-nav-right">
-        <span id="cloud-sync-status" class="status-chip offline">⚠️ OFFLINE</span>
-      </div>
-    </nav>
-
-    <!-- CONTENT AREA -->
-    <div class="page-shell">
-      <div id="portal-header"></div>
-      <div id="portal-content"></div>
-    </div>
-    
-  </div>
-</div>
-
-<!-- ============================================================
-     JAVASCRIPT ENGINE
-============================================================ -->
 <script>
-  // ==========================================
-  // UTILITIES & GLOBALS
-  // ==========================================
-  function generateUUID() {
-    if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
-    return 'id_' + Date.now().toString(36) + Math.random().toString(36).substring(2);
+const KEY='karnel_v3', SB_URL='https://giovxsxgkdilawyxuiqb.supabase.co', SB_KEY='sb_publishable_k9sU8tyILCmQTxAI36ufWQ__JsPNSRY';
+const STD=['Approvals received (CC / CDC)','Site set-up and demolition','Slab and footings','Frame and roof','Lock-up','Fit-out and services','Final inspections','Handover'];
+const COLS=[['todo','To do'],['prog','In progress'],['done','Done']];
+const LOCK='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+const $=s=>document.querySelector(s);
+const uid=()=>Math.random().toString(36).slice(2,9);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let P={},cur=null,tab='board',q='',fs='',sb=null,chan,saveT,rtT,dragId=null,view='proj',cy=new Date().getFullYear(),cm=new Date().getMonth();
+
+function showErr(m){const e=$('#err');e.style.display='block';e.innerHTML='Something went wrong: '+esc(m)+' <button class="btn s" onclick="resetLocal()">Reset this device and reload</button>'}
+function resetLocal(){localStorage.removeItem(KEY);localStorage.removeItem(KEY+'_cur');location.reload()}
+addEventListener('error',e=>showErr(e.message));
+const keyOf=n=>String(n||'').replace(/[^a-z]/gi,'').slice(0,3).toUpperCase()||'PRJ';
+const tint=n=>['#0C66E4','#1F845A','#8270DB','#C25100','#CD519D','#2B7A9B'][[...String(n)].reduce((a,c)=>a+c.charCodeAt(0),0)%6];
+
+/* Normalise any project shape (this app's, or the older steps + checklist format). Never throws on blank entries. */
+function norm(p){
+  const A=x=>Array.isArray(x)?x.filter(o=>o&&typeof o==='object'):[];
+  if(!Array.isArray(p.stages)){
+    p.stages=A(p.steps).map(s=>({id:s.id||uid(),name:s.name||'Untitled stage',state:s.status==='COMPLETE'?'done':/PROGRESS|READY/.test(s.status)?'open':'locked'}));
+    p.tasks=A(p.checklist).map(c=>({id:c.id||uid(),text:c.text||'Untitled task',stage:'',due:'',status:c.status==='COMPLETED'?'done':'todo'}));
   }
-
-  function escapeHTML(str) {
-    if (!str && str !== 0) return '';
-    return String(str).replace(/[&<>'"`]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;','`':'&#96;'}[m]));
-  }
-
-  function validateInput(value, maxLength = 200) {
-    if (!value || typeof value !== 'string') return '';
-    return value.trim().slice(0, maxLength);
-  }
-
-  function validateURL(string) {
-    try {
-      const url = new URL(string);
-      return ['http:','https:','microsoft-edge:'].includes(url.protocol);
-    } catch (_) { return false; }
-  }
-
-  function showToast(message, isError = false) {
-    const ex = document.querySelector('.toast');
-    if (ex) ex.remove();
-    const t = document.createElement('div');
-    t.className = 'toast';
-    t.textContent = message;
-    t.style.borderLeft = isError ? '4px solid #B54040' : '4px solid #3D6B4F';
-    document.body.appendChild(t);
-    setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 3000);
-  }
-
-  function updateRolodexDatalist() {
-    const list = document.getElementById('rolodex-companies');
-    if (!list) return;
-    list.innerHTML = '';
-    rolodex.forEach(c => { if(c.trim()) list.innerHTML += `<option value="${escapeHTML(c)}">`; });
-  }
-
-  function toggleSidebar(forceClose = false) {
-    const sb = document.getElementById('left-sidebar');
-    const bd = document.getElementById('sidebar-backdrop');
-    if (forceClose) {
-        sb.classList.remove('open');
-        bd.classList.remove('open');
-    } else {
-        sb.classList.toggle('open');
-        bd.classList.toggle('open');
-    }
-  }
-
-  // Handle clicking outside modals to close them
-  document.querySelectorAll('.modal-overlay').forEach(el => {
-      el.addEventListener('click', e => { 
-          if (e.target === el) closeModals(); 
-      });
-  });
-
-  const STATUS_MAP = {
-    "READY TO START": { bg: "bg-ready", tile: "status-ready" },
-    "IN PROGRESS":    { bg: "bg-progress", tile: "status-in" },
-    "COMPLETE":       { bg: "bg-complete", tile: "status-complete" },
-    "LOCKED":         { bg: "bg-locked", tile: "status-locked" }
-  };
-
-  function getDisplayStatus(status) {
-    if (status === 'READY TO START') return 'NOT STARTED';
-    if (status === 'IN PROGRESS') return 'IN PROGRESS';
-    if (status === 'COMPLETE') return 'COMPLETED';
-    return 'LOCKED';
-  }
-
-  // ==========================================
-  // STATE MANAGEMENT
-  // ==========================================
-  const DEFAULT_CONTRACTORS = [
-    { trade:"Certifier", company:"", contact:"", email:"" },
-    { trade:"Architect", company:"", contact:"", email:"" },
-    { trade:"Plumber",   company:"", contact:"", email:"" },
-    { trade:"Electrician", company:"", contact:"", email:"" }
-  ];
-  const MASTER_TEMPLATE = [
-    { id:'step_cc_cdc', name:"CC / CDC Approval Received", owner:"Office", prereqs:[], status:"READY TO START", notes:"", date:"" }
-  ];
-
-  let projects       = JSON.parse(localStorage.getItem('karnel_data_final16')) || {};
-  let currentProjectId = localStorage.getItem('karnel_active_final16') || null;
-  let rolodex        = JSON.parse(localStorage.getItem('karnel_rolodex')) || [];
-  let currentView    = localStorage.getItem('karnel_view_final16') || 'DASHBOARD';
-  
-  let projectModalMode = 'NEW';
-  let calMonth = new Date().getMonth();
-  let calYear  = new Date().getFullYear();
-  let activeModalDate = null;
-  let hasPendingSave = false;
-  let saveTimeout;
-  let showCompletedChecklist = false;
-
-  let isDragging = false;
-
-  // Initial State Sanitization
-  if (currentProjectId && projects[currentProjectId] && projects[currentProjectId]._deleted) {
-      const activeKeys = Object.keys(projects).filter(k => !projects[k]._deleted);
-      currentProjectId = activeKeys[0] || null;
-  }
-
-  // ==========================================
-  // SUPABASE CONFIG & SYNC
-  // ==========================================
-  const SUPABASE_URL = 'https://giovxsxgkdilawyxuiqb.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_k9sU8tyILCmQTxAI36ufWQ__JsPNSRY'.trim(); 
-  let supabaseClient = null, supabaseChannel = null;
-  try { if (SUPABASE_URL.startsWith('http')) supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); }
-  catch(e) { console.error("Supabase init error:", e); }
-
-  function updateCloudStatusChip(state) {
-    const el = document.getElementById('cloud-sync-status');
-    if (!el) return;
-    if (state === 'saving') {
-        el.className = 'status-chip saving'; el.textContent = '💾 SAVING...';
-    } else if (state === 'live') {
-        el.className = 'status-chip live'; el.textContent = '● LIVE SYNC';
-    } else if (state === 'error') {
-        el.className = 'status-chip error'; el.textContent = '⚠️ SYNC ERROR';
-    } else {
-        el.className = 'status-chip offline'; el.textContent = '⚠️ OFFLINE';
-    }
-  }
-
-  function markProjectUpdated(projectId) {
-    if (!projects[projectId]) return;
-    projects[projectId].updated_at = new Date().toISOString();
-    projects[projectId]._needsSync = true;
-    debouncedSave();
-  }
-
-  function saveLocalStateSync() {
-    hasPendingSave = false;
-    try {
-        localStorage.setItem('karnel_data_final16', JSON.stringify(projects));
-        localStorage.setItem('karnel_active_final16', currentProjectId);
-        localStorage.setItem('karnel_view_final16', currentView);
-        localStorage.setItem('karnel_rolodex', JSON.stringify([...new Set(rolodex)]));
-    } catch(e) {
-        showToast("Local save failed (storage full?)", true);
-    }
-    updateRolodexDatalist();
-  }
-
-  async function saveState() {
-    updateCloudStatusChip('saving');
-    saveLocalStateSync();
-    await syncToSupabase();
-  }
-
-  function debouncedSave() {
-    hasPendingSave = true;
-    clearTimeout(saveTimeout);
-    saveTimeout = setTimeout(saveState, 500);
-  }
-
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden' && hasPendingSave) {
-        clearTimeout(saveTimeout);
-        saveLocalStateSync(); 
-        syncToSupabase(); 
-    }
-  });
-  window.addEventListener('beforeunload', () => { if (supabaseClient && supabaseChannel) supabaseClient.removeChannel(supabaseChannel); });
-
-  async function syncToSupabase() {
-    if (!supabaseClient) { updateCloudStatusChip('offline'); return; }
-    
-    const projectsToSync = Object.values(projects).filter(p => p._needsSync);
-    if (projectsToSync.length === 0) {
-        updateCloudStatusChip('live');
-        return;
-    }
-
-    try {
-      const payloads = projectsToSync.map(p => {
-        const { _needsSync, ...cleanData } = p; 
-        return {
-          id: p.id,
-          name: p.name,
-          data: cleanData,
-          updated_at: new Date().toISOString() 
-        };
-      });
-      
-      const { error } = await supabaseClient.from('karnel_projects').upsert(payloads);
-      if (error) throw error;
-      
-      projectsToSync.forEach(p => delete p._needsSync);
-      updateCloudStatusChip('live');
-    } catch(e) {
-      console.warn("Sync Error: ", e);
-      updateCloudStatusChip('error');
-    }
-  }
-
-  async function loadFromCloud() {
-    if (!supabaseClient) { updateCloudStatusChip('offline'); return false; }
-    try {
-      if (supabaseChannel) supabaseClient.removeChannel(supabaseChannel);
-      const { data, error } = await supabaseClient.from('karnel_projects').select('*');
-      if (error) throw error;
-      
-      let hasUpdates = false;
-      if (data) {
-        const cloudKeys = new Set();
-        data.forEach(row => {
-          let cloudData = row.data;
-          if (typeof cloudData === 'string') {
-              try { cloudData = JSON.parse(cloudData); } catch (err) { return; }
-          }
-          if (!cloudData) return;
-            
-          cloudKeys.add(row.id);
-          const localData = projects[row.id];
-          
-          const cloudTime = new Date(cloudData.updated_at || 0).getTime();
-          const localTime = new Date(localData?.updated_at || 0).getTime();
-
-          if (!localData || cloudTime > localTime) {
-              projects[row.id] = cloudData;
-              hasUpdates = true;
-          } else if (localTime > cloudTime) {
-              projects[row.id]._needsSync = true;
-              debouncedSave(); 
-          }
-        });
-        
-        Object.keys(projects).forEach(localId => {
-            if (!cloudKeys.has(localId) && projects[localId].updated_at) {
-                projects[localId]._needsSync = true;
-                debouncedSave();
-            }
-        });
-        
-        updateRolodexDatalist();
-        
-        const activeKeys = Object.keys(projects).filter(k => !projects[k]._deleted);
-        if (!currentProjectId || !projects[currentProjectId] || projects[currentProjectId]._deleted) { 
-            currentProjectId = activeKeys[0] || null; 
-            if (currentProjectId) localStorage.setItem('karnel_active_final16', currentProjectId);
-        }
-        
-        if (hasUpdates) {
-            localStorage.setItem('karnel_data_final16', JSON.stringify(projects));
-            render();
-        }
-      }
-      
-      let realtimeRenderTimer;
-      supabaseChannel = supabaseClient.channel('karnel-live');
-      supabaseChannel.on('postgres_changes', { event:'*', schema:'public', table:'karnel_projects' }, payload => {
-        if (payload.new && payload.new.id && payload.new.data) {
-            const newData = payload.new.data;
-            const oldData = projects[payload.new.id];
-            const cloudTime = new Date(newData.updated_at || 0).getTime();
-            const localTime = new Date(oldData?.updated_at || 0).getTime();
-            
-            if (cloudTime > localTime || !oldData) {
-                projects[payload.new.id] = newData;
-            }
-        }
-        
-        clearTimeout(realtimeRenderTimer);
-        realtimeRenderTimer = setTimeout(() => {
-            const ae = document.activeElement;
-            if (!isDragging && (!ae || !['INPUT','TEXTAREA','SELECT'].includes(ae.tagName))) {
-                render();
-            }
-        }, 200);
-        
-      }).subscribe();
-      
-      updateCloudStatusChip('live');
-      return true;
-    } catch(e) { 
-        console.error("Cloud load error:", e); 
-        updateCloudStatusChip('error');
-        return false; 
-    }
-  }
-
-  async function manualSync() {
-    const btn = document.getElementById('sync-btn');
-    if (!btn) return;
-    const orig = btn.textContent; btn.textContent = '⏳ Syncing…'; btn.disabled = true;
-    try { 
-        const ok = await loadFromCloud(); 
-        if(ok) showToast("Synced successfully."); 
-        else showToast("Sync returned with warnings.", true);
-    }
-    catch(e) { showToast("Sync failed. Check connection.", true); }
-    finally { btn.textContent = orig; btn.disabled = false; }
-  }
-
-  // ==========================================
-  // SIDEBAR PROJECTS & NAVIGATION
-  // ==========================================
-  function renderSidebarProjects() {
-    const list = document.getElementById('sidebar-project-list');
-    if(!list) return;
-    list.innerHTML = '';
-    const activeProjects = Object.values(projects).filter(p => !p._deleted);
-    
-    if (activeProjects.length === 0) {
-      list.innerHTML = '<div style="font-size:12px;color:var(--text-stone);padding:8px 0;">No active projects</div>';
-      return;
-    }
-    
-    activeProjects.forEach(p => {
-      if (!p.id) return; 
-      const div = document.createElement('div');
-      div.className = 'project-link' + (p.id === currentProjectId ? ' active' : '');
-      div.textContent = p.name || 'Unnamed Project';
-      div.onclick = () => { switchProject(p.id); };
-      list.appendChild(div);
-    });
-  }
-
-  function setView(v) {
-    if (currentView !== v) {
-      const ps = document.querySelector('.page-shell');
-      if (ps) ps.scrollTo(0,0);
-    }
-    currentView = v;
-    localStorage.setItem('karnel_view_final16', v);
-    if(window.innerWidth <= 1024) toggleSidebar(true);
-    render();
-  }
-
-  function switchProject(id) { 
-    currentProjectId = id; 
-    localStorage.setItem('karnel_active_final16', currentProjectId); 
-    setView('PROJECT'); 
-  }
-
-  // ==========================================
-  // CORE PROJECT FUNCTIONS
-  // ==========================================
-  function openProjectModal(mode) {
-    const activeKeys = Object.keys(projects).filter(k => !projects[k]._deleted);
-    if (mode === 'COPY' && activeKeys.length === 0) return showToast("No active project to copy.", true);
-    projectModalMode = mode;
-    document.getElementById('modal-project-title').innerText = mode === 'NEW' ? 'New Project' : 'Copy Project';
-    document.getElementById('project-address-input').value = '';
-    document.getElementById('modal-project').style.display = 'flex';
-    setTimeout(() => document.getElementById('project-address-input').focus(), 80);
-    if(window.innerWidth <= 1024) toggleSidebar(true);
-  }
-
-  function submitProjectModal() {
-    const name = validateInput(document.getElementById('project-address-input').value);
-    if (!name) return showToast("Please enter a valid address.", true);
-    const timeNow = new Date().toISOString();
-    
-    if (projectModalMode === 'NEW') {
-      const id = 'proj_' + generateUUID(); 
-      projects[id] = { id, name, updated_at: timeNow, _needsSync: true, contractors: JSON.parse(JSON.stringify(DEFAULT_CONTRACTORS)), steps: JSON.parse(JSON.stringify(MASTER_TEMPLATE)), checklist: [], events: [], projectLocationLink: "" };
-      currentProjectId = id;
-    } else {
-      const orig = projects[currentProjectId];
-      const newId = 'proj_' + generateUUID();
-      const steps = orig.steps.map(s => ({ ...s, status: s.prereqs.length === 0 ? "READY TO START" : "LOCKED", notes: "", date: "" }));
-      projects[newId] = { id: newId, name, updated_at: timeNow, _needsSync: true, contractors: JSON.parse(JSON.stringify(orig.contractors)), steps, checklist: [], events: [], projectLocationLink: "" };
-      currentProjectId = newId;
-    }
-    localStorage.setItem('karnel_active_final16', currentProjectId);
-    currentView = 'PROJECT';
-    closeModals();
-    render();
-    saveState(); 
-    showToast("Project created.");
-  }
-
-  function deleteCurrentProject() {
-    if (!currentProjectId) return;
-    const projectToDelete = currentProjectId;
-    const pn = projects[projectToDelete]?.name || 'this project';
-    if (!confirm(`Delete "${pn}"? This cannot be undone.`)) return;
-    
-    projects[projectToDelete]._deleted = true;
-    projects[projectToDelete].updated_at = new Date().toISOString();
-    projects[projectToDelete]._needsSync = true;
-    
-    const activeKeys = Object.keys(projects).filter(k => !projects[k]._deleted);
-    currentProjectId = activeKeys[0] || null;
-    if(currentProjectId) localStorage.setItem('karnel_active_final16', currentProjectId);
-    currentView = 'DASHBOARD';
-    
-    render();
-    saveState();
-    showToast("Project deleted.");
-  }
-
-  function editProjectName() {
-    if (!currentProjectId || !projects[currentProjectId]) return;
-    document.getElementById('edit-project-name-input').value = projects[currentProjectId].name;
-    document.getElementById('modal-edit-project').style.display = 'flex';
-    setTimeout(() => document.getElementById('edit-project-name-input').focus(), 80);
-  }
-  
-  function submitEditProject() {
-      const n = validateInput(document.getElementById('edit-project-name-input').value);
-      if (n) { 
-          projects[currentProjectId].name = n; 
-          markProjectUpdated(currentProjectId); 
-          render(); 
-      }
-      closeModals();
-  }
-
-  function closeModals() { 
-      document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none'); 
-      activeModalDate = null;
-  }
-
-  function exportBackupData() {
-    const cleanProjects = {};
-    Object.values(projects).forEach(p => {
-        if (!p._deleted) {
-            const { _needsSync, _deleted, ...clean } = p;
-            cleanProjects[p.id] = clean;
-        }
-    });
-    const d = { version: 1, timestamp: new Date().toISOString(), projects: cleanProjects, rolodex };
-    const a = Object.assign(document.createElement('a'), { href: "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(d, null, 2)), download: `Karnel_Backup_${new Date().toISOString().split('T')[0]}.json` });
-    document.body.appendChild(a); a.click(); a.remove();
-    showToast("Backup exported.");
-  }
-
-  // ==========================================
-  // WORKFLOW & TILES (DOM In-Place Updates)
-  // ==========================================
-  
-  // Revised engine: Cascades locks dynamically down the chain 
-  // if an upstream task is pulled from COMPLETE to IN PROGRESS
-  function evaluateDependencies(project) {
-    let anyChange = false;
-    let passChanged = false;
-    if (!project || !project.steps) return false;
-
-    do {
-        passChanged = false;
-        project.steps.forEach(step => {
-            const met = step.prereqs.length === 0 || step.prereqs.every(rId => {
-                const pre = project.steps.find(s => String(s.id) === String(rId));
-                return pre && pre.status === "COMPLETE";
-            });
-
-            if (met && step.status === "LOCKED") {
-                step.status = "READY TO START";
-                passChanged = true;
-                anyChange = true;
-            } else if (!met && step.status !== "LOCKED") {
-                step.status = "LOCKED";
-                passChanged = true;
-                anyChange = true;
-            }
-        });
-    } while (passChanged);
-
-    if (anyChange) {
-        project.updated_at = new Date().toISOString();
-        project._needsSync = true;
-        debouncedSave();
-    }
-    return anyChange;
-  }
-
-  function updateField(projectId, type, id, field, value) {
-    const p = projects[projectId]; if (!p) return;
-
-    if (type === 'contractor') {
-      if (!p.contractors || !p.contractors[id]) return; 
-      p.contractors[id][field] = value;
-      if (field === 'company' && value.trim() && !rolodex.includes(value.trim())) rolodex.push(value.trim());
-      markProjectUpdated(projectId);
-    } 
-    else if (type === 'step') {
-      const step = p.steps.find(s => String(s.id) === String(id));
-      if (step) { 
-          step[field] = value; 
-          markProjectUpdated(projectId);
-          
-          if (field === 'status') {
-              evaluateDependencies(p);
-              syncTilesToState(projectId);
-          } 
-      }
-    } 
-    else if (type === 'locationLink') {
-      if (value && !validateURL(value)) { 
-          showToast('Please enter a valid URL (http/https).', true); 
-          return; 
-      }
-      p.projectLocationLink = value;
-      markProjectUpdated(projectId);
-      renderLocationLink(projectId); 
-    }
-  }
-
-  function syncTilesToState(projectId) {
-     const p = projects[projectId]; if(!p) return;
-     
-     (p.steps || []).forEach(step => {
-         const tileEl = document.getElementById(`tile-${projectId}-${step.id}`);
-         if (tileEl) {
-             const mapping = STATUS_MAP[step.status] || STATUS_MAP["LOCKED"];
-             tileEl.className = `tile ${mapping.tile}`;
-             const badge = tileEl.querySelector('.step-badge');
-             if(badge) { badge.className = `step-badge ${mapping.bg}`; badge.textContent = getDisplayStatus(step.status); }
-             const btnContainer = tileEl.querySelector('.smart-btn-container');
-             if(btnContainer) { btnContainer.innerHTML = generateSmartButton(step, projectId); }
-         }
-     });
-
-     const total = p.steps ? p.steps.length : 0;
-     const done = p.steps ? p.steps.filter(s => s.status === 'COMPLETE').length : 0;
-     const pct = total === 0 ? 0 : Math.round((done / total) * 100);
-
-     const numEl = document.getElementById('progress-number-val');
-     const trackEl = document.getElementById('progress-bar-fill');
-     const lblEl = document.getElementById('progress-label-val');
-     if(numEl) numEl.textContent = pct + '%';
-     if(trackEl) trackEl.style.width = pct + '%';
-     if(lblEl) lblEl.textContent = `${done} of ${total} jobs complete`;
-     
-     const dashPct = document.getElementById(`dash-pct-${projectId}`);
-     const dashBar = document.getElementById(`dash-bar-${projectId}`);
-     if(dashPct) {
-         dashPct.textContent = pct + '%';
-         dashPct.style.background = pct === 100 ? 'var(--forest)' : 'var(--forest-lt)';
-         dashPct.style.color = pct === 100 ? '#fff' : 'var(--forest)';
-     }
-     if(dashBar) { dashBar.style.width = pct + '%'; }
-  }
-
-  function generateTileHTML(step, projectId, projectName = null, index = 0) {
-    const mapping = STATUS_MAP[step.status] || STATUS_MAP["LOCKED"];
-    const tag = projectName ? `<div class="project-tag">📍 ${escapeHTML(projectName)}</div>` : '';
-    const drag = currentView === 'PROJECT' ? 'true' : 'false';
-
-    return `<div id="tile-${projectId}-${step.id}" class="tile ${mapping.tile}" style="animation-delay:${index * 0.06}s" draggable="${drag}"
-      ondragstart="dragStart(event,'${step.id}')" ondragover="dragOver(event,this)" ondragleave="dragLeave(event,this)" ondrop="drop(event,'${step.id}',this)">
-      ${tag}
-      <div class="tile-header">
-        <span class="step-badge ${mapping.bg}">${getDisplayStatus(step.status)}</span>
-        <div style="display:flex;gap:6px;align-items:center;">
-          <span class="tile-owner">${escapeHTML(step.owner)}</span>
-          <button class="btn-danger" style="padding:2px 6px;font-size:13px;" onclick="removeJob('${projectId}','${step.id}')">×</button>
-        </div>
-      </div>
-      <div class="tile-name"><span class="drag-handle" title="Drag to reorder">⋮⋮</span>${escapeHTML(step.name)}</div>
-      <input type="date" value="${step.date}" onchange="updateField('${projectId}','step','${step.id}','date',this.value)">
-      <textarea placeholder="Quick notes…" oninput="updateField('${projectId}','step','${step.id}','notes',this.value)">${escapeHTML(step.notes)}</textarea>
-      <div class="smart-btn-container">${generateSmartButton(step, projectId)}</div>
-    </div>`;
-  }
-
-  function generateSmartButton(step, projectId) {
-    if (step.status === 'LOCKED') {
-        return `<select class="smart-btn smart-locked" disabled><option>🔒 Locked</option></select>`;
-    }
-
-    const isReady = step.status === 'READY TO START' ? 'selected' : '';
-    const isInProg = step.status === 'IN PROGRESS' ? 'selected' : '';
-    const isComp = step.status === 'COMPLETE' ? 'selected' : '';
-
-    let colorClass = 'smart-start';
-    if (step.status === 'IN PROGRESS') colorClass = 'smart-progress';
-    if (step.status === 'COMPLETE') colorClass = 'smart-complete';
-
-    return `
-    <select class="smart-btn ${colorClass} smart-dropdown" onchange="updateField('${projectId}','step','${step.id}','status',this.value)">
-        <option value="READY TO START" ${isReady}>Not Started</option>
-        <option value="IN PROGRESS" ${isInProg}>In Progress</option>
-        <option value="COMPLETE" ${isComp}>Completed</option>
-    </select>
-    `;
-  }
-
-  function openJobModal() {
-    if (!currentProjectId) return alert("Create a project first!");
-    const sel = document.getElementById('new-job-prereq');
-    sel.innerHTML = '<option value="0">None (start immediately)</option>';
-    (projects[currentProjectId].steps || []).forEach(s => { sel.innerHTML += `<option value="${s.id}">After: ${escapeHTML(s.name)}</option>`; });
-    document.getElementById('new-job-name').value = '';
-    document.getElementById('modal-job').style.display = 'flex';
-    setTimeout(() => document.getElementById('new-job-name').focus(), 80);
-  }
-
-  function addJob() {
-    const name = validateInput(document.getElementById('new-job-name').value);
-    const owner = document.getElementById('new-job-owner').value;
-    const prereqId = document.getElementById('new-job-prereq').value;
-    if (!name) return showToast("Please enter a job title.", true);
-    const p = projects[currentProjectId]; if(!p) return;
-    
-    p.steps = p.steps || [];
-    const newId = generateUUID();
-    const prereqs = prereqId === "0" ? [] : [prereqId];
-    p.steps.push({ id: newId, name, owner, prereqs: prereqs, status: "LOCKED", notes: "", date: "" });
-    
-    evaluateDependencies(p);
-    markProjectUpdated(currentProjectId);
-    closeModals(); render(); 
-  }
-
-  function removeJob(projectId, stepId) {
-    if (!confirm("Delete this job?")) return;
-    const p = projects[projectId]; if(!p) return;
-    p.steps = (p.steps || []).filter(s => String(s.id) !== String(stepId));
-    p.steps.forEach(s => { s.prereqs = s.prereqs.filter(id => String(id) !== String(stepId)); });
-    
-    evaluateDependencies(p);
-    markProjectUpdated(projectId);
-    render();
-  }
-
-  function dragStart(e, stepId) { 
-      if (currentView !== 'PROJECT') { e.preventDefault(); return; } 
-      isDragging = true;
-      e.dataTransfer.effectAllowed = 'move'; 
-      e.dataTransfer.setData('text/plain', String(stepId)); 
-  }
-  function dragOver(e, el) { e.preventDefault(); el.classList.add('drag-over'); }
-  function dragLeave(e, el) { 
-      if (!el.contains(e.relatedTarget)) el.classList.remove('drag-over'); 
-  }
-  function drop(e, targetId, el) {
-    e.preventDefault(); el.classList.remove('drag-over');
-    isDragging = false;
-    const draggedId = e.dataTransfer.getData('text/plain');
-    if (!draggedId || String(draggedId) === String(targetId) || currentView !== 'PROJECT') return;
-    const p = projects[currentProjectId]; if(!p || !p.steps) return;
-    
-    const fi = p.steps.findIndex(s => String(s.id) === String(draggedId));
-    const ti = p.steps.findIndex(s => String(s.id) === String(targetId));
-    if (fi === -1 || ti === -1) return;
-    
-    p.steps.splice(ti, 0, p.steps.splice(fi, 1)[0]);
-    markProjectUpdated(currentProjectId);
-    render();
-  }
-  document.addEventListener('dragend', () => isDragging = false);
-
-  // ==========================================
-  // DIRECTORY & MINOR TASKS
-  // ==========================================
-  function openTradeModal() { 
-    if (!currentProjectId) return alert("Create a project first!"); 
-    document.getElementById('new-trade-role').value = '';
-    document.getElementById('new-trade-company').value = '';
-    document.getElementById('new-trade-contact').value = '';
-    document.getElementById('new-trade-email').value = '';
-    document.getElementById('modal-trade').style.display = 'flex'; 
-    setTimeout(() => document.getElementById('new-trade-role').focus(), 80);
-  }
-
-  function addTrade() {
-    const trade   = validateInput(document.getElementById('new-trade-role').value);
-    const company = validateInput(document.getElementById('new-trade-company').value);
-    const contact = validateInput(document.getElementById('new-trade-contact').value);
-    const email   = validateInput(document.getElementById('new-trade-email').value);
-    if (!trade) return showToast("Please enter a Trade / Role.", true);
-    
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast("Invalid email address", true);
-    
-    const p = projects[currentProjectId]; if(!p) return;
-    p.contractors = p.contractors || [];
-    p.contractors.push({ trade, company, contact, email });
-    markProjectUpdated(currentProjectId);
-    closeModals(); render(); 
-  }
-
-  function validateEmailInline(el, projectId, i) {
-    const value = el.value;
-    if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        showToast("Invalid email format ignored", true);
-        return;
-    }
-    updateField(projectId, 'contractor', i, 'email', value);
-  }
-
-  function removeTrade(index) {
-    if (!confirm("Remove this trade?")) return;
-    const p = projects[currentProjectId]; if(!p) return;
-    if(!p.contractors || !p.contractors[index]) return;
-    p.contractors.splice(index, 1);
-    markProjectUpdated(currentProjectId);
-    render(); 
-  }
-
-  function addChecklistItem() {
-    const inp = document.getElementById('new-check-text');
-    if (!inp) return;
-    const text = validateInput(inp.value);
-    if (!text || !currentProjectId) return;
-    const p = projects[currentProjectId]; if(!p) return;
-    
-    p.checklist = p.checklist || [];
-    p.checklist.push({ id: generateUUID(), text, status: "PENDING" });
-    markProjectUpdated(currentProjectId);
-    
-    inp.value = '';
-    renderChecklist(currentProjectId);
-  }
-  
-  function updateChecklistStatus(event, projectId, id, status) {
-    const p = projects[projectId]; if(!p || !p.checklist) return;
-    const item = p.checklist.find(i => String(i.id) === String(id));
-    if (item) { 
-        item.status = status; 
-        markProjectUpdated(projectId);
-        
-        const checkbox = event.target;
-        const row = checkbox.closest('.check-item') || checkbox.closest('.check-row');
-        if (row) {
-            const text = row.querySelector('.check-text');
-            if(status === 'COMPLETED') {
-                row.style.opacity = '0.45';
-                if(text) text.style.textDecoration = 'line-through';
-            } else {
-                row.style.opacity = '1';
-                if(text) text.style.textDecoration = 'none';
-            }
-        }
-    }
-  }
-  
-  function deleteChecklistItem(projectId, id) {
-    const p = projects[projectId]; if(!p || !p.checklist) return;
-    p.checklist = p.checklist.filter(i => String(i.id) !== String(id));
-    markProjectUpdated(projectId);
-    renderChecklist(projectId);
-  }
-
-  function toggleCompletedChecklist() {
-      showCompletedChecklist = !showCompletedChecklist;
-      renderChecklist(currentProjectId);
-  }
-
-  function renderChecklist(projectId) {
-      const container = document.getElementById('checklist-container');
-      if (!container) return;
-      const p = projects[projectId]; if(!p) return;
-      
-      const pending = (p.checklist||[]).filter(it => it.status !== 'COMPLETED');
-      const completed = (p.checklist||[]).filter(it => it.status === 'COMPLETED');
-
-      let html = '';
-      pending.forEach(it => {
-          html += `<div class="check-item">
-            <input type="checkbox" onchange="updateChecklistStatus(event, '${p.id}','${it.id}','COMPLETED')">
-            <div class="check-text">${escapeHTML(it.text)}</div>
-            <button type="button" class="chk-del" onclick="deleteChecklistItem('${p.id}','${it.id}')">×</button>
-          </div>`;
-      });
-      
-      if (completed.length > 0) {
-          if (showCompletedChecklist) {
-              html += `<div style="margin: 12px 0 8px; font-size: 10px; font-weight: 800; color: var(--text-stone); text-transform: uppercase;">Completed</div>`;
-              completed.forEach(it => {
-                  html += `<div class="check-item" style="opacity:0.45;">
-                    <input type="checkbox" checked onchange="updateChecklistStatus(event, '${p.id}','${it.id}','PENDING')">
-                    <div class="check-text" style="text-decoration:line-through;">${escapeHTML(it.text)}</div>
-                    <button type="button" class="chk-del" onclick="deleteChecklistItem('${p.id}','${it.id}')">×</button>
-                  </div>`;
-              });
-              html += `<button type="button" class="btn-ghost" style="margin-top: 12px; width: 100%; text-align: center;" onclick="toggleCompletedChecklist()">Hide completed</button>`;
-          } else {
-              html += `<button type="button" class="btn-ghost" style="margin-top: 12px; width: 100%; text-align: center; border: 1px dashed var(--border);" onclick="toggleCompletedChecklist()">Show ${completed.length} completed</button>`;
-          }
-      }
-
-      if (!pending.length && !completed.length) { html = '<div style="font-size:12px;color:var(--text-stone);">No tasks yet.</div>'; }
-      container.innerHTML = html;
-  }
-
-  function renderLocationLink(projectId) {
-      const container = document.getElementById('location-link-container');
-      if (!container) return;
-      const p = projects[projectId]; if(!p) return;
-      
-      if (p.projectLocationLink) {
-        let el = p.projectLocationLink;
-        if (!el.startsWith('microsoft-edge:') && !el.startsWith('http')) el = 'https://' + el;
-        container.innerHTML = `<div style="display:flex;gap:8px;align-items:center;margin-top:12px;">
-            <a href="${escapeHTML(el)}" class="btn btn-primary" target="_blank" style="flex:1;text-decoration:none;">🌍 Open Link</a>
-            <button class="btn-icon" style="flex:none;" onclick="updateField('${p.id}','locationLink',null,null,'')" title="Clear Link">🗑️</button>
-        </div>`;
-      } else {
-        container.innerHTML = `<input type="url" placeholder="Paste folder or map link…" onchange="updateField('${p.id}','locationLink',null,null,this.value)">`;
-      }
-  }
-
-  // ==========================================
-  // CALENDAR & AGENDA
-  // ==========================================
-  function changeMonth(d) { calMonth += d; if (calMonth < 0) { calMonth = 11; calYear--; } if (calMonth > 11) { calMonth = 0; calYear++; } render(); }
-
-  function onCalendarDateChange(val) {
-    activeModalDate = val;
-    const td = new Date(val + 'T00:00:00');
-    document.getElementById('event-modal-title').innerText = "Agendas for " + td.toLocaleDateString('en-AU', { weekday:'short', month:'short', day:'numeric' });
-    refreshEventList(val);
-  }
-
-  function refreshEventList(dateStr) {
-    const lc = document.getElementById('event-list-container');
-    if (!lc) return;
-    let html = ''; let count = 0;
-    const activeProjects = Object.values(projects).filter(p => !p._deleted);
-    
-    activeProjects.forEach(project => {
-      (project.events || []).forEach(ev => {
-        if (ev.date !== dateStr) return;
-        count++;
-        const done = ev.status === 'COMPLETED';
-        html += `<div class="event-list-item" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface-alt);border-radius:var(--radius-sm);border:1px solid var(--border);${done?'opacity:0.5;':'border-left:3px solid var(--forest);'}">
-          <input type="checkbox" ${done?'checked':''} onchange="toggleEventStatusDOM(event, '${project.id}','${ev.id}')" style="width:15px;height:15px;cursor:pointer;">
-          <div style="flex:1;">
-            <div class="event-text" style="font-size:13px;font-weight:700;${done?'text-decoration:line-through;':''}">${escapeHTML(ev.text)}</div>
-            <div style="font-size:10px;color:var(--text-stone);font-weight:700;margin-top:2px;">📍 ${escapeHTML(project.name)}</div>
-          </div>
-          <button type="button" class="btn-danger" style="padding:3px 7px;font-size:13px;" onclick="deleteEventModal('${project.id}','${ev.id}')">×</button>
-        </div>`;
-      });
-    });
-    if (count === 0) html = `<div style="text-align:center;padding:16px;color:var(--text-stone);font-size:12px;background:var(--surface-alt);border-radius:var(--radius-sm);border:1px dashed var(--border-dark);">No agendas for this date.</div>`;
-    lc.innerHTML = html;
-  }
-
-  function openCalendarModal(dateStr, preselectProjectId = null) {
-    const activeKeys = Object.keys(projects).filter(k => !projects[k]._deleted);
-    if (!currentProjectId && !preselectProjectId && activeKeys.length === 0) return alert("Create a project first.");
-    activeModalDate = dateStr;
-    const td = new Date(dateStr + 'T00:00:00');
-    document.getElementById('event-modal-title').innerText = "Agendas for " + td.toLocaleDateString('en-AU', { weekday:'short', month:'short', day:'numeric' });
-    document.getElementById('event-date').value = dateStr;
-    const sel = document.getElementById('event-project-selector');
-    sel.innerHTML = '';
-    
-    activeKeys.forEach(key => {
-      const p = projects[key];
-      const o = document.createElement('option'); o.value = p.id; o.textContent = "📍 " + p.name;
-      if ((preselectProjectId && p.id === preselectProjectId) || (!preselectProjectId && p.id === currentProjectId)) o.selected = true;
-      sel.appendChild(o);
-    });
-    refreshEventList(dateStr);
-    document.getElementById('event-text').value = '';
-    document.getElementById('modal-event').style.display = 'flex';
-    setTimeout(() => document.getElementById('event-text').focus(), 100);
-  }
-
-  function addCalendarEvent() {
-    const text  = validateInput(document.getElementById('event-text').value);
-    const date  = document.getElementById('event-date').value;
-    const pId   = document.getElementById('event-project-selector').value;
-    if (!text || !date || !pId) return showToast("Please enter details and select a project.", true);
-    const p = projects[pId]; if (!p) return;
-    
-    p.events = p.events || [];
-    p.events.push({ id: generateUUID(), date, text, status: "PENDING" });
-    markProjectUpdated(pId);
-    
-    document.getElementById('event-text').value = '';
-    activeModalDate = date; 
-    refreshEventList(date); 
-    
-    if (currentView === 'DAY' || currentView === 'CALENDAR') {
-        render(); 
-        document.getElementById('modal-event').style.display = 'flex';
-    }
-    setTimeout(() => document.getElementById('event-text').focus(), 50);
-  }
-
-  function deleteEventModal(projectId, eventId) {
-    if (!confirm("Delete this agenda?")) return;
-    const p = projects[projectId]; if(!p || !p.events) return;
-    p.events = p.events.filter(e => String(e.id) !== String(eventId));
-    markProjectUpdated(projectId);
-    
-    const targetDate = activeModalDate || document.getElementById('event-date').value;
-    if(targetDate) refreshEventList(targetDate);
-    if (currentView === 'DAY' || currentView === 'CALENDAR') render();
-  }
-
-  function toggleEventStatusDOM(event, projectId, eventId) {
-    if (isDragging) return; // Prevent accidental toggles mid-drag
-    
-    const p = projects[projectId]; if(!p || !p.events) return;
-    const ev = p.events.find(e => String(e.id) === String(eventId));
-    if (ev) { 
-        ev.status = ev.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED'; 
-        markProjectUpdated(projectId);
-        
-        const checkbox = event.target;
-        let row = checkbox.closest('.event-list-item');
-        if(!row) row = checkbox.closest('.priority-card');
-        if(!row) row = checkbox.closest('.cal-event-chip'); 
-        
-        if(row) {
-            let text = row.querySelector('.event-text') || row.querySelector('b');
-            
-            if (ev.status === 'COMPLETED') {
-                row.style.opacity = '0.5';
-                if(row.classList.contains('priority-card')) row.style.borderLeft = '1px solid var(--border)';
-                else row.style.borderLeft = '1px solid var(--border)';
-                if(text) text.style.textDecoration = 'line-through';
-                if(row.classList.contains('cal-event-chip')) row.classList.add('completed');
-            } else {
-                row.style.opacity = '1';
-                if(row.classList.contains('priority-card')) row.style.borderLeft = '4px solid var(--gold)';
-                else row.style.borderLeft = '3px solid var(--forest)';
-                if(text) text.style.textDecoration = 'none';
-                if(row.classList.contains('cal-event-chip')) row.classList.remove('completed');
-            }
-        }
-        
-        if(!activeModalDate) render();
-    }
-  }
-
-  // ==========================================
-  // CALENDAR DRAG & DROP
-  // ==========================================
-  function dragAgendaStart(e, projectId, eventId) { 
-      if (currentView !== 'CALENDAR') { e.preventDefault(); return; } 
-      isDragging = true;
-      e.dataTransfer.effectAllowed = 'move'; 
-      e.dataTransfer.setData('text/plain', JSON.stringify({ p: projectId, e: eventId })); 
-      e.stopPropagation(); 
-  }
-  function dragAgendaOver(e, el) { 
-      e.preventDefault(); 
-      el.classList.add('drag-over'); 
-  }
-  function dragAgendaLeave(e, el) { 
-      if (!el.contains(e.relatedTarget)) el.classList.remove('drag-over'); 
-  }
-  function dropAgenda(e, dateStr, el) {
-    e.preventDefault(); 
-    el.classList.remove('drag-over');
-    isDragging = false;
-    
-    try {
-        const payload = JSON.parse(e.dataTransfer.getData('text/plain'));
-        if (!payload || !payload.p || !payload.e) return;
-        
-        const p = projects[payload.p]; if(!p || !p.events) return;
-        const ev = p.events.find(x => String(x.id) === String(payload.e));
-        if (ev) {
-            ev.date = dateStr;
-            markProjectUpdated(payload.p);
-            render(); 
-        }
-    } catch(err) {
-        console.warn("Invalid drop data");
-    }
-  }
-
-  // ==========================================
-  // RENDER ENGINE
-  // ==========================================
-  function render() {
-    // Failsafe for invalid view state
-    if (!['DASHBOARD','PROJECT','DAY','CALENDAR'].includes(currentView)) {
-        currentView = 'DASHBOARD';
-    }
-
-    const header  = document.getElementById('portal-header');
-    const content = document.getElementById('portal-content');
-
-    ['DASHBOARD','PROJECT','DAY','CALENDAR'].forEach(k => {
-      const el = document.getElementById('nav-' + k.toLowerCase());
-      if (el) el.className = 'nav-link' + (currentView === k ? ' active' : '');
-    });
-
-    renderSidebarProjects();
-
-    const activeProjects = Object.values(projects).filter(p => !p._deleted);
-
-    // Empty state failsafe
-    if (activeProjects.length === 0) {
-      header.innerHTML = `<div class="view-header"><div class="view-title">Welcome to Field Command</div></div>`;
-      content.innerHTML = `<div class="empty-state" style="margin-top:40px;">No active projects.<br><br>Click <b>+ New</b> in the sidebar to begin.</div>`;
-      return;
-    }
-
-    // ---- DASHBOARD ----
-    if (currentView === 'DASHBOARD') {
-      header.innerHTML = `<div class="view-header"><div class="view-title">Dashboard</div><button id="sync-btn" class="btn btn-outline" onclick="manualSync()">🔄 Sync</button></div>`;
-      
-      let totalProjects = activeProjects.length;
-      let totalActive = 0;
-      let totalPendingMinor = 0;
-      let totalBlocked = 0;
-
-      let gridHtml = `<div class="dashboard-grid">`;
-
-      activeProjects.forEach(p => {
-        let steps = p.steps || [];
-        let done = steps.filter(s => s?.status === 'COMPLETE').length;
-        let pct = steps.length ? Math.round((done / steps.length) * 100) : 0;
-        let active = steps.filter(s => s?.status === 'IN PROGRESS' || s?.status === 'READY TO START').length;
-        let blocked = steps.filter(s => s?.status === 'LOCKED').length;
-        let minor = (p.checklist || []).filter(c => c?.status === 'PENDING').length;
-
-        totalActive += active;
-        totalBlocked += blocked;
-        totalPendingMinor += minor;
-
-        gridHtml += `
-          <div class="dash-card" onclick="switchProject('${p.id}')">
-            <div class="dash-title">
-              ${escapeHTML(p.name)}
-              <span id="dash-pct-${p.id}" class="dash-pct" style="color: ${pct === 100 ? '#fff' : 'var(--forest)'}; background: ${pct === 100 ? 'var(--forest)' : 'var(--forest-lt)'}">${pct}%</span>
-            </div>
-            <div class="progress-track" style="max-width: 100%;"><div id="dash-bar-${p.id}" class="progress-bar" style="width:${pct}%"></div></div>
-            <div class="dash-stats">
-              <span>${active} Active Workflows</span>
-              <span>${minor} Minor Tasks</span>
-            </div>
-          </div>
-        `;
-      });
-      gridHtml += `</div>`;
-
-      let kpiHtml = `
-        <div class="kpi-row">
-          <div class="kpi-card">
-            <div class="kpi-label">Total Projects</div>
-            <div class="kpi-val" style="color: var(--text-dark);">${totalProjects}</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Active Workflows</div>
-            <div class="kpi-val" style="color: var(--moss);">${totalActive}</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Pending Minor Tasks</div>
-            <div class="kpi-val" style="color: var(--bark);">${totalPendingMinor}</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Blocked / Locked</div>
-            <div class="kpi-val" style="color: var(--stone);">${totalBlocked}</div>
-          </div>
-        </div>
-      `;
-
-      content.innerHTML = kpiHtml + `<div class="section-row" style="margin-bottom: 16px; font-size: 14px;"><div class="section-label">Project Portfolio</div></div>` + gridHtml;
-      return;
-    }
-
-    // ---- CALENDAR ----
-    if (currentView === 'CALENDAR') {
-      header.innerHTML = `<div class="view-header"><div class="view-title">Calendar</div><button id="sync-btn" class="btn btn-outline" onclick="manualSync()">🔄 Sync</button></div>`;
-      const fd = new Date(calYear, calMonth, 1).getDay();
-      const dm = new Date(calYear, calMonth + 1, 0).getDate();
-      const today = new Date();
-      const mn = new Date(calYear, calMonth).toLocaleString('default', { month:'long' });
-      let html = `<div class="cal-wrap"><div class="cal-nav">
-        <button class="btn btn-outline" onclick="changeMonth(-1)">◀ Previous</button>
-        <div class="cal-month">${mn} ${calYear}</div>
-        <button class="btn btn-outline" onclick="changeMonth(1)">Next ▶</button>
-      </div><div class="cal-grid">`;
-      ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => { html += `<div class="cal-day-label">${d}</div>`; });
-      for (let i = 0; i < fd; i++) html += '<div></div>';
-      for (let day = 1; day <= dm; day++) {
-        const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-        const isToday = day === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear();
-        let evs = '';
-        activeProjects.forEach(p => { 
-            (p.events||[]).forEach(ev => { 
-                if (ev.date === ds) {
-                    evs += `<div class="cal-event-chip ${ev.status==='COMPLETED'?'completed':''}" 
-                              draggable="true" 
-                              ondragstart="dragAgendaStart(event, '${p.id}', '${ev.id}')"
-                              onclick="(function(e){e.stopPropagation(); toggleEventStatusDOM(e, '${p.id}','${ev.id}')})(event)" 
-                              title="${escapeHTML(p.name)}: ${escapeHTML(ev.text)}"><b>${escapeHTML(p.name.substring(0,5))}..</b>: ${escapeHTML(ev.text)}</div>`;
-                }
-            }); 
-        });
-        html += `<div class="cal-cell${isToday?' today':''}" 
-                      onclick="if(!isDragging) openCalendarModal('${ds}')"
-                      ondragover="dragAgendaOver(event, this)"
-                      ondragleave="dragAgendaLeave(event, this)"
-                      ondrop="dropAgenda(event, '${ds}', this)">
-                      <div class="cal-date-num">${day}</div>${evs}
-                 </div>`;
-      }
-      html += '</div></div>';
-      content.innerHTML = html;
-      return;
-    }
-
-    // ---- MY DAY ----
-    if (currentView === 'DAY') {
-      header.innerHTML = `<div class="view-header"><div class="view-title">My Day</div><button id="sync-btn" class="btn btn-outline" onclick="manualSync()">🔄 Sync</button></div>`;
-      const today = new Date();
-      const cap = new Date(today); cap.setDate(cap.getDate() + 2);
-
-      let priorityHtml = '';
-      let pc = 0;
-      activeProjects.forEach(p => {
-        (p.events||[]).forEach(ev => {
-          if (ev.status === 'COMPLETED') return;
-          const ed = new Date(ev.date + 'T00:00:00');
-          if (ed <= cap) {
-            pc++;
-            const ds = ed.toLocaleDateString('en-AU', { weekday:'short', month:'short', day:'numeric' });
-            priorityHtml += `<div class="priority-card">
-              <input type="checkbox" onchange="(function(e){e.stopPropagation(); toggleEventStatusDOM(e, '${p.id}','${ev.id}')})(event)" style="width:16px;height:16px;flex-shrink:0;margin-top:2px;">
-              <div style="flex:1;">
-                <div class="event-text" style="font-size:13px;font-weight:700;color:var(--text-dark);">${escapeHTML(ev.text)}</div>
-                <div style="font-size:11px;color:var(--text-stone);margin-top:5px;display:flex;gap:8px;flex-wrap:wrap;">
-                  <span style="background:var(--gold-lt);color:var(--gold);padding:2px 8px;border-radius:999px;font-weight:700;border:1px solid #DEC070;">🗓️ ${ds}</span>
-                  <span style="color:var(--bark);font-weight:700;">📍 ${escapeHTML(p.name)}</span>
-                </div>
-              </div>
-            </div>`;
-          }
-        });
-      });
-
-      let checklist = `<div class="panel"><div class="panel-header"><div class="panel-title">Global Minor Tasks</div></div><div class="panel-body" style="padding:12px 16px;">`;
-      let tc = 0;
-      activeProjects.forEach(p => {
-        const pending = (p.checklist||[]).filter(i => i?.status==='PENDING');
-        if (pending.length) {
-          checklist += `<div style="font-size:10px;font-weight:800;color:var(--bark);background:var(--bark-lt);padding:3px 8px;border-radius:4px;border:1px solid #DFC8A8;display:inline-block;margin-bottom:6px;margin-top:8px;">📍 ${escapeHTML(p.name)}</div>`;
-          pending.forEach(it => { tc++; checklist += `<div class="check-row"><input type="checkbox" onchange="updateChecklistStatus(event, '${p.id}','${it.id}','COMPLETED')"><div class="check-text">${escapeHTML(it.text)}</div></div>`; });
-        }
-      });
-      if (!tc) checklist += `<div style="font-size:12px;color:var(--text-stone);padding:8px 0;">All tasks clear!</div>`;
-      checklist += '</div></div>';
-
-      let tiles = ''; let ac = 0;
-      activeProjects.forEach(p => { (p.steps || []).forEach((s,i) => { if (s?.status==='READY TO START'||s?.status==='IN PROGRESS') { tiles += generateTileHTML(s, p.id, p.name, ac++); } }); });
-
-      content.innerHTML = `<div class="day-sections">
-        <div>
-          <div class="section-row" style="margin-bottom:14px;"><div class="section-label">Priority Bookings <span style="font-size:10px;color:var(--gold);font-weight:600;text-transform:none;letter-spacing:0;">(within 48 hrs)</span></div></div>
-          ${pc ? priorityHtml : '<div style="font-size:13px;color:var(--text-stone);margin-bottom:20px;">No upcoming priority bookings.</div>'}
-          <div class="section-row" style="margin-top:24px;margin-bottom:4px;"><div class="section-label">Active Workflow</div></div>
-          <div class="workflow-grid">${tiles || '<div class="empty-state" style="grid-column:1/-1;">All caught up! No active tiles today.</div>'}</div>
-        </div>
-        <div>${checklist}</div>
-      </div>`;
-      return;
-    }
-
-    // ---- PROJECT VIEW ----
-    if (!currentProjectId || !projects[currentProjectId] || projects[currentProjectId]._deleted) { 
-        currentProjectId = activeProjects.length > 0 ? activeProjects[0].id : null; 
-    }
-    if (!currentProjectId) return;
-
-    const p = projects[currentProjectId];
-    p.steps = p.steps || [];
-    p.contractors = p.contractors || [];
-    p.checklist = p.checklist || [];
-    p.events = p.events || [];
-
-    const total = p.steps.length;
-    const done  = p.steps.filter(s => s?.status === 'COMPLETE').length;
-    const pct   = total === 0 ? 0 : Math.round((done / total) * 100);
-    const todayStr = new Date().toISOString().split('T')[0];
-
-    header.innerHTML = `
-      <div class="project-hero">
-        <div class="project-hero-top">
-          <div class="project-name-group">
-            <div class="project-name">${escapeHTML(p.name)}</div>
-            <button class="btn-icon" onclick="editProjectName()" title="Edit">✏️</button>
-          </div>
-          <div class="project-hero-actions">
-            <button class="btn btn-primary" onclick="openCalendarModal('${todayStr}','${p.id}')">📅 Book Agenda</button>
-            <button id="sync-btn" class="btn btn-outline" onclick="manualSync()">🔄 Sync</button>
-            <button class="btn btn-outline" onclick="openProjectModal('COPY')">📋 Copy</button>
-            <button class="btn btn-outline" onclick="exportBackupData()">💾 Backup</button>
-            <button class="btn btn-danger" onclick="deleteCurrentProject()">🗑️ Delete</button>
-          </div>
-        </div>
-        <div class="progress-section">
-          <div id="progress-number-val" class="progress-number">${pct}%</div>
-          <div class="progress-detail">
-            <div id="progress-label-val" class="progress-label">${done} of ${total} jobs complete</div>
-            <div class="progress-track"><div id="progress-bar-fill" class="progress-bar" style="width:${pct}%"></div></div>
-          </div>
-        </div>
-      </div>`;
-
-    content.innerHTML = `
-      <div class="content-grid">
-        <!-- LEFT: main workspace -->
-        <div>
-          <!-- Trades -->
-          <details open>
-            <summary>
-              <div class="section-row" style="margin-bottom:12px;">
-                <div class="section-label"><span class="chevron">▼</span> Project Directory / Trades</div>
-                <button class="btn-add" onclick="event.preventDefault();openTradeModal()">+ Add Trade</button>
-              </div>
-            </summary>
-            <div class="panel" style="margin-bottom:24px;">
-              <div class="table-responsive">
-                <table class="trades-table">
-                  <thead><tr><th>Trade</th><th>Company</th><th>Contact</th><th>Email</th><th style="width:36px;"></th></tr></thead>
-                  <tbody>
-                    ${p.contractors.map((c,i) => `<tr>
-                      <td><span class="trade-role">${escapeHTML(c.trade)}</span></td>
-                      <td><input type="text" list="rolodex-companies" placeholder="Company" value="${escapeHTML(c.company)}" oninput="updateField('${p.id}','contractor',${i},'company',this.value)"></td>
-                      <td><input type="text" placeholder="Contact" value="${escapeHTML(c.contact)}" oninput="updateField('${p.id}','contractor',${i},'contact',this.value)"></td>
-                      <td><input type="email" placeholder="Email" value="${escapeHTML(c.email)}" onchange="validateEmailInline(this, '${p.id}', ${i})"></td>
-                      <td><button class="btn-danger" style="padding:3px 7px;font-size:13px;" onclick="removeTrade(${i})">×</button></td>
-                    </tr>`).join('')}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </details>
-
-          <!-- Workflow -->
-          <details open>
-            <summary>
-              <div class="section-row" style="border-top:1px solid var(--border);padding-top:20px;margin-bottom:4px;">
-                <div class="section-label"><span class="chevron">▼</span> Workflow Sequence</div>
-                <button class="btn-add" onclick="event.preventDefault();openJobModal()">+ Add Job</button>
-              </div>
-            </summary>
-            <div class="workflow-grid">
-              ${p.steps.map((s,i) => generateTileHTML(s, p.id, null, i)).join('')}
-            </div>
-          </details>
-        </div>
-
-        <!-- RIGHT: info panels -->
-        <div class="info-col">
-          <!-- File location -->
-          <div class="panel file-panel">
-            <div class="panel-header"><div class="panel-title">📂 File Location</div></div>
-            <div class="panel-body" id="location-link-container"></div>
-          </div>
-
-          <!-- Minor tasks -->
-          <div class="panel">
-            <div class="panel-header"><div class="panel-title">✅ Minor Tasks</div></div>
-            <div class="panel-body">
-              <div style="display:flex;gap:8px;margin-bottom:12px;">
-                <input type="text" id="new-check-text" placeholder="Add task & press Enter…" style="flex:1;">
-                <button class="btn btn-primary" onclick="addChecklistItem()" style="white-space:nowrap;padding:8px 12px;">+ Add</button>
-              </div>
-              <div id="checklist-container"></div>
-            </div>
-          </div>
-        </div>
-      </div>`;
-
-      renderChecklist(currentProjectId);
-      renderLocationLink(currentProjectId);
-  }
-
-  // ---- BOOT ----
-  updateRolodexDatalist();
-  updateCloudStatusChip('live');
-  render();
-  loadFromCloud();
+  p.stages=A(p.stages);p.tasks=A(p.tasks);
+  p.events=A(p.events).filter(e=>/^\d{4}-\d\d-\d\d/.test(e.date||'')).map(e=>({id:e.id||uid(),title:e.title||e.text||'Booking',date:e.date.slice(0,10),time:e.time||'',kind:e.kind||'booking',who:e.who||'',note:e.note||'',done:e.done??/COMPLET|DONE/i.test(e.status||'')}));
+  p.name=p.name||'Untitled project';p.created=p.created||p.updated_at||new Date().toISOString();p.key=p.key||keyOf(p.name);
+  p.stages.forEach(s=>{s.id=s.id||uid();s.name=s.name||'Untitled stage';if(!['locked','open','done'].includes(s.state))s.state='locked'});
+  p.tasks.forEach(t=>{t.id=t.id||uid();t.text=t.text||'Untitled task';t.status=t.status||(t.done?'done':'todo')});
+  let m=Math.max(0,p.seq||0,...p.tasks.map(t=>t.n||0));p.tasks.forEach(t=>{if(!t.n)t.n=++m});p.seq=m;
+  return p;
+}
+try{
+  const raw=JSON.parse(localStorage.getItem(KEY)||localStorage.getItem('karnel_data_final16')||'{}');
+  if(raw&&typeof raw==='object')Object.keys(raw).forEach(k=>{try{if(raw[k]&&typeof raw[k]==='object'){raw[k].id=raw[k].id||k;P[k]=norm(raw[k])}}catch(e){}});
+  cur=localStorage.getItem(KEY+'_cur')||null;
+}catch(e){P={}}
+try{sb=window.supabase.createClient(SB_URL,SB_KEY)}catch(e){}
+const live=()=>Object.values(P).filter(p=>!p._deleted).sort((a,b)=>a.created<b.created?-1:1);
+
+/* ---------- save + sync ---------- */
+function chip(s){$('#chip').textContent={saving:'Saving…',live:'Synced',error:'Sync error, will retry',offline:'Offline, saved on this device'}[s]||s}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(P));localStorage.setItem(KEY+'_cur',cur||'')}catch(e){}}
+function touch(p){p.updated_at=new Date().toISOString();p._dirty=1;persist();chip('saving');clearTimeout(saveT);saveT=setTimeout(sync,500)}
+async function sync(){
+  if(!sb)return chip('offline');
+  const d=Object.values(P).filter(p=>p._dirty);if(!d.length)return chip('live');
+  try{
+    const {error}=await sb.from('karnel_projects').upsert(d.map(p=>{const {_dirty,...c}=p;return{id:p.id,name:p.name,data:c,updated_at:p.updated_at}}));
+    if(error)throw error;d.forEach(p=>delete p._dirty);persist();chip('live');
+  }catch(e){console.warn(e);chip('error')}
+}
+async function load(){
+  if(!sb)return chip('offline');
+  try{
+    const {data,error}=await sb.from('karnel_projects').select('*');if(error)throw error;
+    let changed=false;
+    (data||[]).forEach(r=>{try{
+      let d=r.data;if(typeof d==='string')d=JSON.parse(d);if(!d||typeof d!=='object')return;
+      d.id=d.id||r.id;const l=P[r.id],ct=+new Date(d.updated_at||0),lt=+new Date(l?.updated_at||0);
+      if(!l||ct>lt){P[r.id]=norm(d);changed=true}else if(lt>ct){l._dirty=1}
+    }catch(e){}});
+    const ids=new Set((data||[]).map(r=>r.id));Object.values(P).forEach(p=>{if(!ids.has(p.id))p._dirty=1});
+    persist();if(changed)render();sync();listen();
+  }catch(e){console.warn(e);chip('error')}
+}
+function listen(){
+  try{if(chan)sb.removeChannel(chan);
+  chan=sb.channel('karnel-live').on('postgres_changes',{event:'*',schema:'public',table:'karnel_projects'},pl=>{
+    const n=pl.new,l=n&&P[n.id];
+    if(n&&n.id&&n.data&&typeof n.data==='object'&&(!l||+new Date(n.data.updated_at||0)>+new Date(l.updated_at||0))){P[n.id]=norm(n.data);persist()}
+    clearTimeout(rtT);rtT=setTimeout(()=>{if(!/INPUT|SELECT/.test(document.activeElement.tagName))render()},200);
+  }).subscribe()}catch(e){}
+}
+
+/* ---------- modals ---------- */
+function openM(h,f){$('#md').innerHTML=h;$('#ovl').classList.add('on');if(f)$(f).focus()}
+function closeM(){$('#ovl').classList.remove('on')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
+const cancel='<button type="button" class="btn" onclick="closeM()">Cancel</button>';
+function openCreate(){view==='cal'?openEvent(null,null,null,'reminder'):cur&&P[cur]&&!P[cur]._deleted?openTaskForm():openProjectForm()}
+function openProjectForm(){openM(`<h2>Create project</h2><form onsubmit="createProject(event)">
+  <label for="pn">Project name</label><input class="in" id="pn" required maxlength="80" placeholder="e.g. 14 Wattle Street duplex">
+  <label for="pa">Site address</label><input class="in" id="pa" maxlength="120">
+  <label for="pt">Workflow</label><select class="in" id="pt"><option value="std">Standard residential build (8 stages, all locked)</option><option value="blank">Blank, I'll add the stages</option></select>
+  <div class="dr">${cancel}<button class="btn p">Create project</button></div></form>`,'#pn')}
+function openTaskForm(){const p=P[cur];openM(`<h2>Create task</h2><form onsubmit="createTask(event)">
+  <label>Project</label><input class="in" value="${esc(p.name)}" disabled>
+  <label for="tn">Summary</label><input class="in" id="tn" required maxlength="140">
+  <label for="tg">Workflow stage</label><select class="in" id="tg"><option value="">None</option>${p.stages.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('')}</select>
+  <label for="td">Due date</label><input class="in" type="date" id="td">
+  <div class="dr">${cancel}<button class="btn p">Create</button></div></form>`,'#tn')}
+
+/* ---------- projects ---------- */
+function createProject(e){
+  e.preventDefault();const name=$('#pn').value.trim();
+  const p=norm({id:'p_'+uid(),name,address:$('#pa').value.trim(),created:new Date().toISOString(),
+    stages:$('#pt').value==='std'?STD.map(n=>({id:uid(),name:n,state:'locked'})):[],tasks:[]});
+  P[p.id]=p;cur=p.id;tab='board';touch(p);closeM();render();
+}
+function pick(id){cur=id;view='proj';q='';fs='';persist();render()}
+function editProject(){const p=P[cur],n=prompt('Project name',p.name);if(n&&n.trim())p.name=n.trim();const a=prompt('Site address',p.address||'');if(a!==null)p.address=a.trim();touch(p);render()}
+function deleteProject(){const p=P[cur];if(confirm('Delete "'+p.name+'" with all its tasks and workflow?')){p._deleted=true;touch(p);render()}}
+function setTab(t){tab=t;render()}
+
+/* ---------- workflow: stages only change when you press the button ---------- */
+const stage=sid=>P[cur].stages.find(s=>s.id===sid);
+function setState(sid,s){stage(sid).state=s;touch(P[cur]);render()}
+function addStage(e){e.preventDefault();const v=$('#ns').value.trim();if(!v)return;P[cur].stages.push({id:uid(),name:v,state:'locked'});touch(P[cur]);render();$('#ns').focus()}
+function renameStage(sid){const s=stage(sid),n=prompt('Stage name',s.name);if(n&&n.trim()){s.name=n.trim();touch(P[cur]);render()}}
+function moveStage(sid,d){const a=P[cur].stages,i=a.findIndex(s=>s.id===sid),j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];touch(P[cur]);render()}
+function delStage(sid){const p=P[cur],s=stage(sid);if(!confirm('Delete stage "'+s.name+'"? Its tasks stay on the project.'))return;p.stages=p.stages.filter(x=>x.id!==sid);p.tasks.forEach(t=>{if(t.stage===sid)t.stage=''});touch(p);render()}
+
+/* ---------- tasks ---------- */
+const locked=(p,t)=>{const s=t.stage&&p.stages.find(x=>x.id===t.stage);return s&&s.state==='locked'};
+function createTask(e){e.preventDefault();const p=P[cur];p.tasks.push({id:uid(),n:++p.seq,text:$('#tn').value.trim(),stage:$('#tg').value,due:$('#td').value,status:'todo'});touch(p);closeM();tab='board';render()}
+function setStatus(tid,s){const p=P[cur],t=p.tasks.find(t=>t.id===tid);if(!t||locked(p,t))return;t.status=s;touch(p);render()}
+function delTask(tid){P[cur].tasks=P[cur].tasks.filter(t=>t.id!==tid);touch(P[cur]);render()}
+function drop(e,s){e.preventDefault();if(dragId)setStatus(dragId,s);dragId=null}
+function setQ(v){q=v.toLowerCase();cols()}
+function setFs(v){fs=v;cols()}
+
+/* ---------- render ---------- */
+function render(){
+  const L=live();if(!cur||!P[cur]||P[cur]._deleted)cur=L[0]?.id||null;persist();alerts();
+  $('#side').innerHTML=`<button class="pi${view==='cal'?' on':''}" onclick="goCal()"><span class="av" style="background:#44546F"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span>Calendar</span></button><div class="sh">Projects<button onclick="openProjectForm()" aria-label="Create project">+</button></div>`+L.map(p=>`<button class="pi${view==='proj'&&p.id===cur?' on':''}" onclick="pick('${p.id}')"><span class="av" style="background:${tint(p.name)}">${esc(p.key.slice(0,2))}</span><span>${esc(p.name)}</span></button>`).join('');
+  const m=$('#main');
+  if(view==='cal'){m.innerHTML=`<h1>Calendar</h1><div class="meta" style="margin-bottom:16px">Bookings, reminders and task due dates for every project.</div>`+calView(null);return}
+  if(!cur){m.innerHTML=`<div class="empty"><h1>Create your first project</h1><p>Add a project, then set up its workflow and tasks. Workflow stages stay locked until you unlock them.</p><button class="btn p" onclick="openProjectForm()">Create project</button></div>`;return}
+  const p=P[cur],S=p.stages,n=k=>S.filter(s=>s.state===k).length;
+  m.innerHTML=`<div class="bc">Projects / ${esc(p.name)}</div>
+    <div class="th"><div><h1>${esc(p.name)}</h1><div class="meta">${esc(p.address)||'No site address'}  (key ${esc(p.key)})</div></div>
+      <div class="sa"><button class="btn" onclick="editProject()">Edit details</button><button class="btn d" onclick="deleteProject()">Delete</button></div></div>
+    <div class="tabs"><button class="tab${tab==='board'?' on':''}" onclick="setTab('board')">Board</button><button class="tab${tab==='flow'?' on':''}" onclick="setTab('flow')">Workflow</button><button class="tab${tab==='cal'?' on':''}" onclick="setTab('cal')">Calendar</button></div>
+    <div id="body"></div>`;
+  tab==='board'?board(p):tab==='flow'?flow(p,n):$('#body').innerHTML=calView(p.id);
+}
+function flow(p,n){
+  const S=p.stages,pct=S.length?Math.round(n('done')/S.length*100):0;
+  const rows=S.map((s,i)=>{
+    const ts=p.tasks.filter(t=>t.stage===s.id),dn=ts.filter(t=>t.status==='done').length;
+    const lz=s.state==='locked'?`<span class="lz">${LOCK} Locked</span>`:s.state==='open'?'<span class="lz open">Unlocked</span>':'<span class="lz done">Complete</span>';
+    const acts=s.state==='locked'?`<button class="btn s p" onclick="setState('${s.id}','open')">Unlock stage</button>`
+      :s.state==='open'?`<button class="btn s p" onclick="setState('${s.id}','done')">Mark complete</button><button class="btn s" onclick="setState('${s.id}','locked')">Lock</button>`
+      :`<button class="btn s" onclick="setState('${s.id}','open')">Reopen</button>`;
+    return `<tr class="${s.state==='locked'?'lk':''}"><td><span class="nm">${i+1}</span>${esc(s.name)}</td><td>${lz}</td><td class="hide">${ts.length?dn+' of '+ts.length+' done':'No tasks'}</td><td><div class="sa">${acts}</div></td>
+      <td><div class="ib"><button title="Move up" aria-label="Move up" onclick="moveStage('${s.id}',-1)">↑</button><button title="Move down" aria-label="Move down" onclick="moveStage('${s.id}',1)">↓</button><button title="Rename" aria-label="Rename stage" onclick="renameStage('${s.id}')">✎</button><button title="Delete" aria-label="Delete stage" onclick="delStage('${s.id}')">✕</button></div></td></tr>`}).join('');
+  $('#body').innerHTML=`<div><b>${n('done')} of ${S.length}</b> stages complete</div><div class="pb"><i style="width:${pct}%"></i></div>
+    ${S.length?`<table class="tbl"><thead><tr><th>Stage</th><th>Status</th><th class="hide">Tasks</th><th>Action</th><th></th></tr></thead><tbody>${rows}</tbody></table>`:'<p class="none">No stages yet. Add the first one below.</p>'}
+    <form class="addrow" onsubmit="addStage(event)"><input class="in" id="ns" maxlength="80" placeholder="Add a stage" aria-label="New stage name"><button class="btn p">Add stage</button></form>`;
+}
+function board(p){
+  $('#body').innerHTML=`<div class="tb"><input class="in" type="search" placeholder="Search tasks" aria-label="Search tasks" value="${esc(q)}" oninput="setQ(this.value)">
+    <select class="in" aria-label="Filter by stage" onchange="setFs(this.value)"><option value="">All stages</option>${p.stages.map(s=>`<option value="${s.id}"${fs===s.id?' selected':''}>${esc(s.name)}</option>`).join('')}</select>
+    <button class="btn p" onclick="openTaskForm()">Create task</button></div><div class="board" id="cols"></div>`;
+  cols();
+}
+function cols(){
+  const p=P[cur],today=ymd(new Date());
+  const list=p.tasks.filter(t=>(!fs||t.stage===fs)&&(!q||(t.text+' '+p.key+'-'+t.n).toLowerCase().includes(q)));
+  $('#cols').innerHTML=COLS.map(([k,label])=>{
+    const ts=list.filter(t=>t.status===k);
+    return `<div class="col" ondragover="event.preventDefault()" ondrop="drop(event,'${k}')"><div class="ch">${label}<span class="cnt">${ts.length}</span></div>`+ts.map(t=>{
+      const s=t.stage&&p.stages.find(x=>x.id===t.stage),lk=locked(p,t),od=t.due&&t.status!=='done'&&t.due<today;
+      const due=t.due?new Date(t.due+'T00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'}):'';
+      return `<div class="card${lk?' lk':''}" draggable="${!lk}" ondragstart="dragId='${t.id}'"><div class="ct">${esc(t.text)}</div>
+        <div class="cm">${s?`<span class="ep">${esc(s.name)}</span>`:''}${lk?`<span class="lz">${LOCK} Stage locked</span>`:''}${due?`<span class="due${od?' od':''}">${od?'Overdue ':'Due '}${due}</span>`:''}</div>
+        <div class="cf"><span>${esc(p.key)}-${t.n}</span><span><select aria-label="Status" ${lk?'disabled':''} onchange="setStatus('${t.id}',this.value)">${COLS.map(([v,l])=>`<option value="${v}"${t.status===v?' selected':''}>${l}</option>`).join('')}</select><button class="x" aria-label="Delete task" onclick="delTask('${t.id}')">×</button></span></div></div>`}).join('')+`</div>`}).join('');
+}
+
+
+/* ---------- calendar, agenda and alerts ---------- */
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const fmt=(k,o)=>new Date(k+'T00:00').toLocaleDateString('en-AU',o);
+const KIND={booking:['Booking','bk'],reminder:['Reminder','rm'],task:['Task due','']};
+function items(pid){
+  const o=[];live().forEach(p=>{if(pid&&p.id!==pid)return;
+    p.events.forEach(e=>o.push({id:e.id,pid:p.id,pn:p.name,date:e.date,time:e.time,title:e.title,kind:e.kind==='booking'?'booking':'reminder',who:e.who,done:e.done}));
+    p.tasks.forEach(t=>{if(t.due)o.push({id:t.id,pid:p.id,pn:p.name,date:t.due,time:'',title:t.text,kind:'task',done:t.status==='done'})})});
+  return o.sort((a,b)=>(a.date+a.time)<(b.date+b.time)?-1:1);
+}
+const due=()=>{const lim=ymd(addD(new Date(),2));return items().filter(i=>!i.done&&i.date<=lim)};
+function alerts(){
+  const d=due(),b=$('#bdg'),n=$('#ban');b.textContent=d.length;b.style.display=d.length?'':'none';
+  n.style.display=d.length?'flex':'none';n.innerHTML=`<span><b>${d.length}</b> ${d.length>1?'items are':'item is'} due within 2 days or overdue.</span><button class="btn s" onclick="openNotif()">View</button>`;
+}
+function pushNotes(){
+  try{if(!('Notification' in window)||Notification.permission!=='granted')return;
+    const td=ymd(new Date());let n;try{n=JSON.parse(localStorage.getItem('karnel_notified'))}catch(e){}
+    if(!n||n.d!==td)n={d:td,ids:[]};
+    due().forEach(i=>{if(!n.ids.includes(i.id)){new Notification((i.date<td?'Overdue: ':i.date===td?'Today: ':'Coming up: ')+i.title,{body:i.pn+', '+fmt(i.date,{weekday:'short',day:'numeric',month:'short'})+(i.time?' at '+i.time:'')});n.ids.push(i.id)}});
+    localStorage.setItem('karnel_notified',JSON.stringify(n));
+  }catch(e){}
+}
+function askNotes(){Notification.requestPermission().then(()=>{pushNotes();openNotif()})}
+function openNotif(){
+  const can='Notification' in window&&Notification.permission==='default';
+  openM(`<h2>Due in the next 2 days</h2><p class="meta">Includes overdue items. Mark a booking or reminder as completed to clear it.</p>${groups(due(),true)}${can?'<button class="btn" style="margin-top:14px" onclick="askNotes()">Turn on desktop alerts</button>':''}<div class="dr"><button class="btn" onclick="closeM()">Close</button></div>`);
+}
+function row(i,sp){
+  const t=ymd(new Date()),c=i.date<t?' od':i.date<=ymd(addD(new Date(),2))?' soon':'',[kl,kc]=KIND[i.kind];
+  return `<div class="ai${c}" onclick="openItem('${i.pid}','${i.id}','${i.kind}')"><div class="at">${i.time||'All day'}</div><div><b>${esc(i.title)}</b><div class="meta">${sp?esc(i.pn):''}${sp&&i.who?', ':''}${i.who?'with '+esc(i.who):''}</div></div><span class="lz ${kc}">${kl}</span></div>`;
+}
+function groups(list,sp){
+  const t=ymd(new Date()),tm=ymd(addD(new Date(),1));let h='',last='';
+  list.forEach(i=>{const g=i.date<t?'Overdue':i.date===t?'Today':i.date===tm?'Tomorrow':fmt(i.date,{weekday:'long',day:'numeric',month:'short'});
+    if(g!==last){h+=`<div class="agh${g==='Overdue'?' red':''}">${g}</div>`;last=g}h+=row(i,sp)});
+  return h||'<p class="none">Nothing scheduled.</p>';
+}
+const cp=i=>{const c=tint(i.pn),tk=i.kind==='task';return `<button class="chp${tk?' tk':''}${i.done?' dn2':''}" style="${tk?'color:'+c:'background:'+c}" title="${esc(i.title)}" onclick="event.stopPropagation();openItem('${i.pid}','${i.id}','${i.kind}')">${i.time?i.time+' ':''}${esc(i.title)}</button>`};
+function mv(d){if(!d){const n=new Date();cy=n.getFullYear();cm=n.getMonth()}else{const x=new Date(cy,cm+d,1);cy=x.getFullYear();cm=x.getMonth()}render()}
+function goCal(){view='cal';render()}
+function goTask(pid){cur=pid;view='proj';tab='board';q='';fs='';render()}
+function openItem(pid,id,kind){kind==='task'?goTask(pid):openEvent(pid,id)}
+function calView(pid){
+  const its=items(pid),first=new Date(cy,cm,1),off=(first.getDay()+6)%7,days=new Date(cy,cm+1,0).getDate(),rows=Math.ceil((off+days)/7),td=ymd(new Date()),by={};
+  its.forEach(i=>(by[i.date]=by[i.date]||[]).push(i));
+  let g='<div class="cg">'+['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>`<div class="dh">${d}</div>`).join('');
+  for(let i=0;i<rows*7;i++){const d=new Date(cy,cm,1-off+i),k=ymd(d),L=by[k]||[];
+    g+=`<div class="dc${d.getMonth()!==cm?' off':''}${k===td?' td':''}" onclick="openEvent(${pid?`'${pid}'`:'null'},null,'${k}')"><span class="dn">${d.getDate()}</span>${L.slice(0,3).map(cp).join('')}${L.length>3?`<div class="more">+${L.length-3} more</div>`:''}</div>`}
+  g+='</div>';
+  const a=pid?`'${pid}'`:'null';
+  return `<div class="tb"><button class="btn" onclick="mv(-1)" aria-label="Previous month">‹</button><button class="btn" onclick="mv(0)">Today</button><button class="btn" onclick="mv(1)" aria-label="Next month">›</button><b style="font-size:16px;margin:0 8px">${first.toLocaleDateString('en-AU',{month:'long',year:'numeric'})}</b><span class="sp"></span>
+    <button class="btn" onclick="openEvent(${a},null,null,'booking')">Add booking</button><button class="btn p" onclick="openEvent(${a},null,null,'reminder')">Add reminder</button></div>
+    <div class="cal"><div>${g}</div><div><h2 style="font-size:16px;font-weight:600">Agenda</h2>${groups(its.filter(i=>!i.done).slice(0,40),!pid)}</div></div>`;
+}
+function openEvent(pid,id,date,kind){
+  const L=live();if(!L.length)return openProjectForm();
+  const e=id&&P[pid]?.events.find(x=>x.id===id),pr=pid||(cur&&P[cur]&&!P[cur]._deleted?cur:L[0].id);
+  const v=e||{kind:kind||'reminder',title:'',date:date||ymd(new Date()),time:'',who:'',note:'',done:false};
+  openM(`<h2>${e?'Edit':'Add'} ${e?v.kind:kind||'event'}</h2><form onsubmit="saveEvent(event,'${e?pid:''}','${e?id:''}')">
+    <label for="ek">Type</label><select class="in" id="ek"><option value="booking"${v.kind==='booking'?' selected':''}>Booking</option><option value="reminder"${v.kind!=='booking'?' selected':''}>Reminder</option></select>
+    <label for="et">Title</label><input class="in" id="et" required maxlength="140" value="${esc(v.title)}" placeholder="e.g. Plumber rough-in, call council">
+    <label for="ep">Project</label><select class="in" id="ep" ${e?'disabled':''}>${L.map(p=>`<option value="${p.id}"${p.id===pr?' selected':''}>${esc(p.name)}</option>`).join('')}</select>
+    <label for="ed">Date</label><input class="in" type="date" id="ed" required value="${v.date}">
+    <label for="em">Time (optional)</label><input class="in" type="time" id="em" value="${v.time}">
+    <label for="ew">With (optional)</label><input class="in" id="ew" maxlength="80" value="${esc(v.who)}" placeholder="Contractor, certifier or company">
+    <label for="en">Notes (optional)</label><input class="in" id="en" maxlength="200" value="${esc(v.note)}">
+    ${e?`<label class="ck"><input type="checkbox" id="edn" ${v.done?'checked':''}> Mark as completed</label>`:''}
+    <div class="dr">${e?`<button type="button" class="btn d" style="margin-right:auto" onclick="delEvent('${pid}','${id}')">Delete</button>`:''}${cancel}<button class="btn p">Save</button></div></form>`,'#et');
+}
+function saveEvent(x,pid0,id0){
+  x.preventDefault();const p=P[id0?pid0:$('#ep').value];
+  const d={title:$('#et').value.trim(),kind:$('#ek').value,date:$('#ed').value,time:$('#em').value,who:$('#ew').value.trim(),note:$('#en').value.trim(),done:id0?$('#edn').checked:false};
+  if(id0)Object.assign(p.events.find(e=>e.id===id0),d);else p.events.push({id:uid(),...d});
+  touch(p);closeM();render();
+}
+function delEvent(pid,id){const p=P[pid];p.events=p.events.filter(e=>e.id!==id);touch(p);closeM();render()}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!$('#ovl').classList.contains('on')){render();pushNotes()}});
+
+try{render();chip(sb?'live':'offline');load();pushNotes();setInterval(()=>{alerts();pushNotes()},900000)}catch(e){showErr(e.message)}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')sync()});
 </script>
 </body>
 </html>
