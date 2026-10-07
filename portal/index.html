@@ -89,6 +89,16 @@ h1{font-size:24px;line-height:28px;font-weight:600}.meta{color:var(--sub);margin
 .at{font-size:12px;color:var(--sub);padding-top:1px}.ai .meta{font-size:12px}
 .lz.bk{background:#CFE1FD;color:#0055CC}.lz.rm{background:#DFD8FD;color:#5E4DB2}
 .ck{display:flex;gap:8px;align-items:center;margin-top:14px;font-weight:500}
+.md .ck{font-size:14px;color:var(--n);margin:8px 0 0}
+.pj{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:28px;align-items:start}
+.np{position:sticky;top:0;margin-top:16px;background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:14px}
+.np h2{font-size:14px;font-weight:600;margin-bottom:8px}
+.np textarea{width:100%;height:320px;padding:8px;resize:vertical;line-height:20px;font:inherit;background:#fff;border:1px solid #8590A2;border-radius:3px}
+.np .meta{font-size:12px;margin-top:6px}
+.cal.one{grid-template-columns:1fr}
+.stg{border-left:3px solid var(--lock)}.stg.open{border-left-color:#F5CD47}.stg.done{border-left-color:var(--green)}
+.col form .in{width:100%;background:transparent}
+@media(max-width:1280px){.pj{grid-template-columns:1fr}.np{position:static;margin-top:24px}}
 @media(max-width:1100px){.cal{grid-template-columns:1fr}}
 @media(max-width:900px){.board{grid-template-columns:1fr}.tbl .hide{display:none}}
 @media(max-width:700px){.app{grid-template-columns:1fr;height:auto}.side{display:flex;gap:6px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--bd)}.sh{display:none}.pi{width:auto;white-space:nowrap}main{padding:16px}}
@@ -108,7 +118,21 @@ const LOCK='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="
 const $=s=>document.querySelector(s);
 const uid=()=>Math.random().toString(36).slice(2,9);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let P={},cur=null,tab='board',q='',fs='',sb=null,chan,saveT,rtT,dragId=null,view='proj',cy=new Date().getFullYear(),cm=new Date().getMonth();
+let P={},cur=null,tab='board',q='',fs='',sb=null,chan,saveT,rtT,dragId=null,drag=null,view='proj',cy=new Date().getFullYear(),cm=new Date().getMonth();
+const SETID='_settings',TPL=[['granny','Granny flat'],['single','Single storey'],['double','Double storey']];
+const DEF={
+  granny:['Approvals received (CDC / CC)','Site set-up and utilities','Slab and footings','Frame and roof','Lock-up','Fit-out','Final inspection and OC','Handover'],
+  single:[...STD],
+  double:['Approvals received (CC / CDC)','Site set-up and demolition','Slab and footings','Ground floor frame','Upper floor and frame','Roof','Lock-up','Fit-out and services','Final inspections','Handover']};
+/* Accepts the new shape {t:{granny,single,double}} or the older single list {template:[...]} */
+function normST(x){
+  const t={},src=x&&x.t&&typeof x.t==='object'?x.t:{};
+  TPL.forEach(([k])=>{const a=src[k];t[k]=Array.isArray(a)?a.filter(v=>typeof v==='string'&&v.trim()):[...DEF[k]]});
+  if(x&&Array.isArray(x.template)&&!(x.t&&x.t.single))t.single=x.template.filter(v=>typeof v==='string'&&v.trim());
+  return{t,updated_at:(x&&x.updated_at)||''};
+}
+let ST=normST(null),stab='single';
+try{const x=JSON.parse(localStorage.getItem(KEY+'_set'));if(x&&typeof x==='object'){ST=normST(x);if(x._dirty)ST._dirty=1}}catch(e){}
 
 function showErr(m){const e=$('#err');e.style.display='block';e.innerHTML='Something went wrong: '+esc(m)+' <button class="btn s" onclick="resetLocal()">Reset this device and reload</button>'}
 function resetLocal(){localStorage.removeItem(KEY);localStorage.removeItem(KEY+'_cur');location.reload()}
@@ -121,13 +145,14 @@ function norm(p){
   const A=x=>Array.isArray(x)?x.filter(o=>o&&typeof o==='object'):[];
   if(!Array.isArray(p.stages)){
     p.stages=A(p.steps).map(s=>({id:s.id||uid(),name:s.name||'Untitled stage',state:s.status==='COMPLETE'?'done':/PROGRESS|READY/.test(s.status)?'open':'locked'}));
+    if(typeof p.notes!=='string')p.notes=A(p.steps).filter(s=>s.notes).map(s=>s.name+': '+s.notes).join('\n');
     p.tasks=A(p.checklist).map(c=>({id:c.id||uid(),text:c.text||'Untitled task',stage:'',due:'',status:c.status==='COMPLETED'?'done':'todo'}));
   }
   p.stages=A(p.stages);p.tasks=A(p.tasks);
   p.events=A(p.events).filter(e=>/^\d{4}-\d\d-\d\d/.test(e.date||'')).map(e=>({id:e.id||uid(),title:e.title||e.text||'Booking',date:e.date.slice(0,10),time:e.time||'',kind:e.kind||'booking',who:e.who||'',note:e.note||'',done:e.done??/COMPLET|DONE/i.test(e.status||'')}));
-  p.name=p.name||'Untitled project';p.created=p.created||p.updated_at||new Date().toISOString();p.key=p.key||keyOf(p.name);
+  if(typeof p.notes!=='string')p.notes='';p.name=p.name||'Untitled project';p.created=p.created||p.updated_at||new Date().toISOString();p.key=p.key||keyOf(p.name);
   p.stages.forEach(s=>{s.id=s.id||uid();s.name=s.name||'Untitled stage';if(!['locked','open','done'].includes(s.state))s.state='locked'});
-  p.tasks.forEach(t=>{t.id=t.id||uid();t.text=t.text||'Untitled task';t.status=t.status||(t.done?'done':'todo')});
+  p.tasks.forEach(t=>{t.id=t.id||uid();t.text=t.text||'Untitled task';if(!['todo','prog','done'].includes(t.status))t.status=t.done?'done':'todo'});
   let m=Math.max(0,p.seq||0,...p.tasks.map(t=>t.n||0));p.tasks.forEach(t=>{if(!t.n)t.n=++m});p.seq=m;
   return p;
 }
@@ -141,15 +166,15 @@ const live=()=>Object.values(P).filter(p=>!p._deleted).sort((a,b)=>a.created<b.c
 
 /* ---------- save + sync ---------- */
 function chip(s){$('#chip').textContent={saving:'Saving…',live:'Synced',error:'Sync error, will retry',offline:'Offline, saved on this device'}[s]||s}
-function persist(){try{localStorage.setItem(KEY,JSON.stringify(P));localStorage.setItem(KEY+'_cur',cur||'')}catch(e){}}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(P));localStorage.setItem(KEY+'_set',JSON.stringify(ST));localStorage.setItem(KEY+'_cur',cur||'')}catch(e){}}
 function touch(p){p.updated_at=new Date().toISOString();p._dirty=1;persist();chip('saving');clearTimeout(saveT);saveT=setTimeout(sync,500)}
 async function sync(){
   if(!sb)return chip('offline');
-  const d=Object.values(P).filter(p=>p._dirty);if(!d.length)return chip('live');
-  try{
-    const {error}=await sb.from('karnel_projects').upsert(d.map(p=>{const {_dirty,...c}=p;return{id:p.id,name:p.name,data:c,updated_at:p.updated_at}}));
-    if(error)throw error;d.forEach(p=>delete p._dirty);persist();chip('live');
-  }catch(e){console.warn(e);chip('error')}
+  const d=Object.values(P).filter(p=>p._dirty),rows=d.map(p=>{const {_dirty,...c}=p;return{id:p.id,name:p.name,data:c,updated_at:p.updated_at}});
+  if(ST._dirty)rows.push({id:SETID,name:'Settings',data:{t:ST.t,updated_at:ST.updated_at},updated_at:ST.updated_at});
+  if(!rows.length)return chip('live');
+  try{const {error}=await sb.from('karnel_projects').upsert(rows);if(error)throw error;d.forEach(p=>delete p._dirty);delete ST._dirty;persist();chip('live')}
+  catch(e){console.warn(e);chip('error')}
 }
 async function load(){
   if(!sb)return chip('offline');
@@ -158,49 +183,57 @@ async function load(){
     let changed=false;
     (data||[]).forEach(r=>{try{
       let d=r.data;if(typeof d==='string')d=JSON.parse(d);if(!d||typeof d!=='object')return;
+      if(r.id===SETID){const c=+new Date(d.updated_at||0),l=+new Date(ST.updated_at||0);
+        if((Array.isArray(d.template)||d.t)&&c>l){ST=normST(d);changed=true}else if(l>c)ST._dirty=1;return}
       d.id=d.id||r.id;const l=P[r.id],ct=+new Date(d.updated_at||0),lt=+new Date(l?.updated_at||0);
       if(!l||ct>lt){P[r.id]=norm(d);changed=true}else if(lt>ct){l._dirty=1}
     }catch(e){}});
     const ids=new Set((data||[]).map(r=>r.id));Object.values(P).forEach(p=>{if(!ids.has(p.id))p._dirty=1});
+    if(!ids.has(SETID)&&ST.updated_at)ST._dirty=1;
     persist();if(changed)render();sync();listen();
   }catch(e){console.warn(e);chip('error')}
 }
 function listen(){
   try{if(chan)sb.removeChannel(chan);
   chan=sb.channel('karnel-live').on('postgres_changes',{event:'*',schema:'public',table:'karnel_projects'},pl=>{
-    const n=pl.new,l=n&&P[n.id];
-    if(n&&n.id&&n.data&&typeof n.data==='object'&&(!l||+new Date(n.data.updated_at||0)>+new Date(l.updated_at||0))){P[n.id]=norm(n.data);persist()}
-    clearTimeout(rtT);rtT=setTimeout(()=>{if(!/INPUT|SELECT/.test(document.activeElement.tagName))render()},200);
+    const n=pl.new;
+    if(n&&n.id===SETID&&n.data&&(Array.isArray(n.data.template)||n.data.t)){if(+new Date(n.data.updated_at||0)>+new Date(ST.updated_at||0)){ST=normST(n.data);persist()}}
+    else if(n&&n.id&&n.data&&typeof n.data==='object'){const l=P[n.id];if(!l||+new Date(n.data.updated_at||0)>+new Date(l.updated_at||0)){P[n.id]=norm(n.data);persist()}}
+    clearTimeout(rtT);rtT=setTimeout(()=>{if(!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName))render()},200);
   }).subscribe()}catch(e){}
 }
-
 /* ---------- modals ---------- */
 function openM(h,f){$('#md').innerHTML=h;$('#ovl').classList.add('on');if(f)$(f).focus()}
 function closeM(){$('#ovl').classList.remove('on')}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
 const cancel='<button type="button" class="btn" onclick="closeM()">Cancel</button>';
-function openCreate(){view==='cal'?openEvent(null,null,null,'reminder'):cur&&P[cur]&&!P[cur]._deleted?openTaskForm():openProjectForm()}
-function openProjectForm(){openM(`<h2>Create project</h2><form onsubmit="createProject(event)">
-  <label for="pn">Project name</label><input class="in" id="pn" required maxlength="80" placeholder="e.g. 14 Wattle Street duplex">
-  <label for="pa">Site address</label><input class="in" id="pa" maxlength="120">
-  <label for="pt">Workflow</label><select class="in" id="pt"><option value="std">Standard residential build (8 stages, all locked)</option><option value="blank">Blank, I'll add the stages</option></select>
+function openCreate(){view==='cal'?openEvent(null,null,null,'reminder'):view==='proj'&&cur&&P[cur]&&!P[cur]._deleted?openTaskForm():openProjectForm()}
+function openProjectForm(){
+  const o=[...TPL.map(([k,n])=>[k,`${n} (${ST.t[k].length} stages)`]),['none','No stages (I will add them later)']];let sel='single';
+  try{sel=localStorage.getItem(KEY+'_lt')||sel}catch(e){}
+  openM(`<h2>Create project</h2><form onsubmit="createProject(event)">
+  <label for="pn">Project name or site address</label><input class="in" id="pn" required maxlength="80" placeholder="e.g. 14 Wattle Street, Kellyville">
+  <label>Workflow</label>${o.map(([k,n])=>`<label class="ck"><input type="radio" name="pt" value="${k}"${k===sel?' checked':''}> ${n}</label>`).join('')}
+  <div class="meta" style="margin-top:8px">You can edit these lists in Settings.</div>
   <div class="dr">${cancel}<button class="btn p">Create project</button></div></form>`,'#pn')}
-function openTaskForm(){const p=P[cur];openM(`<h2>Create task</h2><form onsubmit="createTask(event)">
-  <label>Project</label><input class="in" value="${esc(p.name)}" disabled>
-  <label for="tn">Summary</label><input class="in" id="tn" required maxlength="140">
-  <label for="tg">Workflow stage</label><select class="in" id="tg"><option value="">None</option>${p.stages.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('')}</select>
-  <label for="td">Due date</label><input class="in" type="date" id="td">
-  <div class="dr">${cancel}<button class="btn p">Create</button></div></form>`,'#tn')}
-
+function openTaskForm(tid){
+  const p=P[cur],t=tid&&p.tasks.find(x=>x.id===tid);
+  openM(`<h2>${t?'Edit':'Create'} task</h2><form onsubmit="saveTask(event,'${t?t.id:''}')">
+    <label for="tn">Summary</label><input class="in" id="tn" required maxlength="140" value="${esc(t?.text)}">
+    <label for="tg">Workflow stage</label><select class="in" id="tg"><option value="">None</option>${p.stages.map(s=>`<option value="${s.id}"${t&&t.stage===s.id?' selected':''}>${esc(s.name)}</option>`).join('')}</select>
+    <label for="td">Due date</label><input class="in" type="date" id="td" value="${t?esc(t.due):''}">
+    ${t?`<label for="ts">Status</label><select class="in" id="ts">${COLS.map(([v,l])=>`<option value="${v}"${t.status===v?' selected':''}>${l}</option>`).join('')}</select>`:''}
+    <div class="dr">${t?`<button type="button" class="btn d" style="margin-right:auto" onclick="delTask('${t.id}')">Delete</button>`:''}${cancel}<button class="btn p">${t?'Save':'Create'}</button></div></form>`,'#tn');
+}
 /* ---------- projects ---------- */
 function createProject(e){
-  e.preventDefault();const name=$('#pn').value.trim();
-  const p=norm({id:'p_'+uid(),name,address:$('#pa').value.trim(),created:new Date().toISOString(),
-    stages:$('#pt').value==='std'?STD.map(n=>({id:uid(),name:n,state:'locked'})):[],tasks:[]});
-  P[p.id]=p;cur=p.id;tab='board';touch(p);closeM();render();
+  e.preventDefault();const r=document.querySelector('input[name=pt]:checked'),k=r?r.value:'none';
+  try{localStorage.setItem(KEY+'_lt',k)}catch(x){}
+  const p=norm({id:'p_'+uid(),name:$('#pn').value.trim(),created:new Date().toISOString(),notes:'',stages:(ST.t[k]||[]).map(n=>({id:uid(),name:n,state:'locked'})),tasks:[]});
+  P[p.id]=p;cur=p.id;view='proj';tab='board';q='';fs='';touch(p);closeM();render();
 }
 function pick(id){cur=id;view='proj';q='';fs='';persist();render()}
-function editProject(){const p=P[cur],n=prompt('Project name',p.name);if(n&&n.trim())p.name=n.trim();const a=prompt('Site address',p.address||'');if(a!==null)p.address=a.trim();touch(p);render()}
+function editProject(){const p=P[cur],n=prompt('Project name',p.name);if(n&&n.trim()){p.name=n.trim();touch(p);render()}}
 function deleteProject(){const p=P[cur];if(confirm('Delete "'+p.name+'" with all its tasks and workflow?')){p._deleted=true;touch(p);render()}}
 function setTab(t){tab=t;render()}
 
@@ -214,26 +247,33 @@ function delStage(sid){const p=P[cur],s=stage(sid);if(!confirm('Delete stage "'+
 
 /* ---------- tasks ---------- */
 const locked=(p,t)=>{const s=t.stage&&p.stages.find(x=>x.id===t.stage);return s&&s.state==='locked'};
-function createTask(e){e.preventDefault();const p=P[cur];p.tasks.push({id:uid(),n:++p.seq,text:$('#tn').value.trim(),stage:$('#tg').value,due:$('#td').value,status:'todo'});touch(p);closeM();tab='board';render()}
+function saveTask(e,tid){
+  e.preventDefault();const p=P[cur],d={text:$('#tn').value.trim(),stage:$('#tg').value,due:$('#td').value};
+  if(tid)Object.assign(p.tasks.find(t=>t.id===tid),d,{status:$('#ts').value});else p.tasks.push({id:uid(),n:++p.seq,status:'todo',...d});
+  q='';fs='';touch(p);closeM();render();
+}
+function quickTask(e){e.preventDefault();const v=$('#qt').value.trim();if(!v)return;const p=P[cur];p.tasks.push({id:uid(),n:++p.seq,text:v,stage:'',due:'',status:'todo'});q='';fs='';touch(p);render();$('#qt').focus()}
 function setStatus(tid,s){const p=P[cur],t=p.tasks.find(t=>t.id===tid);if(!t||locked(p,t))return;t.status=s;touch(p);render()}
-function delTask(tid){P[cur].tasks=P[cur].tasks.filter(t=>t.id!==tid);touch(P[cur]);render()}
-function drop(e,s){e.preventDefault();if(dragId)setStatus(dragId,s);dragId=null}
+function delTask(tid){if(!confirm('Delete this task?'))return;P[cur].tasks=P[cur].tasks.filter(t=>t.id!==tid);touch(P[cur]);closeM();render()}
+function drop(e,k){e.preventDefault();if(!drag)return;const d=drag;drag=null;if(d.t==='stage')setState(d.id,{todo:'locked',prog:'open',done:'done'}[k]);else setStatus(d.id,k)}
+function dragStart(e,t,id){drag={t,id};try{e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move'}catch(x){}}
 function setQ(v){q=v.toLowerCase();cols()}
 function setFs(v){fs=v;cols()}
 
 /* ---------- render ---------- */
 function render(){
   const L=live();if(!cur||!P[cur]||P[cur]._deleted)cur=L[0]?.id||null;persist();alerts();
-  $('#side').innerHTML=`<button class="pi${view==='cal'?' on':''}" onclick="goCal()"><span class="av" style="background:#44546F"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span>Calendar</span></button><div class="sh">Projects<button onclick="openProjectForm()" aria-label="Create project">+</button></div>`+L.map(p=>`<button class="pi${view==='proj'&&p.id===cur?' on':''}" onclick="pick('${p.id}')"><span class="av" style="background:${tint(p.name)}">${esc(p.key.slice(0,2))}</span><span>${esc(p.name)}</span></button>`).join('');
+  $('#side').innerHTML=`<button class="pi${view==='cal'?' on':''}" onclick="goCal()"><span class="av" style="background:#44546F"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span>Calendar</span></button><div class="sh">Projects<button onclick="openProjectForm()" aria-label="Create project">+</button></div>`+L.map(p=>`<button class="pi${view==='proj'&&p.id===cur?' on':''}" onclick="pick('${p.id}')"><span class="av" style="background:${tint(p.name)}">${esc(p.key.slice(0,2))}</span><span>${esc(p.name)}</span></button>`).join('')+`<button class="pi${view==='set'?' on':''}" onclick="goSet()" style="margin-top:12px"><span class="av" style="background:#8590A2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></span><span>Settings</span></button>`;
   const m=$('#main');
+  if(view==='set'){m.innerHTML=setView();return}
   if(view==='cal'){m.innerHTML=`<h1>Calendar</h1><div class="meta" style="margin-bottom:16px">Bookings, reminders and task due dates for every project.</div>`+calView(null);return}
   if(!cur){m.innerHTML=`<div class="empty"><h1>Create your first project</h1><p>Add a project, then set up its workflow and tasks. Workflow stages stay locked until you unlock them.</p><button class="btn p" onclick="openProjectForm()">Create project</button></div>`;return}
   const p=P[cur],S=p.stages,n=k=>S.filter(s=>s.state===k).length;
   m.innerHTML=`<div class="bc">Projects / ${esc(p.name)}</div>
-    <div class="th"><div><h1>${esc(p.name)}</h1><div class="meta">${esc(p.address)||'No site address'}  (key ${esc(p.key)})</div></div>
-      <div class="sa"><button class="btn" onclick="editProject()">Edit details</button><button class="btn d" onclick="deleteProject()">Delete</button></div></div>
-    <div class="tabs"><button class="tab${tab==='board'?' on':''}" onclick="setTab('board')">Board</button><button class="tab${tab==='flow'?' on':''}" onclick="setTab('flow')">Workflow</button><button class="tab${tab==='cal'?' on':''}" onclick="setTab('cal')">Calendar</button></div>
-    <div id="body"></div>`;
+    <div class="th"><div><h1>${esc(p.name)}</h1><div class="meta">Project key ${esc(p.key)}</div></div>
+      <div class="sa"><button class="btn" onclick="editProject()">Rename</button><button class="btn d" onclick="deleteProject()">Delete</button></div></div>
+    <div class="pj"><div><div class="tabs"><button class="tab${tab==='board'?' on':''}" onclick="setTab('board')">Board</button><button class="tab${tab==='flow'?' on':''}" onclick="setTab('flow')">Workflow</button><button class="tab${tab==='cal'?' on':''}" onclick="setTab('cal')">Calendar</button></div>
+    <div id="body"></div></div><aside class="np"><h2>Project notes</h2><textarea id="pnote" aria-label="Project notes" placeholder="Site notes, call logs, decisions…" oninput="saveNote(this.value)">${esc(p.notes)}</textarea><div class="meta">Saved automatically and synced.</div></aside></div>`;
   tab==='board'?board(p):tab==='flow'?flow(p,n):$('#body').innerHTML=calView(p.id);
 }
 function flow(p,n){
@@ -248,7 +288,7 @@ function flow(p,n){
       <td><div class="ib"><button title="Move up" aria-label="Move up" onclick="moveStage('${s.id}',-1)">↑</button><button title="Move down" aria-label="Move down" onclick="moveStage('${s.id}',1)">↓</button><button title="Rename" aria-label="Rename stage" onclick="renameStage('${s.id}')">✎</button><button title="Delete" aria-label="Delete stage" onclick="delStage('${s.id}')">✕</button></div></td></tr>`}).join('');
   $('#body').innerHTML=`<div><b>${n('done')} of ${S.length}</b> stages complete</div><div class="pb"><i style="width:${pct}%"></i></div>
     ${S.length?`<table class="tbl"><thead><tr><th>Stage</th><th>Status</th><th class="hide">Tasks</th><th>Action</th><th></th></tr></thead><tbody>${rows}</tbody></table>`:'<p class="none">No stages yet. Add the first one below.</p>'}
-    <form class="addrow" onsubmit="addStage(event)"><input class="in" id="ns" maxlength="80" placeholder="Add a stage" aria-label="New stage name"><button class="btn p">Add stage</button></form>`;
+    <form class="addrow" onsubmit="addStage(event)"><input class="in" id="ns" maxlength="80" placeholder="Add a stage" aria-label="New stage name"><button class="btn p">Add stage</button></form><div class="addrow"><select class="in" id="tp" style="flex:0 1 180px" aria-label="Template">${TPL.map(([k,n])=>`<option value="${k}">${n}</option>`).join('')}</select><button class="btn" onclick="addTemplate()">Add missing stages from this list</button></div>`;
 }
 function board(p){
   $('#body').innerHTML=`<div class="tb"><input class="in" type="search" placeholder="Search tasks" aria-label="Search tasks" value="${esc(q)}" oninput="setQ(this.value)">
@@ -256,20 +296,41 @@ function board(p){
     <button class="btn p" onclick="openTaskForm()">Create task</button></div><div class="board" id="cols"></div>`;
   cols();
 }
+const stageCard=p=>s=>{
+  const ts=p.tasks.filter(t=>t.stage===s.id),dn=ts.filter(t=>t.status==='done').length,
+  a=s.state==='locked'?`<button class="btn s p" onclick="setState('${s.id}','open')">Unlock</button>`:s.state==='open'?`<button class="btn s p" onclick="setState('${s.id}','done')">Complete</button><button class="btn s" onclick="setState('${s.id}','locked')">Lock</button>`:`<button class="btn s" onclick="setState('${s.id}','open')">Reopen</button>`;
+  return `<div class="card stg ${s.state}" draggable="true" ondragstart="dragStart(event,'stage','${s.id}')"><div class="cm"><span class="lz ${s.state==='locked'?'':s.state}">${s.state==='locked'?LOCK+' ':''}Workflow stage</span></div><div class="ct"><b>${esc(s.name)}</b></div><div class="due">${ts.length?dn+' of '+ts.length+' tasks done':'No tasks yet'}</div><div class="sa" style="margin-top:8px">${a}</div></div>`};
+const taskCard=(p,today)=>t=>{
+  const s=t.stage&&p.stages.find(x=>x.id===t.stage),lk=locked(p,t),od=t.due&&t.status!=='done'&&t.due<today,due=t.due?fmt(t.due,{day:'numeric',month:'short'}):'';
+  return `<div class="card${lk?' lk':''}" draggable="${!lk}" ondragstart="dragStart(event,'task','${t.id}')" onclick="openTaskForm('${t.id}')"><div class="ct">${esc(t.text)}</div>
+    <div class="cm">${s?`<span class="ep">${esc(s.name)}</span>`:''}${lk?`<span class="lz">${LOCK} Stage locked</span>`:''}${due?`<span class="due${od?' od':''}">${od?'Overdue ':'Due '}${due}</span>`:''}</div>
+    <div class="cf"><span>${esc(p.key)}-${t.n}</span><select aria-label="Status" ${lk?'disabled':''} onclick="event.stopPropagation()" onchange="setStatus('${t.id}',this.value)">${COLS.map(([v,l])=>`<option value="${v}"${t.status===v?' selected':''}>${l}</option>`).join('')}</select></div></div>`};
 function cols(){
-  const p=P[cur],today=ymd(new Date());
-  const list=p.tasks.filter(t=>(!fs||t.stage===fs)&&(!q||(t.text+' '+p.key+'-'+t.n).toLowerCase().includes(q)));
+  const p=P[cur],today=ymd(new Date()),sm={locked:'todo',open:'prog',done:'done'};
+  const tl=p.tasks.filter(t=>(!fs||t.stage===fs)&&(!q||(t.text+' '+p.key+'-'+t.n).toLowerCase().includes(q)));
+  const sl=p.stages.filter(s=>(!fs||s.id===fs)&&(!q||s.name.toLowerCase().includes(q)));
   $('#cols').innerHTML=COLS.map(([k,label])=>{
-    const ts=list.filter(t=>t.status===k);
-    return `<div class="col" ondragover="event.preventDefault()" ondrop="drop(event,'${k}')"><div class="ch">${label}<span class="cnt">${ts.length}</span></div>`+ts.map(t=>{
-      const s=t.stage&&p.stages.find(x=>x.id===t.stage),lk=locked(p,t),od=t.due&&t.status!=='done'&&t.due<today;
-      const due=t.due?new Date(t.due+'T00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'}):'';
-      return `<div class="card${lk?' lk':''}" draggable="${!lk}" ondragstart="dragId='${t.id}'"><div class="ct">${esc(t.text)}</div>
-        <div class="cm">${s?`<span class="ep">${esc(s.name)}</span>`:''}${lk?`<span class="lz">${LOCK} Stage locked</span>`:''}${due?`<span class="due${od?' od':''}">${od?'Overdue ':'Due '}${due}</span>`:''}</div>
-        <div class="cf"><span>${esc(p.key)}-${t.n}</span><span><select aria-label="Status" ${lk?'disabled':''} onchange="setStatus('${t.id}',this.value)">${COLS.map(([v,l])=>`<option value="${v}"${t.status===v?' selected':''}>${l}</option>`).join('')}</select><button class="x" aria-label="Delete task" onclick="delTask('${t.id}')">×</button></span></div></div>`}).join('')+`</div>`}).join('');
+    const ss=sl.filter(s=>sm[s.state]===k),ts=tl.filter(t=>t.status===k);
+    return `<div class="col" ondragover="event.preventDefault()" ondrop="drop(event,'${k}')"><div class="ch">${label}<span class="cnt">${ss.length+ts.length}</span></div>${ss.map(stageCard(p)).join('')}${ts.map(taskCard(p,today)).join('')}${k==='todo'?`<form onsubmit="quickTask(event)"><input class="in" id="qt" maxlength="140" placeholder="+ Add a task, press Enter" aria-label="Quick add task"></form>`:''}</div>`}).join('');
 }
-
-
+function saveNote(v){const p=P[cur];p.notes=v;touch(p)}
+function addTemplate(){const p=P[cur],k=$('#tp').value,have=new Set(p.stages.map(s=>s.name.toLowerCase()));let n=0;ST.t[k].forEach(t=>{if(!have.has(t.toLowerCase())){p.stages.push({id:uid(),name:t,state:'locked'});n++}});if(n){touch(p);render()}else alert('Every stage in that list is already in this project.')}
+function touchS(){ST.updated_at=new Date().toISOString();ST._dirty=1;persist();chip('saving');clearTimeout(saveT);saveT=setTimeout(sync,500)}
+function goSet(){view='set';render()}
+function tAdd(e){e.preventDefault();const v=$('#tadd').value.trim();if(!v)return;ST.t[stab].push(v);touchS();render();$('#tadd').focus()}
+function tDel(i){ST.t[stab].splice(i,1);touchS();render()}
+function tRename(i){const n=prompt('Stage name',ST.t[stab][i]);if(n&&n.trim()){ST.t[stab][i]=n.trim();touchS();render()}}
+function tMove(i,d){const a=ST.t[stab],j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];touchS();render()}
+function tReset(){if(confirm('Reset this list to its default stages?')){ST.t[stab]=[...DEF[stab]];touchS();render()}}
+function setView(){
+  const T=ST.t[stab],nm=TPL.find(x=>x[0]===stab)[1];
+  return `<h1>Settings</h1><div class="meta">Workflow stages used when you create a new project.</div>
+    <div class="tabs">${TPL.map(([k,n])=>`<button class="tab${k===stab?' on':''}" onclick="stab='${k}';render()">${n} (${ST.t[k].length})</button>`).join('')}</div>
+    <p class="meta" style="margin-bottom:12px">Edit the ${nm.toLowerCase()} list. Changes only affect new projects. Existing projects keep their own stages.</p>
+    ${T.length?`<table class="tbl" style="max-width:640px"><tbody>${T.map((n,i)=>`<tr><td><span class="nm">${i+1}</span>${esc(n)}</td><td><div class="ib"><button aria-label="Move up" onclick="tMove(${i},-1)">↑</button><button aria-label="Move down" onclick="tMove(${i},1)">↓</button><button aria-label="Rename" onclick="tRename(${i})">✎</button><button aria-label="Delete" onclick="tDel(${i})">✕</button></div></td></tr>`).join('')}</tbody></table>`:'<p class="none">No stages in this list yet.</p>'}
+    <form class="addrow" onsubmit="tAdd(event)"><input class="in" id="tadd" maxlength="80" placeholder="Add a stage to ${esc(nm.toLowerCase())}" aria-label="New stage"><button class="btn p">Add</button></form>
+    <div style="margin-top:20px"><button class="btn" onclick="tReset()">Reset this list to default</button></div>`;
+}
 /* ---------- calendar, agenda and alerts ---------- */
 const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
@@ -324,7 +385,7 @@ function calView(pid){
   const a=pid?`'${pid}'`:'null';
   return `<div class="tb"><button class="btn" onclick="mv(-1)" aria-label="Previous month">‹</button><button class="btn" onclick="mv(0)">Today</button><button class="btn" onclick="mv(1)" aria-label="Next month">›</button><b style="font-size:16px;margin:0 8px">${first.toLocaleDateString('en-AU',{month:'long',year:'numeric'})}</b><span class="sp"></span>
     <button class="btn" onclick="openEvent(${a},null,null,'booking')">Add booking</button><button class="btn p" onclick="openEvent(${a},null,null,'reminder')">Add reminder</button></div>
-    <div class="cal"><div>${g}</div><div><h2 style="font-size:16px;font-weight:600">Agenda</h2>${groups(its.filter(i=>!i.done).slice(0,40),!pid)}</div></div>`;
+    <div class="cal${pid?' one':''}"><div>${g}</div><div><h2 style="font-size:16px;font-weight:600">Agenda</h2>${groups(its.filter(i=>!i.done).slice(0,40),!pid)}</div></div>`;
 }
 function openEvent(pid,id,date,kind){
   const L=live();if(!L.length)return openProjectForm();
