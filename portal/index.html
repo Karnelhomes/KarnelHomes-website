@@ -90,11 +90,23 @@ h1{font-size:24px;line-height:28px;font-weight:600}.meta{color:var(--sub);margin
 .lz.bk{background:#CFE1FD;color:#0055CC}.lz.rm{background:#DFD8FD;color:#5E4DB2}
 .ck{display:flex;gap:8px;align-items:center;margin-top:14px;font-weight:500}
 .md .ck{font-size:14px;color:var(--n);margin:8px 0 0}
-.pj{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:28px;align-items:start}
+.pj{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:start}
 .np{position:sticky;top:0;margin-top:16px;background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:14px}
 .np h2{font-size:14px;font-weight:600;margin-bottom:8px}
-.np textarea{width:100%;height:320px;padding:8px;resize:vertical;line-height:20px;font:inherit;background:#fff;border:1px solid #8590A2;border-radius:3px}
-.np .meta{font-size:12px;margin-top:6px}
+.np .meta{font-size:12px;margin-top:8px}
+
+/* Notes bullet-list styles */
+.note-input-wrap{display:flex;gap:6px;margin-bottom:10px}
+.note-input-wrap .in{flex:1;height:30px}
+.note-list{list-style:none;padding:0;margin:0;max-height:360px;overflow-y:auto}
+.note-item{display:flex;align-items:center;gap:8px;padding:6px 4px;border-bottom:1px solid var(--bd);background:#fff;border-radius:3px;margin-bottom:4px}
+.note-item:last-child{margin-bottom:0}
+.note-item input[type="checkbox"]{cursor:pointer;width:15px;height:15px;accent-color:var(--blue)}
+.note-text{flex:1;word-break:break-word;font-size:13px;line-height:18px}
+.note-item.done .note-text{text-decoration:line-through;color:var(--sub)}
+.note-del{background:none;border:0;color:var(--sub);font-size:14px;line-height:1;padding:2px 4px;border-radius:3px;cursor:pointer}
+.note-del:hover{background:#091E4224;color:var(--red)}
+
 .cal.one{grid-template-columns:1fr}
 .stg{border-left:3px solid var(--lock)}.stg.open{border-left-color:#F5CD47}.stg.done{border-left-color:var(--green)}
 .col form .in{width:100%;background:transparent}
@@ -124,7 +136,7 @@ const DEF={
   granny:['Approvals received (CDC / CC)','Site set-up and utilities','Slab and footings','Frame and roof','Lock-up','Fit-out','Final inspection and OC','Handover'],
   single:[...STD],
   double:['Approvals received (CC / CDC)','Site set-up and demolition','Slab and footings','Ground floor frame','Upper floor and frame','Roof','Lock-up','Fit-out and services','Final inspections','Handover']};
-/* Accepts the new shape {t:{granny,single,double}} or the older single list {template:[...]} */
+
 function normST(x){
   const t={},src=x&&x.t&&typeof x.t==='object'?x.t:{};
   TPL.forEach(([k])=>{const a=src[k];t[k]=Array.isArray(a)?a.filter(v=>typeof v==='string'&&v.trim()):[...DEF[k]]});
@@ -140,17 +152,30 @@ addEventListener('error',e=>showErr(e.message));
 const keyOf=n=>String(n||'').replace(/[^a-z]/gi,'').slice(0,3).toUpperCase()||'PRJ';
 const tint=n=>['#0C66E4','#1F845A','#8270DB','#C25100','#CD519D','#2B7A9B'][[...String(n)].reduce((a,c)=>a+c.charCodeAt(0),0)%6];
 
-/* Normalise any project shape (this app's, or the older steps + checklist format). Never throws on blank entries. */
+/* Normalise any project shape & bullet notes */
+function normNoteItems(raw){
+  if(Array.isArray(raw)) return raw.filter(i=>i&&typeof i==='object').map(i=>({id:i.id||uid(),text:i.text||'',done:!!i.done}));
+  if(typeof raw==='string'&&raw.trim()){
+    return raw.split('\n').map(line=>line.trim()).filter(Boolean).map(line=>({
+      id:uid(),
+      text:line.replace(/^[-*•]\s*/,''),
+      done:false
+    }));
+  }
+  return [];
+}
+
 function norm(p){
   const A=x=>Array.isArray(x)?x.filter(o=>o&&typeof o==='object'):[];
   if(!Array.isArray(p.stages)){
     p.stages=A(p.steps).map(s=>({id:s.id||uid(),name:s.name||'Untitled stage',state:s.status==='COMPLETE'?'done':/PROGRESS|READY/.test(s.status)?'open':'locked'}));
-    if(typeof p.notes!=='string')p.notes=A(p.steps).filter(s=>s.notes).map(s=>s.name+': '+s.notes).join('\n');
+    if(typeof p.notes!=='string'&&!Array.isArray(p.notes))p.notes=A(p.steps).filter(s=>s.notes).map(s=>s.name+': '+s.notes).join('\n');
     p.tasks=A(p.checklist).map(c=>({id:c.id||uid(),text:c.text||'Untitled task',stage:'',due:'',status:c.status==='COMPLETED'?'done':'todo'}));
   }
   p.stages=A(p.stages);p.tasks=A(p.tasks);
   p.events=A(p.events).filter(e=>/^\d{4}-\d\d-\d\d/.test(e.date||'')).map(e=>({id:e.id||uid(),title:e.title||e.text||'Booking',date:e.date.slice(0,10),time:e.time||'',kind:e.kind||'booking',who:e.who||'',note:e.note||'',done:e.done??/COMPLET|DONE/i.test(e.status||'')}));
-  if(typeof p.notes!=='string')p.notes='';p.name=p.name||'Untitled project';p.created=p.created||p.updated_at||new Date().toISOString();p.key=p.key||keyOf(p.name);
+  p.noteItems=normNoteItems(p.noteItems||p.notes);
+  p.name=p.name||'Untitled project';p.created=p.created||p.updated_at||new Date().toISOString();p.key=p.key||keyOf(p.name);
   p.stages.forEach(s=>{s.id=s.id||uid();s.name=s.name||'Untitled stage';if(!['locked','open','done'].includes(s.state))s.state='locked'});
   p.tasks.forEach(t=>{t.id=t.id||uid();t.text=t.text||'Untitled task';if(!['todo','prog','done'].includes(t.status))t.status=t.done?'done':'todo'});
   let m=Math.max(0,p.seq||0,...p.tasks.map(t=>t.n||0));p.tasks.forEach(t=>{if(!t.n)t.n=++m});p.seq=m;
@@ -213,7 +238,7 @@ function openProjectForm(){
   try{sel=localStorage.getItem(KEY+'_lt')||sel}catch(e){}
   openM(`<h2>Create project</h2><form onsubmit="createProject(event)">
   <label for="pn">Project name or site address</label><input class="in" id="pn" required maxlength="80" placeholder="e.g. 14 Wattle Street, Kellyville">
-  <label>Workflow</label>${o.map(([k,n])=>`<label class="ck"><input type="radio" name="pt" value="${k}"${k===sel?' checked':''}> ${n}</label>`).join('')}
+  <label>Workflow</label>${o.map(([k,n])=>`<label class="ck"><input type="radio" name="pt" value="${k}"${k===sel?' checked':''}>${n}</label>`).join('')}
   <div class="meta" style="margin-top:8px">You can edit these lists in Settings.</div>
   <div class="dr">${cancel}<button class="btn p">Create project</button></div></form>`,'#pn')}
 function openTaskForm(tid){
@@ -229,7 +254,7 @@ function openTaskForm(tid){
 function createProject(e){
   e.preventDefault();const r=document.querySelector('input[name=pt]:checked'),k=r?r.value:'none';
   try{localStorage.setItem(KEY+'_lt',k)}catch(x){}
-  const p=norm({id:'p_'+uid(),name:$('#pn').value.trim(),created:new Date().toISOString(),notes:'',stages:(ST.t[k]||[]).map(n=>({id:uid(),name:n,state:'locked'})),tasks:[]});
+  const p=norm({id:'p_'+uid(),name:$('#pn').value.trim(),created:new Date().toISOString(),noteItems:[],stages:(ST.t[k]||[]).map(n=>({id:uid(),name:n,state:'locked'})),tasks:[]});
   P[p.id]=p;cur=p.id;view='proj';tab='board';q='';fs='';touch(p);closeM();render();
 }
 function pick(id){cur=id;view='proj';q='';fs='';persist();render()}
@@ -273,9 +298,56 @@ function render(){
     <div class="th"><div><h1>${esc(p.name)}</h1><div class="meta">Project key ${esc(p.key)}</div></div>
       <div class="sa"><button class="btn" onclick="editProject()">Rename</button><button class="btn d" onclick="deleteProject()">Delete</button></div></div>
     <div class="pj"><div><div class="tabs"><button class="tab${tab==='board'?' on':''}" onclick="setTab('board')">Board</button><button class="tab${tab==='flow'?' on':''}" onclick="setTab('flow')">Workflow</button><button class="tab${tab==='cal'?' on':''}" onclick="setTab('cal')">Calendar</button></div>
-    <div id="body"></div></div><aside class="np"><h2>Project notes</h2><textarea id="pnote" aria-label="Project notes" placeholder="Site notes, call logs, decisions…" oninput="saveNote(this.value)">${esc(p.notes)}</textarea><div class="meta">Saved automatically and synced.</div></aside></div>`;
+    <div id="body"></div></div>
+    <aside class="np">
+      <h2>Project notes</h2>
+      <form class="note-input-wrap" onsubmit="addNoteItem(event)">
+        <input class="in" id="ni" placeholder="Add bullet note..." aria-label="Add note item" maxlength="150">
+        <button class="btn p s">Add</button>
+      </form>
+      <ul class="note-list" id="nlist">
+        ${(p.noteItems||[]).map(item=>`
+          <li class="note-item${item.done?' done':''}">
+            <input type="checkbox" ${item.done?'checked':''} onchange="toggleNoteItem('${item.id}')" aria-label="Mark note complete">
+            <span class="note-text">${esc(item.text)}</span>
+            <button type="button" class="note-del" title="Delete note" onclick="deleteNoteItem('${item.id}')">✕</button>
+          </li>
+        `).join('')}
+      </ul>
+      ${!(p.noteItems||[]).length?'<p class="none" style="text-align:center">No bullet notes yet.</p>':''}
+      <div class="meta">Saved automatically and synced.</div>
+    </aside></div>`;
   tab==='board'?board(p):tab==='flow'?flow(p,n):$('#body').innerHTML=calView(p.id);
 }
+
+/* Bullet points note functions */
+function addNoteItem(e){
+  e.preventDefault();
+  const input=$('#ni');
+  const txt=input.value.trim();
+  if(!txt)return;
+  const p=P[cur];
+  p.noteItems=p.noteItems||[];
+  p.noteItems.push({id:uid(),text:txt,done:false});
+  touch(p);
+  render();
+}
+function toggleNoteItem(id){
+  const p=P[cur];
+  const item=(p.noteItems||[]).find(x=>x.id===id);
+  if(item){
+    item.done=!item.done;
+    touch(p);
+    render();
+  }
+}
+function deleteNoteItem(id){
+  const p=P[cur];
+  p.noteItems=(p.noteItems||[]).filter(x=>x.id!==id);
+  touch(p);
+  render();
+}
+
 function flow(p,n){
   const S=p.stages,pct=S.length?Math.round(n('done')/S.length*100):0;
   const rows=S.map((s,i)=>{
@@ -313,7 +385,6 @@ function cols(){
     const ss=sl.filter(s=>sm[s.state]===k),ts=tl.filter(t=>t.status===k);
     return `<div class="col" ondragover="event.preventDefault()" ondrop="drop(event,'${k}')"><div class="ch">${label}<span class="cnt">${ss.length+ts.length}</span></div>${ss.map(stageCard(p)).join('')}${ts.map(taskCard(p,today)).join('')}${k==='todo'?`<form onsubmit="quickTask(event)"><input class="in" id="qt" maxlength="140" placeholder="+ Add a task, press Enter" aria-label="Quick add task"></form>`:''}</div>`}).join('');
 }
-function saveNote(v){const p=P[cur];p.notes=v;touch(p)}
 function addTemplate(){const p=P[cur],k=$('#tp').value,have=new Set(p.stages.map(s=>s.name.toLowerCase()));let n=0;ST.t[k].forEach(t=>{if(!have.has(t.toLowerCase())){p.stages.push({id:uid(),name:t,state:'locked'});n++}});if(n){touch(p);render()}else alert('Every stage in that list is already in this project.')}
 function touchS(){ST.updated_at=new Date().toISOString();ST._dirty=1;persist();chip('saving');clearTimeout(saveT);saveT=setTimeout(sync,500)}
 function goSet(){view='set';render()}
