@@ -107,10 +107,20 @@ h1{font-size:24px;line-height:28px;font-weight:600}.meta{color:var(--sub);margin
 .note-del{background:none;border:0;color:var(--sub);font-size:14px;line-height:1;padding:2px 4px;border-radius:3px;cursor:pointer}
 .note-del:hover{background:#091E4224;color:var(--red)}
 
+/* Dashboard Home Layout */
+.home-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:20px 0}
+.stat-card{background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:16px}
+.stat-val{font-size:28px;font-weight:700;line-height:32px;margin-top:4px}
+.home-sections{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start}
+.p-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.p-card{border:1px solid var(--bd);border-radius:6px;padding:14px;background:#fff;cursor:pointer;transition:border-color .15s}
+.p-card:hover{border-color:var(--blue)}
+.p-card-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+
 .cal.one{grid-template-columns:1fr}
 .stg{border-left:3px solid var(--lock)}.stg.open{border-left-color:#F5CD47}.stg.done{border-left-color:var(--green)}
 .col form .in{width:100%;background:transparent}
-@media(max-width:1280px){.pj{grid-template-columns:1fr}.np{position:static;margin-top:24px}}
+@media(max-width:1280px){.pj,.home-sections{grid-template-columns:1fr}.np{position:static;margin-top:24px}}
 @media(max-width:1100px){.cal{grid-template-columns:1fr}}
 @media(max-width:900px){.board{grid-template-columns:1fr}.tbl .hide{display:none}}
 @media(max-width:700px){.app{grid-template-columns:1fr;height:auto}.side{display:flex;gap:6px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--bd)}.sh{display:none}.pi{width:auto;white-space:nowrap}main{padding:16px}}
@@ -130,8 +140,8 @@ const LOCK='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="
 const $=s=>document.querySelector(s);
 const uid=()=>Math.random().toString(36).slice(2,9);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let P={},cur=null,tab='board',q='',fs='',sb=null,chan,saveT,rtT,dragId=null,drag=null,view='proj',cy=new Date().getFullYear(),cm=new Date().getMonth();
-const SETID='_settings',TPL=[['granny','Granny flat'],['single','Single storey'],['double','Double storey']];
+let P={},cur=null,tab='board',q='',fs='',sb=null,chan,saveT,rtT,dragId=null,drag=null,view='home',cy=new Date().getFullYear(),cm=new Date().getMonth();
+const SETID='_settings', GENID='_general', TPL=[['granny','Granny flat'],['single','Single storey'],['double','Double storey']];
 const DEF={
   granny:['Approvals received (CDC / CC)','Site set-up and utilities','Slab and footings','Frame and roof','Lock-up','Fit-out','Final inspection and OC','Handover'],
   single:[...STD],
@@ -144,10 +154,13 @@ function normST(x){
   return{t,updated_at:(x&&x.updated_at)||''};
 }
 let ST=normST(null),stab='single';
+let genEvents=[];
+
 try{const x=JSON.parse(localStorage.getItem(KEY+'_set'));if(x&&typeof x==='object'){ST=normST(x);if(x._dirty)ST._dirty=1}}catch(e){}
+try{const g=JSON.parse(localStorage.getItem(KEY+'_gen'));if(Array.isArray(g))genEvents=g}catch(e){}
 
 function showErr(m){const e=$('#err');e.style.display='block';e.innerHTML='Something went wrong: '+esc(m)+' <button class="btn s" onclick="resetLocal()">Reset this device and reload</button>'}
-function resetLocal(){localStorage.removeItem(KEY);localStorage.removeItem(KEY+'_cur');location.reload()}
+function resetLocal(){localStorage.removeItem(KEY);localStorage.removeItem(KEY+'_cur');localStorage.removeItem(KEY+'_gen');location.reload()}
 addEventListener('error',e=>showErr(e.message));
 const keyOf=n=>String(n||'').replace(/[^a-z]/gi,'').slice(0,3).toUpperCase()||'PRJ';
 const tint=n=>['#0C66E4','#1F845A','#8270DB','#C25100','#CD519D','#2B7A9B'][[...String(n)].reduce((a,c)=>a+c.charCodeAt(0),0)%6];
@@ -191,12 +204,13 @@ const live=()=>Object.values(P).filter(p=>!p._deleted).sort((a,b)=>a.created<b.c
 
 /* ---------- save + sync ---------- */
 function chip(s){$('#chip').textContent={saving:'Saving…',live:'Synced',error:'Sync error, will retry',offline:'Offline, saved on this device'}[s]||s}
-function persist(){try{localStorage.setItem(KEY,JSON.stringify(P));localStorage.setItem(KEY+'_set',JSON.stringify(ST));localStorage.setItem(KEY+'_cur',cur||'')}catch(e){}}
-function touch(p){p.updated_at=new Date().toISOString();p._dirty=1;persist();chip('saving');clearTimeout(saveT);saveT=setTimeout(sync,500)}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(P));localStorage.setItem(KEY+'_set',JSON.stringify(ST));localStorage.setItem(KEY+'_cur',cur||'');localStorage.setItem(KEY+'_gen',JSON.stringify(genEvents))}catch(e){}}
+function touch(p){if(p){p.updated_at=new Date().toISOString();p._dirty=1;}persist();chip('saving');clearTimeout(saveT);saveT=setTimeout(sync,500)}
 async function sync(){
   if(!sb)return chip('offline');
   const d=Object.values(P).filter(p=>p._dirty),rows=d.map(p=>{const {_dirty,...c}=p;return{id:p.id,name:p.name,data:c,updated_at:p.updated_at}});
   if(ST._dirty)rows.push({id:SETID,name:'Settings',data:{t:ST.t,updated_at:ST.updated_at},updated_at:ST.updated_at});
+  rows.push({id:GENID,name:'General Events',data:{events:genEvents,updated_at:new Date().toISOString()},updated_at:new Date().toISOString()});
   if(!rows.length)return chip('live');
   try{const {error}=await sb.from('karnel_projects').upsert(rows);if(error)throw error;d.forEach(p=>delete p._dirty);delete ST._dirty;persist();chip('live')}
   catch(e){console.warn(e);chip('error')}
@@ -210,6 +224,7 @@ async function load(){
       let d=r.data;if(typeof d==='string')d=JSON.parse(d);if(!d||typeof d!=='object')return;
       if(r.id===SETID){const c=+new Date(d.updated_at||0),l=+new Date(ST.updated_at||0);
         if((Array.isArray(d.template)||d.t)&&c>l){ST=normST(d);changed=true}else if(l>c)ST._dirty=1;return}
+      if(r.id===GENID){if(Array.isArray(d.events)){genEvents=d.events;changed=true}return}
       d.id=d.id||r.id;const l=P[r.id],ct=+new Date(d.updated_at||0),lt=+new Date(l?.updated_at||0);
       if(!l||ct>lt){P[r.id]=norm(d);changed=true}else if(lt>ct){l._dirty=1}
     }catch(e){}});
@@ -223,6 +238,7 @@ function listen(){
   chan=sb.channel('karnel-live').on('postgres_changes',{event:'*',schema:'public',table:'karnel_projects'},pl=>{
     const n=pl.new;
     if(n&&n.id===SETID&&n.data&&(Array.isArray(n.data.template)||n.data.t)){if(+new Date(n.data.updated_at||0)>+new Date(ST.updated_at||0)){ST=normST(n.data);persist()}}
+    else if(n&&n.id===GENID&&n.data&&Array.isArray(n.data.events)){genEvents=n.data.events;persist()}
     else if(n&&n.id&&n.data&&typeof n.data==='object'){const l=P[n.id];if(!l||+new Date(n.data.updated_at||0)>+new Date(l.updated_at||0)){P[n.id]=norm(n.data);persist()}}
     clearTimeout(rtT);rtT=setTimeout(()=>{if(!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName))render()},200);
   }).subscribe()}catch(e){}
@@ -232,7 +248,7 @@ function openM(h,f){$('#md').innerHTML=h;$('#ovl').classList.add('on');if(f)$(f)
 function closeM(){$('#ovl').classList.remove('on')}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
 const cancel='<button type="button" class="btn" onclick="closeM()">Cancel</button>';
-function openCreate(){view==='cal'?openEvent(null,null,null,'reminder'):view==='proj'&&cur&&P[cur]&&!P[cur]._deleted?openTaskForm():openProjectForm()}
+function openCreate(){view==='cal'||view==='home'?openEvent(null,null,null,'reminder'):view==='proj'&&cur&&P[cur]&&!P[cur]._deleted?openTaskForm():openProjectForm()}
 function openProjectForm(){
   const o=[...TPL.map(([k,n])=>[k,`${n} (${ST.t[k].length} stages)`]),['none','No stages (I will add them later)']];let sel='single';
   try{sel=localStorage.getItem(KEY+'_lt')||sel}catch(e){}
@@ -261,8 +277,9 @@ function pick(id){cur=id;view='proj';q='';fs='';persist();render()}
 function editProject(){const p=P[cur],n=prompt('Project name',p.name);if(n&&n.trim()){p.name=n.trim();touch(p);render()}}
 function deleteProject(){const p=P[cur];if(confirm('Delete "'+p.name+'" with all its tasks and workflow?')){p._deleted=true;touch(p);render()}}
 function setTab(t){tab=t;render()}
+function goHome(){view='home';render()}
 
-/* ---------- workflow: stages only change when you press the button ---------- */
+/* ---------- workflow ---------- */
 const stage=sid=>P[cur].stages.find(s=>s.id===sid);
 function setState(sid,s){stage(sid).state=s;touch(P[cur]);render()}
 function addStage(e){e.preventDefault();const v=$('#ns').value.trim();if(!v)return;P[cur].stages.push({id:uid(),name:v,state:'locked'});touch(P[cur]);render();$('#ns').focus()}
@@ -287,12 +304,17 @@ function setFs(v){fs=v;cols()}
 
 /* ---------- render ---------- */
 function render(){
-  const L=live();if(!cur||!P[cur]||P[cur]._deleted)cur=L[0]?.id||null;persist();alerts();
-  $('#side').innerHTML=`<button class="pi${view==='cal'?' on':''}" onclick="goCal()"><span class="av" style="background:#44546F"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span>Calendar</span></button><div class="sh">Projects<button onclick="openProjectForm()" aria-label="Create project">+</button></div>`+L.map(p=>`<button class="pi${view==='proj'&&p.id===cur?' on':''}" onclick="pick('${p.id}')"><span class="av" style="background:${tint(p.name)}">${esc(p.key.slice(0,2))}</span><span>${esc(p.name)}</span></button>`).join('')+`<button class="pi${view==='set'?' on':''}" onclick="goSet()" style="margin-top:12px"><span class="av" style="background:#8590A2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></span><span>Settings</span></button>`;
+  const L=live();if(!cur&&L.length)cur=L[0].id;persist();alerts();
+  $('#side').innerHTML=`<button class="pi${view==='home'?' on':''}" onclick="goHome()"><span class="av" style="background:#172B4D"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span></button>
+  <button class="pi${view==='cal'?' on':''}" onclick="goCal()"><span class="av" style="background:#44546F"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span>Calendar</span></button>
+  <div class="sh">Projects<button onclick="openProjectForm()" aria-label="Create project">+</button></div>`+L.map(p=>`<button class="pi${view==='proj'&&p.id===cur?' on':''}" onclick="pick('${p.id}')"><span class="av" style="background:${tint(p.name)}">${esc(p.key.slice(0,2))}</span><span>${esc(p.name)}</span></button>`).join('')+`<button class="pi${view==='set'?' on':''}" onclick="goSet()" style="margin-top:12px"><span class="av" style="background:#8590A2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></span><span>Settings</span></button>`;
+  
   const m=$('#main');
+  if(view==='home'){m.innerHTML=homeView();return}
   if(view==='set'){m.innerHTML=setView();return}
   if(view==='cal'){m.innerHTML=`<h1>Calendar</h1><div class="meta" style="margin-bottom:16px">Bookings, reminders and task due dates for every project.</div>`+calView(null);return}
-  if(!cur){m.innerHTML=`<div class="empty"><h1>Create your first project</h1><p>Add a project, then set up its workflow and tasks. Workflow stages stay locked until you unlock them.</p><button class="btn p" onclick="openProjectForm()">Create project</button></div>`;return}
+  if(!cur||!P[cur]||P[cur]._deleted){m.innerHTML=`<div class="empty"><h1>Create your first project</h1><p>Add a project, then set up its workflow and tasks.</p><button class="btn p" onclick="openProjectForm()">Create project</button></div>`;return}
+  
   const p=P[cur],S=p.stages,n=k=>S.filter(s=>s.state===k).length;
   m.innerHTML=`<div class="bc">Projects / ${esc(p.name)}</div>
     <div class="th"><div><h1>${esc(p.name)}</h1><div class="meta">Project key ${esc(p.key)}</div></div>
@@ -318,6 +340,44 @@ function render(){
       <div class="meta">Saved automatically and synced.</div>
     </aside></div>`;
   tab==='board'?board(p):tab==='flow'?flow(p,n):$('#body').innerHTML=calView(p.id);
+}
+
+/* Home Dashboard View */
+function homeView(){
+  const L=live();
+  const allItems=items();
+  const overdueCount=allItems.filter(i=>!i.done && i.date < ymd(new Date())).length;
+  const pendingCount=allItems.filter(i=>!i.done).length;
+  let totalStages=0, doneStages=0;
+  L.forEach(p=>{ (p.stages||[]).forEach(s=>{ totalStages++; if(s.state==='done') doneStages++; }); });
+
+  return `<h1>Overview Dashboard</h1>
+    <div class="meta">Welcome back! Here is a summary across all active projects and general items.</div>
+    <div class="home-grid">
+      <div class="stat-card"><div class="meta">Active Projects</div><div class="stat-val">${L.length}</div></div>
+      <div class="stat-card"><div class="meta">Pending Items</div><div class="stat-val" style="color:var(--blue)">${pendingCount}</div></div>
+      <div class="stat-card"><div class="meta">Overdue Items</div><div class="stat-val" style="color:${overdueCount?'var(--red)':'inherit'}">${overdueCount}</div></div>
+      <div class="stat-card"><div class="meta">Stages Completed</div><div class="stat-val" style="color:var(--green)">${doneStages}/${totalStages}</div></div>
+    </div>
+    <div class="home-sections">
+      <div>
+        <h2 style="font-size:16px;font-weight:600;margin-bottom:12px">Active Projects Overview</h2>
+        ${L.length?`<div class="p-grid">${L.map(p=>{
+          const doneS=(p.stages||[]).filter(s=>s.state==='done').length;
+          const totalS=(p.stages||[]).length;
+          const pct=totalS?Math.round(doneS/totalS*100):0;
+          return `<div class="p-card" onclick="pick('${p.id}')">
+            <div class="p-card-header"><span class="av" style="background:${tint(p.name)}">${esc(p.key.slice(0,2))}</span><b>${esc(p.name)}</b></div>
+            <div class="due">${doneS} of ${totalS} stages complete (${pct}%)</div>
+            <div class="pb" style="margin:8px 0 0"><i style="width:${pct}%"></i></div>
+          </div>`;
+        }).join('')}</div>`:'<p class="none">No projects created yet.</p>'}
+      </div>
+      <div>
+        <h2 style="font-size:16px;font-weight:600;margin-bottom:12px">Upcoming Agenda</h2>
+        ${groups(allItems.filter(i=>!i.done).slice(0,10),true)}
+      </div>
+    </div>`;
 }
 
 /* Bullet points note functions */
@@ -408,9 +468,14 @@ const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
 const fmt=(k,o)=>new Date(k+'T00:00').toLocaleDateString('en-AU',o);
 const KIND={booking:['Booking','bk'],reminder:['Reminder','rm'],task:['Task due','']};
 function items(pid){
-  const o=[];live().forEach(p=>{if(pid&&p.id!==pid)return;
+  const o=[];
+  live().forEach(p=>{if(pid&&p.id!==pid)return;
     p.events.forEach(e=>o.push({id:e.id,pid:p.id,pn:p.name,date:e.date,time:e.time,title:e.title,kind:e.kind==='booking'?'booking':'reminder',who:e.who,done:e.done}));
     p.tasks.forEach(t=>{if(t.due)o.push({id:t.id,pid:p.id,pn:p.name,date:t.due,time:'',title:t.text,kind:'task',done:t.status==='done'})})});
+  
+  if(!pid){
+    genEvents.forEach(e=>o.push({id:e.id,pid:'general',pn:'General',date:e.date,time:e.time,title:e.title,kind:e.kind==='booking'?'booking':'reminder',who:e.who,done:e.done}));
+  }
   return o.sort((a,b)=>(a.date+a.time)<(b.date+b.time)?-1:1);
 }
 const due=()=>{const lim=ymd(addD(new Date(),2));return items().filter(i=>!i.done&&i.date<=lim)};
@@ -441,10 +506,10 @@ function groups(list,sp){
     if(g!==last){h+=`<div class="agh${g==='Overdue'?' red':''}">${g}</div>`;last=g}h+=row(i,sp)});
   return h||'<p class="none">Nothing scheduled.</p>';
 }
-const cp=i=>{const c=tint(i.pn),tk=i.kind==='task';return `<button class="chp${tk?' tk':''}${i.done?' dn2':''}" style="${tk?'color:'+c:'background:'+c}" title="${esc(i.title)}" onclick="event.stopPropagation();openItem('${i.pid}','${i.id}','${i.kind}')">${i.time?i.time+' ':''}${esc(i.title)}</button>`};
+const cp=i=>{const c=i.pid==='general'?'#626F86':tint(i.pn),tk=i.kind==='task';return `<button class="chp${tk?' tk':''}${i.done?' dn2':''}" style="${tk?'color:'+c:'background:'+c}" title="${esc(i.title)}" onclick="event.stopPropagation();openItem('${i.pid}','${i.id}','${i.kind}')">${i.time?i.time+' ':''}${esc(i.title)}</button>`};
 function mv(d){if(!d){const n=new Date();cy=n.getFullYear();cm=n.getMonth()}else{const x=new Date(cy,cm+d,1);cy=x.getFullYear();cm=x.getMonth()}render()}
 function goCal(){view='cal';render()}
-function goTask(pid){cur=pid;view='proj';tab='board';q='';fs='';render()}
+function goTask(pid){if(pid==='general')return;cur=pid;view='proj';tab='board';q='';fs='';render()}
 function openItem(pid,id,kind){kind==='task'?goTask(pid):openEvent(pid,id)}
 function calView(pid){
   const its=items(pid),first=new Date(cy,cm,1),off=(first.getDay()+6)%7,days=new Date(cy,cm+1,0).getDate(),rows=Math.ceil((off+days)/7),td=ymd(new Date()),by={};
@@ -459,13 +524,17 @@ function calView(pid){
     <div class="cal${pid?' one':''}"><div>${g}</div><div><h2 style="font-size:16px;font-weight:600">Agenda</h2>${groups(its.filter(i=>!i.done).slice(0,40),!pid)}</div></div>`;
 }
 function openEvent(pid,id,date,kind){
-  const L=live();if(!L.length)return openProjectForm();
-  const e=id&&P[pid]?.events.find(x=>x.id===id),pr=pid||(cur&&P[cur]&&!P[cur]._deleted?cur:L[0].id);
+  const L=live();
+  const e=id&&(pid==='general'?genEvents.find(x=>x.id===id):P[pid]?.events.find(x=>x.id===id));
+  const pr=pid||(cur&&P[cur]&&!P[cur]._deleted?cur:'general');
   const v=e||{kind:kind||'reminder',title:'',date:date||ymd(new Date()),time:'',who:'',note:'',done:false};
   openM(`<h2>${e?'Edit':'Add'} ${e?v.kind:kind||'event'}</h2><form onsubmit="saveEvent(event,'${e?pid:''}','${e?id:''}')">
     <label for="ek">Type</label><select class="in" id="ek"><option value="booking"${v.kind==='booking'?' selected':''}>Booking</option><option value="reminder"${v.kind!=='booking'?' selected':''}>Reminder</option></select>
     <label for="et">Title</label><input class="in" id="et" required maxlength="140" value="${esc(v.title)}" placeholder="e.g. Plumber rough-in, call council">
-    <label for="ep">Project</label><select class="in" id="ep" ${e?'disabled':''}>${L.map(p=>`<option value="${p.id}"${p.id===pr?' selected':''}>${esc(p.name)}</option>`).join('')}</select>
+    <label for="ep">Project</label><select class="in" id="ep" ${e?'disabled':''}>
+      <option value="general"${pr==='general'?' selected':''}>General (No project)</option>
+      ${L.map(p=>`<option value="${p.id}"${p.id===pr?' selected':''}>${esc(p.name)}</option>`).join('')}
+    </select>
     <label for="ed">Date</label><input class="in" type="date" id="ed" required value="${v.date}">
     <label for="em">Time (optional)</label><input class="in" type="time" id="em" value="${v.time}">
     <label for="ew">With (optional)</label><input class="in" id="ew" maxlength="80" value="${esc(v.who)}" placeholder="Contractor, certifier or company">
@@ -474,12 +543,42 @@ function openEvent(pid,id,date,kind){
     <div class="dr">${e?`<button type="button" class="btn d" style="margin-right:auto" onclick="delEvent('${pid}','${id}')">Delete</button>`:''}${cancel}<button class="btn p">Save</button></div></form>`,'#et');
 }
 function saveEvent(x,pid0,id0){
-  x.preventDefault();const p=P[id0?pid0:$('#ep').value];
+  x.preventDefault();
+  const selectedProj=$('#ep').value;
   const d={title:$('#et').value.trim(),kind:$('#ek').value,date:$('#ed').value,time:$('#em').value,who:$('#ew').value.trim(),note:$('#en').value.trim(),done:id0?$('#edn').checked:false};
-  if(id0)Object.assign(p.events.find(e=>e.id===id0),d);else p.events.push({id:uid(),...d});
-  touch(p);closeM();render();
+  
+  if(id0){
+    if(pid0==='general'){
+      Object.assign(genEvents.find(e=>e.id===id0),d);
+    }else{
+      Object.assign(P[pid0].events.find(e=>e.id===id0),d);
+      touch(P[pid0]);
+    }
+  }else{
+    if(selectedProj==='general'){
+      genEvents.push({id:uid(),...d});
+    }else{
+      const p=P[selectedProj];
+      p.events.push({id:uid(),...d});
+      touch(p);
+    }
+  }
+  touch();
+  closeM();
+  render();
 }
-function delEvent(pid,id){const p=P[pid];p.events=p.events.filter(e=>e.id!==id);touch(p);closeM();render()}
+function delEvent(pid,id){
+  if(pid==='general'){
+    genEvents=genEvents.filter(e=>e.id!==id);
+  }else{
+    const p=P[pid];
+    p.events=p.events.filter(e=>e.id!==id);
+    touch(p);
+  }
+  touch();
+  closeM();
+  render();
+}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!$('#ovl').classList.contains('on')){render();pushNotes()}});
 
 try{render();chip(sb?'live':'offline');load();pushNotes();setInterval(()=>{alerts();pushNotes()},900000)}catch(e){showErr(e.message)}
