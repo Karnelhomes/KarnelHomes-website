@@ -1,3 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site Induction</title>
+  <style>
+    /* Mobile-first styling with large touch targets */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f4f5;
+      padding: 20px;
+      margin: 0;
+    }
+    .form-container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    h2 {
+      margin-top: 0;
+      color: #111827;
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 14px;
+      color: #374151;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 16px; /* Prevents iOS zoom on focus */
+      box-sizing: border-box;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #2563eb;
+      ring: 2px solid #2563eb;
+    }
+    .optional-tag {
+      font-weight: normal;
+      color: #6b7280;
+      font-size: 12px;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #1d4ed8;
+    }
+    #statusMessage {
+      margin-top: 16px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>Site Induction Scan</h2>
+    <form id="inductionForm">
+      
+      <div class="form-group">
+        <label for="job_location">Job Location *</label>
+        <select id="job_location" required>
+          <option value="" disabled selected>Select active site...</option>
+          <option value="8 Redhill place Rouse Hill">8 Redhill place Rouse Hill</option>
+          <option value="8 Falmouth Rd, Marayong">8 Falmouth Rd, Marayong</option>
+          <option value="5 Percy St, Edmondson park">5 Percy St, Edmondson park</option>
+          <option value="15 Meeson St, Claymore">15 Meeson St, Claymore</option>
+          <option value="87 Modenese St, Oran Park">87 Modenese St, Oran Park</option>
+          <option value="37 Grebe cct, Oran Park">37 Grebe cct, Oran Park</option>
+          <option value="13 Sharples CCt, Oran Park">13 Sharples CCt, Oran Park</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="person_name">Full Name *</label>
+        <input type="text" id="person_name" required placeholder="John Doe">
+      </div>
+
+      <div class="form-group">
+        <label for="company">Company *</label>
+        <input type="text" id="company" required placeholder="ABC Plumbing">
+      </div>
+
+      <div class="form-group">
+        <label for="purpose">Purpose / Job *</label>
+        <input type="text" id="purpose" required placeholder="e.g., Site Inspection, Rough-in">
+      </div>
+
+      <div class="form-group">
+        <label for="phone_no">Phone No. <span class="optional-tag">(Optional)</span></label>
+        <input type="tel" id="phone_no" placeholder="0400 000 000">
+      </div>
+
+      <div class="form-group">
+        <label for="email_id">Email ID <span class="optional-tag">(Optional)</span></label>
+        <input type="email" id="email_id" placeholder="john@example.com">
+      </div>
+
+      <button type="submit" id="submitBtn">Submit Induction</button>
+      <div id="statusMessage"></div>
+    </form>
+  </div>
+
+  <!-- Load Supabase Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
 <script>
     // 1. Initialize Supabase (Using a different variable name to avoid conflicts)
     const SUPABASE_URL = 'https://giovxsxgkdilawyxuiqb.supabase.co';
@@ -61,3 +192,5 @@
       console.log('Email trigger placeholder. Data ready to send:', data);
     }
   </script>
+</body>
+</html>
