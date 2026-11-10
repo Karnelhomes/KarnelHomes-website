@@ -200,7 +200,6 @@
         <input type="email" id="email_id" placeholder="john@example.com">
       </div>
 
-      <!-- NEW: Safety Rules Section -->
       <div class="induction-notes">
         <h3>⚠️ Site Safety Rules</h3>
         <div class="notes-scroll">
@@ -213,7 +212,6 @@
         </div>
       </div>
 
-      <!-- NEW: Mandatory Checkbox -->
       <div class="checkbox-group">
         <input type="checkbox" id="acknowledgment" required>
         <label for="acknowledgment">Yes, I understand and agree to comply with the Karnel Homes site safety rules.</label>
@@ -224,7 +222,6 @@
     </form>
   </div>
 
-  <!-- Load Supabase Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <script>
@@ -268,6 +265,9 @@
         statusMessage.innerText = 'Induction recorded successfully!';
         form.reset();
         
+        // Trigger Email Notification via Google Apps Script
+        triggerEmailNotification(inductionData);
+        
         setTimeout(() => {
           submitBtn.disabled = false;
           submitBtn.innerText = 'Submit Induction';
@@ -275,6 +275,24 @@
         }, 3000);
       }
     });
+
+    // Pings the Google Web App URL to send the email
+    function triggerEmailNotification(data) {
+      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwVDmTDQ3CwGLB_d0ecvrZPgyljttAEwEYlAJYxfpdWhcipJK3qeJeYCClJ0QzKL7KRGw/exec';
+
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors', // Crucial for sending cross-origin data silently to Google
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      }).then(() => {
+        console.log('Email trigger fired successfully');
+      }).catch(err => {
+        console.error('Email trigger failed:', err);
+      });
+    }
   </script>
 </body>
 </html>
