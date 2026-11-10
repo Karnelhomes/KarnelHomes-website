@@ -1,136 +1,233 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Site Induction</title>
-  <style>
-    /* Mobile-first styling with large touch targets */
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: #f4f4f5;
-      padding: 20px;
-      margin: 0;
-    }
-    .form-container {
-      max-width: 500px;
-      margin: 0 auto;
-      background: white;
-      padding: 24px;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    }
-    h2 {
-      margin-top: 0;
-      color: #111827;
-      text-align: center;
-    }
-    .form-group {
-      margin-bottom: 16px;
-    }
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 600;
-      font-size: 14px;
-      color: #374151;
-    }
-    input, select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 16px; /* Prevents iOS zoom on focus */
-      box-sizing: border-box;
-    }
-    input:focus, select:focus {
-      outline: none;
-      border-color: #2563eb;
-      ring: 2px solid #2563eb;
-    }
-    .optional-tag {
-      font-weight: normal;
-      color: #6b7280;
-      font-size: 12px;
-    }
-    button {
-      width: 100%;
-      padding: 14px;
-      background-color: #2563eb;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    button:hover {
-      background-color: #1d4ed8;
-    }
-    #statusMessage {
-      margin-top: 16px;
-      text-align: center;
-      font-weight: bold;
-      font-size: 14px;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site Induction - Karnel Homes</title>
+  <style>
+    /* Mobile-first styling */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f4f5;
+      padding: 20px;
+      margin: 0;
+    }
+    .form-container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .logo-placeholder {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .logo-placeholder span {
+      background-color: #0C66E4;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 800;
+      font-size: 20px;
+    }
+    h2 {
+      margin-top: 0;
+      color: #111827;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 14px;
+      color: #374151;
+    }
+    input[type="text"], input[type="tel"], input[type="email"], select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 16px; /* Prevents iOS zoom */
+      box-sizing: border-box;
+      background-color: #fff;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
+    }
+    .optional-tag {
+      font-weight: normal;
+      color: #6b7280;
+      font-size: 12px;
+    }
+    
+    /* Induction Notes Styling */
+    .induction-notes {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 24px;
+      margin-bottom: 16px;
+    }
+    .induction-notes h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 15px;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .notes-scroll {
+      max-height: 180px;
+      overflow-y: auto;
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.5;
+      padding-right: 8px;
+    }
+    .notes-scroll p {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    .notes-scroll strong {
+      color: #1e293b;
+    }
+    
+    /* Checkbox Styling */
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 24px;
+      background-color: #eff6ff;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #bfdbfe;
+    }
+    .checkbox-group input[type="checkbox"] {
+      margin-top: 3px;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+    .checkbox-group label {
+      margin-bottom: 0;
+      font-weight: 500;
+      font-size: 14px;
+      color: #1e40af;
+      cursor: pointer;
+      line-height: 1.4;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1d4ed8;
+    }
+    button:disabled {
+      background-color: #93c5fd;
+      cursor: not-allowed;
+    }
+    #statusMessage {
+      margin-top: 16px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
 
-  <div class="form-container">
-    <h2>Site Induction Scan</h2>
-    <form id="inductionForm">
-      
-      <div class="form-group">
-        <label for="job_location">Job Location *</label>
-        <select id="job_location" required>
-          <option value="" disabled selected>Select active site...</option>
-          <option value="8 Redhill place Rouse Hill">8 Redhill place Rouse Hill</option>
-          <option value="8 Falmouth Rd, Marayong">8 Falmouth Rd, Marayong</option>
-          <option value="5 Percy St, Edmondson park">5 Percy St, Edmondson park</option>
-          <option value="15 Meeson St, Claymore">15 Meeson St, Claymore</option>
-          <option value="87 Modenese St, Oran Park">87 Modenese St, Oran Park</option>
-          <option value="37 Grebe cct, Oran Park">37 Grebe cct, Oran Park</option>
-          <option value="13 Sharples CCt, Oran Park">13 Sharples CCt, Oran Park</option>
-        </select>
-      </div>
+  <div class="form-container">
+    <div class="logo-placeholder"><span>Karnel Homes</span></div>
+    <h2>Site Induction Sign-In</h2>
+    <form id="inductionForm">
+      
+      <div class="form-group">
+        <label for="job_location">Job Location *</label>
+        <select id="job_location" required>
+          <option value="" disabled selected>Select active site...</option>
+          <option value="8 Redhill place Rouse Hill">8 Redhill place Rouse Hill</option>
+          <option value="8 Falmouth Rd, Marayong">8 Falmouth Rd, Marayong</option>
+          <option value="5 Percy St, Edmondson park">5 Percy St, Edmondson park</option>
+          <option value="15 Meeson St, Claymore">15 Meeson St, Claymore</option>
+          <option value="87 Modenese St, Oran Park">87 Modenese St, Oran Park</option>
+          <option value="37 Grebe cct, Oran Park">37 Grebe cct, Oran Park</option>
+          <option value="13 Sharples CCt, Oran Park">13 Sharples CCt, Oran Park</option>
+        </select>
+      </div>
 
-      <div class="form-group">
-        <label for="person_name">Full Name *</label>
-        <input type="text" id="person_name" required placeholder="John Doe">
-      </div>
+      <div class="form-group">
+        <label for="person_name">Full Name *</label>
+        <input type="text" id="person_name" required placeholder="John Doe">
+      </div>
 
-      <div class="form-group">
-        <label for="company">Company *</label>
-        <input type="text" id="company" required placeholder="ABC Plumbing">
-      </div>
+      <div class="form-group">
+        <label for="company">Company *</label>
+        <input type="text" id="company" required placeholder="ABC Plumbing">
+      </div>
 
-      <div class="form-group">
-        <label for="purpose">Purpose / Job *</label>
-        <input type="text" id="purpose" required placeholder="e.g., Site Inspection, Rough-in">
-      </div>
+      <div class="form-group">
+        <label for="purpose">Purpose / Job *</label>
+        <input type="text" id="purpose" required placeholder="e.g., Site Inspection, Rough-in">
+      </div>
 
-      <div class="form-group">
-        <label for="phone_no">Phone No. <span class="optional-tag">(Optional)</span></label>
-        <input type="tel" id="phone_no" placeholder="0400 000 000">
-      </div>
+      <div class="form-group">
+        <label for="phone_no">Phone No. <span class="optional-tag">(Optional)</span></label>
+        <input type="tel" id="phone_no" placeholder="0400 000 000">
+      </div>
 
-      <div class="form-group">
-        <label for="email_id">Email ID <span class="optional-tag">(Optional)</span></label>
-        <input type="email" id="email_id" placeholder="john@example.com">
-      </div>
+      <div class="form-group">
+        <label for="email_id">Email ID <span class="optional-tag">(Optional)</span></label>
+        <input type="email" id="email_id" placeholder="john@example.com">
+      </div>
 
-      <button type="submit" id="submitBtn">Submit Induction</button>
-      <div id="statusMessage"></div>
-    </form>
-  </div>
+      <!-- NEW: Safety Rules Section -->
+      <div class="induction-notes">
+        <h3>⚠️ Site Safety Rules</h3>
+        <div class="notes-scroll">
+          <p><strong>1. PPE Requirements:</strong> High-visibility clothing, steel-capped boots, and hard hats must be worn at all times while on site.</p>
+          <p><strong>2. Incidents & Hazards:</strong> All injuries, near-misses, and site hazards must be reported to the Site Supervisor immediately.</p>
+          <p><strong>3. Housekeeping:</strong> Keep your work area clean and free of trip hazards. Dispose of all rubbish in the designated site bins before leaving.</p>
+          <p><strong>4. Drugs & Alcohol:</strong> Zero tolerance policy. Anyone found under the influence will be removed from the site immediately.</p>
+          <p><strong>5. Site Alterations:</strong> Do not alter scaffolding, remove edge protection, or operate machinery you are not licensed for.</p>
+          <p><strong>6. Access:</strong> Park only in designated areas and do not block neighboring driveways or footpaths.</p>
+        </div>
+      </div>
 
-  <!-- Load Supabase Library -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
-<script>
-    // 1. Initialize Supabase (Using a different variable name to avoid conflicts)
+      <!-- NEW: Mandatory Checkbox -->
+      <div class="checkbox-group">
+        <input type="checkbox" id="acknowledgment" required>
+        <label for="acknowledgment">Yes, I understand and agree to comply with the Karnel Homes site safety rules.</label>
+      </div>
+
+      <button type="submit" id="submitBtn">Submit Induction</button>
+      <div id="statusMessage"></div>
+    </form>
+  </div>
+
+  <!-- Load Supabase Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <script>
     const SUPABASE_URL = 'https://giovxsxgkdilawyxuiqb.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_k9sU8tyILCmQTxAI36ufWQ__JsPNSRY';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -142,13 +239,11 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      // Disable button to prevent double-clicks
       submitBtn.disabled = true;
       submitBtn.innerText = 'Submitting...';
       statusMessage.style.color = '#374151';
       statusMessage.innerText = '';
 
-      // Collect data
       const inductionData = {
         job_location: document.getElementById('job_location').value,
         person_name: document.getElementById('person_name').value,
@@ -158,7 +253,6 @@
         email_id: document.getElementById('email_id').value || null
       };
 
-      // 2. Insert into Supabase (Using the new variable name)
       const { data, error } = await supabaseClient
         .from('site_inductions')
         .insert([inductionData]);
@@ -170,15 +264,10 @@
         submitBtn.disabled = false;
         submitBtn.innerText = 'Submit Induction';
       } else {
-        // Success
         statusMessage.style.color = 'green';
         statusMessage.innerText = 'Induction recorded successfully!';
         form.reset();
         
-        // 3. Trigger Email (Placeholder for later configuration)
-        triggerEmailNotification(inductionData);
-        
-        // Reset button state after 3 seconds
         setTimeout(() => {
           submitBtn.disabled = false;
           submitBtn.innerText = 'Submit Induction';
@@ -186,11 +275,6 @@
         }, 3000);
       }
     });
-
-    // Placeholder function for future email integration
-    function triggerEmailNotification(data) {
-      console.log('Email trigger placeholder. Data ready to send:', data);
-    }
   </script>
 </body>
 </html>
