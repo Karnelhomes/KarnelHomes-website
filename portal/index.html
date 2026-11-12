@@ -2,15 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#ffffff">
+<link rel="apple-touch-icon" href="https://placehold.co/192x192/0C66E4/FFF.png?text=K">
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiS2FybmVsIEhvbWVzIiwic2hvcnRfbmFtZSI6Ikthcm5lbCIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjZmZmZmZmIiwidGhlbWVfY29sb3IiOiIjMEM2NkU0IiwiaWNvbnMiOlt7InNyYyI6Imh0dHBzOi8vcGxhY2Vob2xkLmNvLzE5MngxOTIvMEM2NkU0L0ZGRi5wbmc/dGV4dD1LIiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3BuZyJ9LHsic3JjIjoiaHR0cHM6Ly9wbGFjZWhvbGQuY28vNTEyeDUxMi8wQzY2RTQvRkZGLnBuZz90ZXh0PUsiLCJzaXplcyI6IjUxMng1MTIiLCJ0eXBlIjoiaW1hZ2UvcG5nIn1dfQ==">
+
 <title>Karnel Homes — Projects</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
 <script>window.supabase||document.write('<script src="https://unpkg.com/@supabase/supabase-js@2"><\/script>')</script>
 <style>
 :root{--n:#172B4D;--sub:#626F86;--bd:#DCDFE4;--bg:#F7F8F9;--blue:#0C66E4;--blue-d:#0055CC;--blue-bg:#E9F2FF;--green:#1F845A;--red:#C9372C;--r:3px}
 *{box-sizing:border-box;margin:0}
-body{font:14px/20px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--n);background:#fff}
-button,input,select{font:inherit;color:inherit}
+body{font:14px/20px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--n);background:#fff; -webkit-tap-highlight-color: transparent;}
+button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--blue);outline-offset:1px}
 .top{height:52px;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid var(--bd);background:#fff;position:sticky;top:0;z-index:20}
@@ -50,11 +56,10 @@ h1{font-size:24px;line-height:28px;font-weight:600}.meta{color:var(--sub);margin
 .ep{font-size:12px;font-weight:600;background:#DFD8FD;color:#5E4DB2;padding:0 6px;border-radius:3px}
 .due{font-size:12px;color:var(--sub)}.due.od{color:var(--red);font-weight:600}
 .cf{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;color:var(--sub)}
-.cf select{height:24px;font-size:12px;border:0;background:#091E420F;border-radius:3px;padding:0 4px}
+.cf select{height:24px;font-size:12px;border:1px solid var(--bd);background:#091E420F;border-radius:3px;padding:0 4px}
 .x{background:none;border:0;color:var(--sub);font-size:16px;line-height:1;padding:2px 6px;border-radius:3px}.x:hover{background:#091E4224;color:var(--red)}
 .lz{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;text-transform:uppercase;padding:1px 6px;border-radius:3px;background:#DCDFE4;color:#44546F}
 .lz.open{background:#F8E6A0;color:#7F5F01}.lz.done{background:#BAF3DB;color:#216E4E}
-.pb{height:8px;background:#DCDFE4;border-radius:4px;overflow:hidden;margin:6px 0 20px;max-width:420px}.pb i{display:block;height:100%;background:var(--green)}
 .tbl{width:100%;border-collapse:collapse}
 .tbl th{text-align:left;font-size:12px;font-weight:600;color:var(--sub);padding:8px 10px;border-bottom:2px solid var(--bd)}
 .tbl td{padding:10px;border-bottom:1px solid var(--bd);vertical-align:middle}
@@ -67,7 +72,7 @@ h1{font-size:24px;line-height:28px;font-weight:600}.meta{color:var(--sub);margin
 .none{color:var(--sub);padding:12px 4px}
 .empty{max-width:420px;margin:12vh auto;text-align:center}.empty h1{margin-bottom:8px}.empty p{color:var(--sub);margin-bottom:16px}
 .ovl{position:fixed;inset:0;background:#091E4270;display:none;place-items:start center;padding-top:9vh;z-index:50}.ovl.on{display:grid}
-.md{background:#fff;border-radius:6px;padding:24px;width:min(480px,92vw);box-shadow:0 8px 12px #091E4226,0 0 1px #091E424f}
+.md{background:#fff;border-radius:6px;padding:24px;width:min(480px,92vw);box-shadow:0 8px 12px #091E4226,0 0 1px #091E424f; max-height:85vh; overflow-y:auto}
 .md h2{font-size:20px;line-height:24px;font-weight:500;margin-bottom:6px}
 .md label{display:block;font-size:12px;font-weight:600;color:var(--sub);margin:14px 0 4px}.md .in{width:100%}
 .dr{display:flex;gap:8px;justify-content:flex-end;margin-top:22px}
@@ -89,28 +94,71 @@ h1{font-size:24px;line-height:28px;font-weight:600}.meta{color:var(--sub);margin
 .at{font-size:12px;color:var(--sub);padding-top:1px}.ai .meta{font-size:12px}
 .lz.bk{background:#CFE1FD;color:#0055CC}.lz.rm{background:#DFD8FD;color:#5E4DB2}
 .ck{display:flex;gap:8px;align-items:center;margin-top:14px;font-weight:500}
+
+/* Project Right Sidebar Layout */
+.proj-wrap {display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:24px; align-items:start; margin-top:16px}
+.proj-right {background:var(--bg); border:1px solid var(--bd); border-radius:6px; padding:16px}
+
+/* Collapsible Contractors Pane */
+details.cpane { background:var(--bg); border:1px solid var(--bd); border-radius:6px; margin-top:16px; margin-bottom:8px; overflow:hidden;}
+details.cpane summary { padding:12px 16px; font-weight:600; font-size:14px; cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; user-select:none; background:#fff; }
+details.cpane summary::-webkit-details-marker { display:none; }
+details.cpane[open] summary { border-bottom:1px solid var(--bd); }
+.c-table { width:100%; border-collapse:collapse; background:#fff; font-size:13px; }
+.c-table th, .c-table td { padding:10px 16px; border-bottom:1px solid var(--bd); text-align:left; vertical-align:middle; }
+.c-table th { background:var(--bg); color:var(--sub); font-weight:600; font-size:12px; }
+
 @media(max-width:1100px){.cal{grid-template-columns:1fr}}
-@media(max-width:900px){.board{grid-template-columns:1fr}.tbl .hide{display:none}}
-@media(max-width:700px){.app{grid-template-columns:1fr;height:auto}.side{display:flex;gap:6px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--bd)}.sh{display:none}.pi{width:auto;white-space:nowrap}main{padding:16px}}
+@media(max-width:900px){.board{grid-template-columns:1fr}.tbl .hide{display:none} .proj-wrap{grid-template-columns:1fr}}
+@media(max-width:700px){
+  .app{grid-template-columns:1fr;height:auto}
+  .side{display:flex;gap:6px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--bd);padding:8px}
+  .sh{display:none}
+  .pi{width:auto;white-space:nowrap}
+  main{padding:16px}
+}
 </style>
 </head>
 <body>
-<header class="top"><div class="logo">K</div><div class="bn">Karnel Homes</div><div class="sp"></div><div class="chip" id="chip">Starting…</div><button class="btn" onclick="openNotif()" aria-label="Alerts">Alerts<span class="bdg" id="bdg" style="display:none">0</span></button><button class="btn p" onclick="openCreate()">Create</button></header>
+<header class="top"><div class="logo">K</div><div class="bn">Karnel Homes</div><div class="sp"></div><div class="chip" id="chip">Starting…</div><button class="btn" onclick="openNotif()" aria-label="Alerts">Alerts<span class="bdg" id="bdg" style="display:none">0</span></button><button class="btn p" onclick="openProjectForm()">Create</button></header>
 <div class="ban" id="ban"></div><div class="err" id="err"></div>
 <div class="app"><aside class="side" id="side"></aside><main id="main"></main></div>
 <div class="ovl" id="ovl" onclick="if(event.target===this)closeM()"><div class="md" id="md"></div></div>
 
 <script>
 const KEY='karnel_v3', SB_URL='https://giovxsxgkdilawyxuiqb.supabase.co', SB_KEY='sb_publishable_k9sU8tyILCmQTxAI36ufWQ__JsPNSRY';
-const STD=['Approvals received (CC / CDC)','Site set-up and demolition','Slab and footings','Frame and roof','Lock-up','Fit-out and services','Final inspections','Handover'];
+
+// !! PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE !!
+const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzwZrBXM9aAbA9TXuTwiyAB-69wHrvP7a6_X_2526auOZFc8nUKoDrEmPyj0N7wZeM/exec'; 
+
+const DEFAULT_STD=[
+  '1. CDC / CC Approved',
+  '2. Send Stamped Plans (Archi, BASIX, Struct, Stormwater)',
+  '3. Site Ready (Fencing, Sediment Control, Banners)',
+  '4. Benching',
+  '5. Piering',
+  '6. Structural Inspections (Struct Eng, Certifier, FJA - BPA)',
+  '7. Internal Plumbing (1-week advance notice)',
+  '8. Steel',
+  '9. MHF Termites Pipe Work',
+  '10. Pre-Pour Inspections (Certifier & Structural Eng)',
+  '11. Slab',
+  '12. External Plumbing (1-week advance notice)',
+  '13. Electrician & Certifier (Same day)',
+  '14. Termite Perimeter (Next day MHF)'
+];
 const COLS=[['todo','To do'],['prog','In progress'],['done','Done']];
-const LOCK='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
 const $=s=>document.querySelector(s);
 const uid=()=>Math.random().toString(36).slice(2,9);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-// ADDED indData array to store global induction records
-let P={},cur=null,tab='board',q='',fs='',sb=null,chan,saveT,rtT,dragId=null,view='proj',cy=new Date().getFullYear(),cm=new Date().getMonth(),indData=[];
+let P={},cur=null,tab='board',q='',sb=null,chan,saveT,rtT,dragId=null,view='proj',cy=new Date().getFullYear(),cm=new Date().getMonth(),indData=[];
+let customWorkflow=[];
+
+try{ customWorkflow = JSON.parse(localStorage.getItem(KEY+'_workflow')) || DEFAULT_STD; }
+catch(e){ customWorkflow = [...DEFAULT_STD]; }
+
+function saveWorkflowTmpl(){ localStorage.setItem(KEY+'_workflow', JSON.stringify(customWorkflow)); }
 
 function showErr(m){const e=$('#err');e.style.display='block';e.innerHTML='Something went wrong: '+esc(m)+' <button class="btn s" onclick="resetLocal()">Reset this device and reload</button>'}
 function resetLocal(){localStorage.removeItem(KEY);localStorage.removeItem(KEY+'_cur');location.reload()}
@@ -118,22 +166,42 @@ addEventListener('error',e=>showErr(e.message));
 const keyOf=n=>String(n||'').replace(/[^a-z]/gi,'').slice(0,3).toUpperCase()||'PRJ';
 const tint=n=>['#0C66E4','#1F845A','#8270DB','#C25100','#CD519D','#2B7A9B'][[...String(n)].reduce((a,c)=>a+c.charCodeAt(0),0)%6];
 
+// -------- GOOGLE SYNC WEBHOOK DISPATCHER --------
+function syncToGoogle(action, item, p) {
+  if(!WEBHOOK_URL || WEBHOOK_URL.includes('YOUR_GOOGLE')) return;
+  const ev = {
+    id: item.id,
+    projectName: p.name,
+    title: item.title || item.text,
+    date: item.date || item.due,
+    time: item.time || '',
+    who: item.who || '',
+    note: item.note || '',
+    done: item.done || item.status === 'done'
+  };
+  if(action !== 'delete' && !ev.date) return; // Only sync tasks with dates to the calendar
+  
+  fetch(WEBHOOK_URL, { 
+    method: 'POST', 
+    body: JSON.stringify({ action: action, event: ev }), 
+    mode: 'no-cors' 
+  }).catch(e => console.error("Sync error:", e));
+}
+// -------------------------------------------------
+
 function norm(p){
   const A=x=>Array.isArray(x)?x.filter(o=>o&&typeof o==='object'):[];
-  if(!Array.isArray(p.stages)){
-    p.stages=A(p.steps).map(s=>({id:s.id||uid(),name:s.name||'Untitled stage',state:s.status==='COMPLETE'?'done':/PROGRESS|READY/.test(s.status)?'open':'locked'}));
-    p.tasks=A(p.checklist).map(c=>({id:c.id||uid(),text:c.text||'Untitled task',stage:'',due:'',status:c.status==='COMPLETED'?'done':'todo'}));
-  }
-  p.stages=A(p.stages);p.tasks=A(p.tasks);
+  p.tasks=A(p.tasks||p.checklist).map(c=>({id:c.id||uid(),text:c.text||'Untitled task',due:c.due||'',status:c.status==='COMPLETED'?'done':(c.status||'todo')}));
   p.events=A(p.events).filter(e=>/^\d{4}-\d\d-\d\d/.test(e.date||'')).map(e=>({id:e.id||uid(),title:e.title||e.text||'Booking',date:e.date.slice(0,10),time:e.time||'',kind:e.kind||'booking',who:e.who||'',note:e.note||'',done:e.done??/COMPLET|DONE/i.test(e.status||'')}));
+  p.contractors=A(p.contractors).map(c=>({id:c.id||uid(), type:c.type||'', name:c.name||'', phone:c.phone||''}));
   p.name=p.name||'Untitled project';p.created=p.created||p.updated_at||new Date().toISOString();p.key=p.key||keyOf(p.name);
-  p.stages.forEach(s=>{s.id=s.id||uid();s.name=s.name||'Untitled stage';if(!['locked','open','done'].includes(s.state))s.state='locked'});
-  p.tasks.forEach(t=>{t.id=t.id||uid();t.text=t.text||'Untitled task';t.status=t.status||(t.done?'done':'todo')});
-  let m=Math.max(0,p.seq||0,...p.tasks.map(t=>t.n||0));p.tasks.forEach(t=>{if(!t.n)t.n=++m});p.seq=m;
+  p.notes=p.notes||'';
+  
+  let m=Math.max(0,p.seq||0,...p.tasks.map(t=>t.n||0));p.tasks.forEach((t,i)=>{if(!t.n)t.n=++m});p.seq=m;
   return p;
 }
 try{
-  const raw=JSON.parse(localStorage.getItem(KEY)||localStorage.getItem('karnel_data_final16')||'{}');
+  const raw=JSON.parse(localStorage.getItem(KEY)||'{}');
   if(raw&&typeof raw==='object')Object.keys(raw).forEach(k=>{try{if(raw[k]&&typeof raw[k]==='object'){raw[k].id=raw[k].id||k;P[k]=norm(raw[k])}}catch(e){}});
   cur=localStorage.getItem(KEY+'_cur')||null;
 }catch(e){P={}}
@@ -170,7 +238,7 @@ function listen(){
   chan=sb.channel('karnel-live').on('postgres_changes',{event:'*',schema:'public',table:'karnel_projects'},pl=>{
     const n=pl.new,l=n&&P[n.id];
     if(n&&n.id&&n.data&&typeof n.data==='object'&&(!l||+new Date(n.data.updated_at||0)>+new Date(l.updated_at||0))){P[n.id]=norm(n.data);persist()}
-    clearTimeout(rtT);rtT=setTimeout(()=>{if(!/INPUT|SELECT/.test(document.activeElement.tagName))render()},200);
+    clearTimeout(rtT);rtT=setTimeout(()=>{if(!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName))render()},200);
   }).subscribe()}catch(e){}
 }
 
@@ -178,100 +246,231 @@ function openM(h,f){$('#md').innerHTML=h;$('#ovl').classList.add('on');if(f)$(f)
 function closeM(){$('#ovl').classList.remove('on')}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
 const cancel='<button type="button" class="btn" onclick="closeM()">Cancel</button>';
-function openCreate(){view==='cal'?openEvent(null,null,null,'reminder'):cur&&P[cur]&&!P[cur]._deleted?openTaskForm():openProjectForm()}
+
 function openProjectForm(){openM(`<h2>Create project</h2><form onsubmit="createProject(event)">
-  <label for="pn">Project name</label><input class="in" id="pn" required maxlength="80" placeholder="e.g. 14 Wattle Street duplex">
-  <label for="pa">Site address</label><input class="in" id="pa" maxlength="120">
-  <label for="pt">Workflow</label><select class="in" id="pt"><option value="std">Standard residential build (8 stages, all locked)</option><option value="blank">Blank, I'll add the stages</option></select>
+  <label for="pn">Project Name (Site Location)</label><input class="in" id="pn" required maxlength="80" placeholder="e.g. 14 Wattle Street duplex">
+  <label for="pt">Workflow</label><select class="in" id="pt"><option value="std">Standard Template (${customWorkflow.length} stages)</option><option value="blank">Blank, I'll add the stages</option></select>
   <div class="dr">${cancel}<button class="btn p">Create project</button></div></form>`,'#pn')}
-function openTaskForm(){const p=P[cur];openM(`<h2>Create task</h2><form onsubmit="createTask(event)">
+
+function openTaskForm(){const p=P[cur];openM(`<h2>Add task / step</h2><form onsubmit="createTask(event)">
   <label>Project</label><input class="in" value="${esc(p.name)}" disabled>
-  <label for="tn">Summary</label><input class="in" id="tn" required maxlength="140">
-  <label for="tg">Workflow stage</label><select class="in" id="tg"><option value="">None</option>${p.stages.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('')}</select>
-  <label for="td">Due date</label><input class="in" type="date" id="td">
+  <label for="tn">Summary / Step name</label><input class="in" id="tn" required maxlength="140">
+  <label for="td">Date (Optional)</label><input class="in" type="date" id="td">
   <div class="dr">${cancel}<button class="btn p">Create</button></div></form>`,'#tn')}
+
+function openBookTask(tid){
+  const t=P[cur].tasks.find(x=>x.id===tid);
+  openM(`<h2>📅 Schedule Event</h2><form onsubmit="saveTaskDate(event,'${tid}')">
+    <p class="meta" style="margin-bottom:12px;font-weight:600">${esc(t.text)}</p>
+    <label>Select Date</label><input class="in" type="date" id="t-date" value="${t.due}" required>
+    <div class="dr">${cancel}<button class="btn p">Save Date</button></div></form>`,'#t-date');
+}
+function saveTaskDate(e,tid){
+  e.preventDefault(); 
+  const p=P[cur], t=p.tasks.find(x=>x.id===tid);
+  t.due=$('#t-date').value; 
+  syncToGoogle('save', t, p); // Ping webhook
+  touch(p); closeM(); render();
+}
 
 function createProject(e){
   e.preventDefault();const name=$('#pn').value.trim();
-  const p=norm({id:'p_'+uid(),name,address:$('#pa').value.trim(),created:new Date().toISOString(),
-    stages:$('#pt').value==='std'?STD.map(n=>({id:uid(),name:n,state:'locked'})):[],tasks:[]});
+  const isStd = $('#pt').value==='std';
+  const tasks = isStd ? customWorkflow.map((n,i)=>({id:uid(),n:i+1,text:n,due:'',status:'todo'})) : [];
+  
+  const p=norm({id:'p_'+uid(),name,created:new Date().toISOString(),tasks:tasks,events:[],notes:'',contractors:[]});
   P[p.id]=p;cur=p.id;tab='board';touch(p);closeM();render();
 }
-function pick(id){cur=id;view='proj';q='';fs='';persist();render()}
-function editProject(){const p=P[cur],n=prompt('Project name',p.name);if(n&&n.trim())p.name=n.trim();const a=prompt('Site address',p.address||'');if(a!==null)p.address=a.trim();touch(p);render()}
+function pick(id){cur=id;view='proj';q='';persist();render()}
+function editProject(){const p=P[cur],n=prompt('Project name',p.name);if(n&&n.trim()){p.name=n.trim();touch(p);render()}}
 function deleteProject(){const p=P[cur];if(confirm('Delete "'+p.name+'" with all its tasks and workflow?')){p._deleted=true;touch(p);render()}}
 function setTab(t){tab=t;render()}
 
-const stage=sid=>P[cur].stages.find(s=>s.id===sid);
-function setState(sid,s){stage(sid).state=s;touch(P[cur]);render()}
-function addStage(e){e.preventDefault();const v=$('#ns').value.trim();if(!v)return;P[cur].stages.push({id:uid(),name:v,state:'locked'});touch(P[cur]);render();$('#ns').focus()}
-function renameStage(sid){const s=stage(sid),n=prompt('Stage name',s.name);if(n&&n.trim()){s.name=n.trim();touch(P[cur]);render()}}
-function moveStage(sid,d){const a=P[cur].stages,i=a.findIndex(s=>s.id===sid),j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];touch(P[cur]);render()}
-function delStage(sid){const p=P[cur],s=stage(sid);if(!confirm('Delete stage "'+s.name+'"? Its tasks stay on the project.'))return;p.stages=p.stages.filter(x=>x.id!==sid);p.tasks.forEach(t=>{if(t.stage===sid)t.stage=''});touch(p);render()}
-
-const locked=(p,t)=>{const s=t.stage&&p.stages.find(x=>x.id===t.stage);return s&&s.state==='locked'};
-function createTask(e){e.preventDefault();const p=P[cur];p.tasks.push({id:uid(),n:++p.seq,text:$('#tn').value.trim(),stage:$('#tg').value,due:$('#td').value,status:'todo'});touch(p);closeM();tab='board';render()}
-function setStatus(tid,s){const p=P[cur],t=p.tasks.find(t=>t.id===tid);if(!t||locked(p,t))return;t.status=s;touch(p);render()}
-function delTask(tid){P[cur].tasks=P[cur].tasks.filter(t=>t.id!==tid);touch(P[cur]);render()}
+function createTask(e){
+  e.preventDefault();const p=P[cur];
+  const t = {id:uid(),n:++p.seq,text:$('#tn').value.trim(),due:$('#td').value,status:'todo'};
+  p.tasks.push(t);
+  if(t.due) syncToGoogle('save', t, p);
+  touch(p);closeM();render()
+}
+function setStatus(tid,s){
+  const p=P[cur],t=p.tasks.find(t=>t.id===tid);
+  if(!t)return;
+  t.status=s;
+  if(t.due) syncToGoogle('save', t, p); // Sync done status
+  touch(p);render()
+}
+function updateTaskText(tid,val){
+  const p=P[cur],t=p.tasks.find(t=>t.id===tid);
+  if(t) { t.text=val; if(t.due) syncToGoogle('save', t, p); }
+  touch(p);
+}
+function delTask(tid){
+  const p=P[cur], t=p.tasks.find(x=>x.id===tid);
+  if(t && t.due) syncToGoogle('delete', t, p);
+  p.tasks=p.tasks.filter(x=>x.id!==tid);
+  touch(p);render()
+}
 function drop(e,s){e.preventDefault();if(dragId)setStatus(dragId,s);dragId=null}
 function setQ(v){q=v.toLowerCase();cols()}
-function setFs(v){fs=v;cols()}
+function saveNote(v){P[cur].notes=v; touch(P[cur]);} 
+
+// Contractors Section
+function openContractorForm(pid){
+  openM(`<h2>Add Contractor</h2><form onsubmit="saveContractor(event,'${pid}')">
+    <label>Trade / Type (e.g. Plumber)</label><input class="in" id="c-type" required>
+    <label>Company / Contact Name</label><input class="in" id="c-name" required>
+    <label>Phone / Details</label><input class="in" id="c-phone">
+    <div class="dr">${cancel}<button class="btn p">Save</button></div></form>`,'#c-type');
+}
+function saveContractor(e,pid){
+  e.preventDefault(); P[pid].contractors.push({id:uid(), type:$('#c-type').value.trim(), name:$('#c-name').value.trim(), phone:$('#c-phone').value.trim()});
+  touch(P[pid]); closeM(); render();
+}
+function delContractor(pid,cid){
+  if(confirm('Remove this contractor?')){P[pid].contractors=P[pid].contractors.filter(c=>c.id!==cid); touch(P[pid]); render();}
+}
 
 function render(){
   const L=live();if(!cur||!P[cur]||P[cur]._deleted)cur=L[0]?.id||null;persist();alerts();
   
-  // ADDED Inductions button to sidebar here
   $('#side').innerHTML=`<button class="pi${view==='cal'?' on':''}" onclick="goCal()"><span class="av" style="background:#44546F"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span>Calendar</span></button>
   <button class="pi${view==='inductions'?' on':''}" onclick="goInductions()"><span class="av" style="background:#1F845A">IN</span><span>Inductions</span></button>
-  <div class="sh">Projects<button onclick="openProjectForm()" aria-label="Create project">+</button></div>`+L.map(p=>`<button class="pi${view==='proj'&&p.id===cur?' on':''}" onclick="pick('${p.id}')"><span class="av" style="background:${tint(p.name)}">${esc(p.key.slice(0,2))}</span><span>${esc(p.name)}</span></button>`).join('');
+  <button class="pi${view==='template'?' on':''}" onclick="goTemplate()"><span class="av" style="background:#8270DB">⚙️</span><span>Edit Workflows</span></button>
+  <div class="sh" style="margin-top:16px">Projects<button onclick="openProjectForm()" aria-label="Create project">+</button></div>`+L.map(p=>`<button class="pi${view==='proj'&&p.id===cur?' on':''}" onclick="pick('${p.id}')"><span class="av" style="background:${tint(p.name)}">${esc(p.key.slice(0,2))}</span><span>${esc(p.name)}</span></button>`).join('');
   
   const m=$('#main');
-  
-  // ADDED Routing for Inductions view
   if(view==='inductions'){ renderInductionsView(); return; }
+  if(view==='template'){ renderTemplateView(); return; }
+  if(view==='cal'){m.innerHTML=`<h1>Master Calendar</h1><div class="meta" style="margin-bottom:16px">Bookings, reminders and task due dates for every project.</div>`+calView(null);return}
+  if(!cur){m.innerHTML=`<div class="empty"><h1>Create your first project</h1><p>Add a project, then set up its workflow and tasks.</p><button class="btn p" onclick="openProjectForm()">Create project</button></div>`;return}
   
-  if(view==='cal'){m.innerHTML=`<h1>Calendar</h1><div class="meta" style="margin-bottom:16px">Bookings, reminders and task due dates for every project.</div>`+calView(null);return}
-  if(!cur){m.innerHTML=`<div class="empty"><h1>Create your first project</h1><p>Add a project, then set up its workflow and tasks. Workflow stages stay locked until you unlock them.</p><button class="btn p" onclick="openProjectForm()">Create project</button></div>`;return}
-  const p=P[cur],S=p.stages,n=k=>S.filter(s=>s.state===k).length;
+  const p=P[cur];
+  
   m.innerHTML=`<div class="bc">Projects / ${esc(p.name)}</div>
-    <div class="th"><div><h1>${esc(p.name)}</h1><div class="meta">${esc(p.address)||'No site address'}  (key ${esc(p.key)})</div></div>
-      <div class="sa"><button class="btn" onclick="editProject()">Edit details</button><button class="btn d" onclick="deleteProject()">Delete</button></div></div>
-    <div class="tabs"><button class="tab${tab==='board'?' on':''}" onclick="setTab('board')">Board</button><button class="tab${tab==='flow'?' on':''}" onclick="setTab('flow')">Workflow</button><button class="tab${tab==='cal'?' on':''}" onclick="setTab('cal')">Calendar</button></div>
-    <div id="body"></div>`;
-  tab==='board'?board(p):tab==='flow'?flow(p,n):$('#body').innerHTML=calView(p.id);
+    <div class="th"><div><h1>${esc(p.name)}</h1><div class="meta">Key: ${esc(p.key)}</div></div>
+      <div class="sa"><button class="btn" onclick="editProject()">Edit Name</button><button class="btn d" onclick="deleteProject()">Delete</button></div></div>
+    
+    <details class="cpane">
+      <summary><span>👷 Contractors (${p.contractors?.length||0})</span></summary>
+      <div style="padding:0 16px 16px;">
+        <div style="text-align:right; margin-bottom:12px"><button class="btn s p" onclick="openContractorForm('${p.id}')">+ Add Contractor</button></div>
+        <div style="overflow-x:auto;">${renderContractorsTable(p)}</div>
+      </div>
+    </details>
+
+    <div class="proj-wrap">
+      <div class="proj-main">
+        <div class="tabs"><button class="tab${tab==='board'?' on':''}" onclick="setTab('board')">Board</button><button class="tab${tab==='flow'?' on':''}" onclick="setTab('flow')">Workflow</button></div>
+        <div id="body"></div>
+      </div>
+      
+      <div class="proj-right">
+        <h3 style="font-size:14px; margin-bottom:8px">Project Notes</h3>
+        <textarea class="in" style="width:100%; height:120px; resize:vertical; padding:8px" placeholder="Write project-specific notes here..." onchange="saveNote(this.value)">${esc(p.notes||'')}</textarea>
+        
+        <div class="th" style="margin-top:24px; margin-bottom:12px">
+          <h3 style="font-size:14px">Bookings & Reminders</h3>
+          <button class="btn s" onclick="openEvent('${p.id}')">Add</button>
+        </div>
+        <div id="proj-events">${renderProjEvents(p)}</div>
+      </div>
+    </div>`;
+    
+  tab==='board'?board(p):flow(p);
 }
 
-function flow(p,n){
-  const S=p.stages,pct=S.length?Math.round(n('done')/S.length*100):0;
-  const rows=S.map((s,i)=>{
-    const ts=p.tasks.filter(t=>t.stage===s.id),dn=ts.filter(t=>t.status==='done').length;
-    const lz=s.state==='locked'?`<span class="lz">${LOCK} Locked</span>`:s.state==='open'?'<span class="lz open">Unlocked</span>':'<span class="lz done">Complete</span>';
-    const acts=s.state==='locked'?`<button class="btn s p" onclick="setState('${s.id}','open')">Unlock stage</button>`
-      :s.state==='open'?`<button class="btn s p" onclick="setState('${s.id}','done')">Mark complete</button><button class="btn s" onclick="setState('${s.id}','locked')">Lock</button>`
-      :`<button class="btn s" onclick="setState('${s.id}','open')">Reopen</button>`;
-    return `<tr class="${s.state==='locked'?'lk':''}"><td><span class="nm">${i+1}</span>${esc(s.name)}</td><td>${lz}</td><td class="hide">${ts.length?dn+' of '+ts.length+' done':'No tasks'}</td><td><div class="sa">${acts}</div></td>
-      <td><div class="ib"><button title="Move up" aria-label="Move up" onclick="moveStage('${s.id}',-1)">↑</button><button title="Move down" aria-label="Move down" onclick="moveStage('${s.id}',1)">↓</button><button title="Rename" aria-label="Rename stage" onclick="renameStage('${s.id}')">✎</button><button title="Delete" aria-label="Delete stage" onclick="delStage('${s.id}')">✕</button></div></td></tr>`}).join('');
-  $('#body').innerHTML=`<div><b>${n('done')} of ${S.length}</b> stages complete</div><div class="pb"><i style="width:${pct}%"></i></div>
-    ${S.length?`<table class="tbl"><thead><tr><th>Stage</th><th>Status</th><th class="hide">Tasks</th><th>Action</th><th></th></tr></thead><tbody>${rows}</tbody></table>`:'<p class="none">No stages yet. Add the first one below.</p>'}
-    <form class="addrow" onsubmit="addStage(event)"><input class="in" id="ns" maxlength="80" placeholder="Add a stage" aria-label="New stage name"><button class="btn p">Add stage</button></form>`;
+// Right panel events (combines p.events AND p.tasks with due dates)
+function renderProjEvents(p){
+  let evs = [
+    ...p.events.filter(e=>!e.done),
+    ...p.tasks.filter(t=>t.due && t.status!=='done').map(t=>({id:t.id, date:t.due, time:'', title:t.text, kind:'task', who:''}))
+  ];
+  evs.sort((a,b)=>(a.date+a.time)<(b.date+b.time)?-1:1);
+  
+  if(!evs.length) return '<div class="none">No upcoming bookings.</div>';
+  return evs.map(i=>`
+    <div class="ai" style="padding:8px; background:#fff; border:1px solid var(--bd); border-radius:4px; margin-bottom:8px" onclick="openItem('${p.id}','${i.id}','${i.kind}')">
+      <div style="font-size:11px; color:var(--sub); font-weight:600">${fmt(i.date,{month:'short',day:'numeric'})} ${i.time||''}</div>
+      <div style="font-weight:500; font-size:13px; margin:2px 0">${esc(i.title)}</div>
+      ${i.who?`<div style="font-size:11px; color:var(--sub)">With: ${esc(i.who)}</div>`:''}
+    </div>
+  `).join('');
 }
+
+// Top Contractor Table
+function renderContractorsTable(p){
+  if(!p.contractors||!p.contractors.length) return '';
+  let rows = p.contractors.map(c=>`<tr>
+    <td><b>${esc(c.type)}</b></td><td>${esc(c.name)}</td><td>${esc(c.phone)}</td>
+    <td style="text-align:right"><button class="btn s" onclick="delContractor('${p.id}','${c.id}')">✕</button></td>
+  </tr>`).join('');
+  return `<table class="c-table"><thead><tr><th>Trade / Type</th><th>Name / Company</th><th>Contact Details</th><th style="width:40px"></th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+// EDIT WORKFLOW TEMPLATE
+function goTemplate() { view = 'template'; render(); }
+function updateTmplStep(idx, val) { customWorkflow[idx] = val; saveWorkflowTmpl(); }
+function addTmplStep() { customWorkflow.push('New step'); saveWorkflowTmpl(); render(); }
+function delTmplStep(idx) { if(confirm('Remove this step from template?')){customWorkflow.splice(idx,1); saveWorkflowTmpl(); render();} }
+function moveTmplStep(idx, dir) { 
+  if(idx+dir < 0 || idx+dir >= customWorkflow.length) return;
+  let temp = customWorkflow[idx]; customWorkflow[idx] = customWorkflow[idx+dir]; customWorkflow[idx+dir] = temp;
+  saveWorkflowTmpl(); render();
+}
+function renderTemplateView() {
+  const rows = customWorkflow.map((step, i) => `<tr>
+    <td style="width:40px"><span class="nm">${i+1}</span></td>
+    <td><input class="in" style="width:100%" value="${esc(step)}" onchange="updateTmplStep(${i}, this.value)"></td>
+    <td style="width:110px">
+      <div class="ib">
+        <button onclick="moveTmplStep(${i},-1)">↑</button>
+        <button onclick="moveTmplStep(${i},1)">↓</button>
+        <button onclick="delTmplStep(${i})">✕</button>
+      </div>
+    </td>
+  </tr>`).join('');
+  
+  $('#main').innerHTML = `<h1>Edit Workflow Template</h1>
+    <div class="meta" style="margin-bottom:16px">Customize the default steps applied to new projects. (Changes will not affect existing projects).</div>
+    <div style="background:#fff; border-radius:6px; box-shadow:0 1px 1px #091E4240; overflow-x:auto;">
+      <table class="tbl"><thead><tr><th>#</th><th>Step Name (Click to edit)</th><th>Order</th></tr></thead><tbody>${rows}</tbody></table>
+    </div>
+    <div style="margin-top:16px"><button class="btn p" onclick="addTmplStep()">+ Add Step</button></div>`;
+}
+
+function flow(p){
+  const rows = p.tasks.sort((a,b)=>a.n-b.n).map((t,i)=>`
+    <tr>
+      <td style="width:40px"><span class="nm">${i+1}</span></td>
+      <td><input class="in" style="width:100%; border-color:transparent; background:transparent" value="${esc(t.text)}" onchange="updateTaskText('${t.id}',this.value)"></td>
+      <td style="width:140px"><select class="in s" style="width:100%" onchange="setStatus('${t.id}',this.value)">${COLS.map(([v,l])=>`<option value="${v}"${t.status===v?' selected':''}>${l}</option>`).join('')}</select></td>
+      <td style="width:100px">${t.due?fmt(t.due,{month:'short',day:'numeric'}):'-'}</td>
+      <td style="width:110px">
+        <div class="sa"><button class="btn s" onclick="openBookTask('${t.id}')">📅 Book</button><button class="btn s" title="Delete" onclick="delTask('${t.id}')">✕</button></div>
+      </td>
+    </tr>
+  `).join('');
+  
+  $('#body').innerHTML=`<table class="tbl"><thead><tr><th>#</th><th>Step / Description (Click to edit)</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table>
+  <div style="margin-top:16px"><button class="btn p" onclick="openTaskForm()">+ Add Extra Step</button></div>`;
+}
+
 function board(p){
-  $('#body').innerHTML=`<div class="tb"><input class="in" type="search" placeholder="Search tasks" aria-label="Search tasks" value="${esc(q)}" oninput="setQ(this.value)">
-    <select class="in" aria-label="Filter by stage" onchange="setFs(this.value)"><option value="">All stages</option>${p.stages.map(s=>`<option value="${s.id}"${fs===s.id?' selected':''}>${esc(s.name)}</option>`).join('')}</select>
-    <button class="btn p" onclick="openTaskForm()">Create task</button></div><div class="board" id="cols"></div>`;
+  $('#body').innerHTML=`<div class="tb"><input class="in" type="search" placeholder="Search items..." aria-label="Search tasks" value="${esc(q)}" oninput="setQ(this.value)"><button class="btn p" onclick="openTaskForm()">+ Add Item</button></div><div class="board" id="cols"></div>`;
   cols();
 }
 function cols(){
   const p=P[cur],today=ymd(new Date());
-  const list=p.tasks.filter(t=>(!fs||t.stage===fs)&&(!q||(t.text+' '+p.key+'-'+t.n).toLowerCase().includes(q)));
+  const list=p.tasks.filter(t=>(!q||(t.text+' '+p.key+'-'+t.n).toLowerCase().includes(q)));
   $('#cols').innerHTML=COLS.map(([k,label])=>{
-    const ts=list.filter(t=>t.status===k);
+    const ts=list.filter(t=>t.status===k).sort((a,b)=>a.n-b.n);
     return `<div class="col" ondragover="event.preventDefault()" ondrop="drop(event,'${k}')"><div class="ch">${label}<span class="cnt">${ts.length}</span></div>`+ts.map(t=>{
-      const s=t.stage&&p.stages.find(x=>x.id===t.stage),lk=locked(p,t),od=t.due&&t.status!=='done'&&t.due<today;
-      const due=t.due?new Date(t.due+'T00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'}):'';
-      return `<div class="card${lk?' lk':''}" draggable="${!lk}" ondragstart="dragId='${t.id}'"><div class="ct">${esc(t.text)}</div>
-        <div class="cm">${s?`<span class="ep">${esc(s.name)}</span>`:''}${lk?`<span class="lz">${LOCK} Stage locked</span>`:''}${due?`<span class="due${od?' od':''}">${od?'Overdue ':'Due '}${due}</span>`:''}</div>
-        <div class="cf"><span>${esc(p.key)}-${t.n}</span><span><select aria-label="Status" ${lk?'disabled':''} onchange="setStatus('${t.id}',this.value)">${COLS.map(([v,l])=>`<option value="${v}"${t.status===v?' selected':''}>${l}</option>`).join('')}</select><button class="x" aria-label="Delete task" onclick="delTask('${t.id}')">×</button></span></div></div>`}).join('')+`</div>`}).join('');
+      const od=t.due&&t.status!=='done'&&t.due<today;
+      const due=t.due?fmt(t.due,{day:'numeric',month:'short'}):'';
+      return `<div class="card" draggable="true" ondragstart="dragId='${t.id}'"><div class="ct">${esc(t.text)}</div>
+        <div class="cm">${due?`<span class="due${od?' od':''}">${od?'Overdue ':'📅 '}${due}</span>`:''}</div>
+        <div class="cf"><span><button class="btn s" onclick="openBookTask('${t.id}')">📅 Book</button></span><span><select aria-label="Status" onchange="setStatus('${t.id}',this.value)">${COLS.map(([v,l])=>`<option value="${v}"${t.status===v?' selected':''}>${l}</option>`).join('')}</select><button class="x" aria-label="Delete item" onclick="delTask('${t.id}')">×</button></span></div></div>`}).join('')+`</div>`}).join('');
 }
 
 const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -300,7 +499,7 @@ function pushNotes(){
 function askNotes(){Notification.requestPermission().then(()=>{pushNotes();openNotif()})}
 function openNotif(){
   const can='Notification' in window&&Notification.permission==='default';
-  openM(`<h2>Due in the next 2 days</h2><p class="meta">Includes overdue items. Mark a booking or reminder as completed to clear it.</p>${groups(due(),true)}${can?'<button class="btn" style="margin-top:14px" onclick="askNotes()">Turn on desktop alerts</button>':''}<div class="dr"><button class="btn" onclick="closeM()">Close</button></div>`);
+  openM(`<h2>Due in the next 2 days</h2><p class="meta">Includes overdue items.</p>${groups(due(),true)}${can?'<button class="btn" style="margin-top:14px" onclick="askNotes()">Turn on desktop alerts</button>':''}<div class="dr"><button class="btn" onclick="closeM()">Close</button></div>`);
 }
 function row(i,sp){
   const t=ymd(new Date()),c=i.date<t?' od':i.date<=ymd(addD(new Date(),2))?' soon':'',[kl,kc]=KIND[i.kind];
@@ -315,14 +514,33 @@ function groups(list,sp){
 const cp=i=>{const c=tint(i.pn),tk=i.kind==='task';return `<button class="chp${tk?' tk':''}${i.done?' dn2':''}" style="${tk?'color:'+c:'background:'+c}" title="${esc(i.title)}" onclick="event.stopPropagation();openItem('${i.pid}','${i.id}','${i.kind}')">${i.time?i.time+' ':''}${esc(i.title)}</button>`};
 function mv(d){if(!d){const n=new Date();cy=n.getFullYear();cm=n.getMonth()}else{const x=new Date(cy,cm+d,1);cy=x.getFullYear();cm=x.getMonth()}render()}
 function goCal(){view='cal';render()}
-function goTask(pid){cur=pid;view='proj';tab='board';q='';fs='';render()}
+function goTask(pid){cur=pid;view='proj';tab='board';q='';render()}
 function openItem(pid,id,kind){kind==='task'?goTask(pid):openEvent(pid,id)}
+
+// UNIVERSAL CALENDAR DAY VIEW MODAL
+function openDayView(date){
+  const its = items().filter(i=>i.date===date);
+  let h = `<h2>Agenda for ${fmt(date,{weekday:'long',day:'numeric',month:'short'})}</h2>`;
+  if(its.length){
+    h += `<div style="max-height:50vh;overflow-y:auto;margin:16px 0;padding-right:8px">` + its.map(i=>`
+      <div class="ai" style="padding:10px; background:#f7f8f9; border:1px solid #dcdfe4; border-radius:4px; margin-bottom:8px" onclick="openItem('${i.pid}','${i.id}','${i.kind}')">
+        <div style="font-size:12px; font-weight:600; color:var(--blue-d); margin-bottom:4px">${esc(i.pn)}</div>
+        <div style="font-weight:600">${i.time?i.time+' ':''}${esc(i.title)}</div>
+        ${i.who?`<div style="font-size:12px;color:var(--sub)">With: ${esc(i.who)}</div>`:''}
+      </div>`).join('') + `</div>`;
+  } else {
+    h += `<p class="none">No events scheduled.</p>`;
+  }
+  h += `<div class="dr"><button class="btn p" onclick="openEvent(null,null,'${date}','booking')">Add Booking</button><button class="btn" onclick="closeM()">Close</button></div>`;
+  openM(h);
+}
+
 function calView(pid){
   const its=items(pid),first=new Date(cy,cm,1),off=(first.getDay()+6)%7,days=new Date(cy,cm+1,0).getDate(),rows=Math.ceil((off+days)/7),td=ymd(new Date()),by={};
   its.forEach(i=>(by[i.date]=by[i.date]||[]).push(i));
   let g='<div class="cg">'+['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>`<div class="dh">${d}</div>`).join('');
   for(let i=0;i<rows*7;i++){const d=new Date(cy,cm,1-off+i),k=ymd(d),L=by[k]||[];
-    g+=`<div class="dc${d.getMonth()!==cm?' off':''}${k===td?' td':''}" onclick="openEvent(${pid?`'${pid}'`:'null'},null,'${k}')"><span class="dn">${d.getDate()}</span>${L.slice(0,3).map(cp).join('')}${L.length>3?`<div class="more">+${L.length-3} more</div>`:''}</div>`}
+    g+=`<div class="dc${d.getMonth()!==cm?' off':''}${k===td?' td':''}" onclick="openDayView('${k}')"><span class="dn">${d.getDate()}</span>${L.slice(0,3).map(cp).join('')}${L.length>3?`<div class="more">+${L.length-3} more</div>`:''}</div>`}
   g+='</div>';
   const a=pid?`'${pid}'`:'null';
   return `<div class="tb"><button class="btn" onclick="mv(-1)" aria-label="Previous month">‹</button><button class="btn" onclick="mv(0)">Today</button><button class="btn" onclick="mv(1)" aria-label="Next month">›</button><b style="font-size:16px;margin:0 8px">${first.toLocaleDateString('en-AU',{month:'long',year:'numeric'})}</b><span class="sp"></span>
@@ -346,13 +564,21 @@ function openEvent(pid,id,date,kind){
 }
 function saveEvent(x,pid0,id0){
   x.preventDefault();const p=P[id0?pid0:$('#ep').value];
-  const d={title:$('#et').value.trim(),kind:$('#ek').value,date:$('#ed').value,time:$('#em').value,who:$('#ew').value.trim(),note:$('#en').value.trim(),done:id0?$('#edn').checked:false};
-  if(id0)Object.assign(p.events.find(e=>e.id===id0),d);else p.events.push({id:uid(),...d});
+  const d={id:id0||uid(), title:$('#et').value.trim(),kind:$('#ek').value,date:$('#ed').value,time:$('#em').value,who:$('#ew').value.trim(),note:$('#en').value.trim(),done:id0?$('#edn').checked:false};
+  if(id0) Object.assign(p.events.find(e=>e.id===id0),d);
+  else p.events.push(d);
+  
+  syncToGoogle('save', d, p);
   touch(p);closeM();render();
 }
-function delEvent(pid,id){const p=P[pid];p.events=p.events.filter(e=>e.id!==id);touch(p);closeM();render()}
+function delEvent(pid,id){
+  const p=P[pid], e=p.events.find(x=>x.id===id);
+  if(e) syncToGoogle('delete', e, p);
+  p.events=p.events.filter(x=>x.id!==id);
+  touch(p);closeM();render()
+}
 
-/* ---------- ADDED: SITE INDUCTIONS LOGIC ---------- */
+/* ---------- SITE INDUCTIONS LOGIC ---------- */
 function goInductions() {
   view = 'inductions';
   render();
@@ -392,14 +618,12 @@ function renderInductionsView() {
   $('#main').innerHTML = `<h1>Live Site Inductions</h1><div class="meta" style="margin-bottom:16px">On-site sign-ins across all active jobs.</div><div id="ind-body"><p>Loading...</p></div>`;
 }
 
-// Global Supabase Listener for Real-Time Updates
 if(sb){
   sb.channel('ind-live').on('postgres_changes',{event:'INSERT',schema:'public',table:'site_inductions'},pl=>{
     indData.unshift(pl.new);
     if(view==='inductions') drawInductions();
   }).subscribe();
 }
-/* ------------------------------------------------ */
 
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!$('#ovl').classList.contains('on')){render();pushNotes()}});
 
