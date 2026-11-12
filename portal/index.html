@@ -259,7 +259,6 @@ function openTaskForm(){const p=P[cur];openM(`<h2>Add task / step</h2><form onsu
   <label for="td">Date (Optional)</label><input class="in" type="date" id="td">
   <div class="dr">${cancel}<button class="btn p">Create</button></div></form>`,'#tn')}
 
-// MODIFIED: Date picker for tasks now has an explicit "Clear Date" button if a date already exists
 function openBookTask(tid){
   const t=P[cur].tasks.find(x=>x.id===tid);
   openM(`<h2>📅 Schedule Event</h2><form onsubmit="saveTaskDate(event,'${tid}')">
@@ -271,7 +270,6 @@ function openBookTask(tid){
     </div></form>`,'#t-date');
 }
 
-// MODIFIED: Clear the date manually and delete from Google calendar
 function clearTaskDate(tid){
   const p=P[cur], t=p.tasks.find(x=>x.id===tid);
   if(t.due) syncToGoogle('delete', t, p);
@@ -279,17 +277,16 @@ function clearTaskDate(tid){
   touch(p); closeM(); render();
 }
 
-// MODIFIED: Handles case if user clears the text box manually
 function saveTaskDate(e,tid){
   e.preventDefault(); 
   const p=P[cur], t=p.tasks.find(x=>x.id===tid);
   const newDate = $('#t-date').value;
   
   if(!newDate && t.due) {
-    syncToGoogle('delete', t, p); // Wiped text manually
+    syncToGoogle('delete', t, p); 
   } else if(newDate) {
     t.due = newDate;
-    syncToGoogle('save', t, p); // Ping webhook for new/changed date
+    syncToGoogle('save', t, p); 
   }
   
   t.due = newDate;
@@ -320,7 +317,7 @@ function setStatus(tid,s){
   const p=P[cur],t=p.tasks.find(t=>t.id===tid);
   if(!t)return;
   t.status=s;
-  if(t.due) syncToGoogle('save', t, p); // Sync done status
+  if(t.due) syncToGoogle('save', t, p); 
   touch(p);render()
 }
 function updateTaskText(tid,val){
@@ -352,6 +349,20 @@ function saveContractor(e,pid){
 }
 function delContractor(pid,cid){
   if(confirm('Remove this contractor?')){P[pid].contractors=P[pid].contractors.filter(c=>c.id!==cid); touch(P[pid]); render();}
+}
+
+// MODIFIED: Reset to Template Function
+function resetWorkflow(pid) {
+  if(!confirm("Are you sure you want to replace this project's workflow with your default template? This will remove current steps, statuses, and dates.")) return;
+  const p = P[pid];
+  
+  // Wipe dates from google calendar first
+  p.tasks.forEach(t => { if(t.due) syncToGoogle('delete', t, p); });
+  
+  // Apply fresh template
+  p.tasks = customWorkflow.map((n,i)=>({id:uid(),n:i+1,text:n,due:'',status:'todo'}));
+  touch(p);
+  render();
 }
 
 function render(){
@@ -403,7 +414,6 @@ function render(){
   tab==='board'?board(p):flow(p);
 }
 
-// Right panel events (combines p.events AND p.tasks with due dates)
 function renderProjEvents(p){
   let evs = [
     ...p.events.filter(e=>!e.done),
@@ -421,7 +431,6 @@ function renderProjEvents(p){
   `).join('');
 }
 
-// Top Contractor Table
 function renderContractorsTable(p){
   if(!p.contractors||!p.contractors.length) return '';
   let rows = p.contractors.map(c=>`<tr>
@@ -431,7 +440,6 @@ function renderContractorsTable(p){
   return `<table class="c-table"><thead><tr><th>Trade / Type</th><th>Name / Company</th><th>Contact Details</th><th style="width:40px"></th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
-// EDIT WORKFLOW TEMPLATE
 function goTemplate() { view = 'template'; render(); }
 function updateTmplStep(idx, val) { customWorkflow[idx] = val; saveWorkflowTmpl(); }
 function addTmplStep() { customWorkflow.push('New step'); saveWorkflowTmpl(); render(); }
@@ -455,7 +463,7 @@ function renderTemplateView() {
   </tr>`).join('');
   
   $('#main').innerHTML = `<h1>Edit Workflow Template</h1>
-    <div class="meta" style="margin-bottom:16px">Customize the default steps applied to new projects. (Changes will not affect existing projects).</div>
+    <div class="meta" style="margin-bottom:16px">Customize the default steps applied to new projects.</div>
     <div style="background:#fff; border-radius:6px; box-shadow:0 1px 1px #091E4240; overflow-x:auto;">
       <table class="tbl"><thead><tr><th>#</th><th>Step Name (Click to edit)</th><th>Order</th></tr></thead><tbody>${rows}</tbody></table>
     </div>
@@ -475,8 +483,12 @@ function flow(p){
     </tr>
   `).join('');
   
+  // MODIFIED: Reset to template button added here
   $('#body').innerHTML=`<table class="tbl"><thead><tr><th>#</th><th>Step / Description (Click to edit)</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table>
-  <div style="margin-top:16px"><button class="btn p" onclick="openTaskForm()">+ Add Extra Step</button></div>`;
+  <div style="margin-top:16px; display:flex; gap:8px;">
+    <button class="btn p" onclick="openTaskForm()">+ Add Extra Step</button>
+    <button class="btn" onclick="resetWorkflow('${p.id}')">🔄 Reset to Template</button>
+  </div>`;
 }
 
 function board(p){
@@ -538,18 +550,15 @@ const cp=i=>{const c=tint(i.pn),tk=i.kind==='task';return `<button class="chp${t
 function mv(d){if(!d){const n=new Date();cy=n.getFullYear();cm=n.getMonth()}else{const x=new Date(cy,cm+d,1);cy=x.getFullYear();cm=x.getMonth()}render()}
 function goCal(){view='cal';render()}
 function goTask(pid){cur=pid;view='proj';tab='board';q='';render()}
-
-// MODIFIED: Fix for clicking tasks in the sidebar and calendar
 function openItem(pid,id,kind){
   if(kind === 'task') {
-    goTask(pid); // Ensures we are viewing the project
-    openBookTask(id); // Opens the date picker modal automatically
+    goTask(pid); 
+    openBookTask(id); 
   } else {
     openEvent(pid,id);
   }
 }
 
-// UNIVERSAL CALENDAR DAY VIEW MODAL
 function openDayView(date){
   const its = items().filter(i=>i.date===date);
   let h = `<h2>Agenda for ${fmt(date,{weekday:'long',day:'numeric',month:'short'})}</h2>`;
