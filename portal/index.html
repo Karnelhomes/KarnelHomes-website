@@ -133,19 +133,20 @@ const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzwZrBXM9aAbA9TXuTw
 
 const DEFAULT_STD=[
   '1. CDC / CC Approved',
-  '2. Send Stamped Plans (Archi, BASIX, Struct, Stormwater)',
-  '3. Site Ready (Fencing, Sediment Control, Banners)',
-  '4. Benching',
-  '5. Piering',
-  '6. Structural Inspections (Struct Eng, Certifier, FJA - BPA)',
-  '7. Internal Plumbing (1-week advance notice)',
-  '8. Steel',
-  '9. MHF Termites Pipe Work',
-  '10. Pre-Pour Inspections (Certifier & Structural Eng)',
-  '11. Slab',
-  '12. External Plumbing (1-week advance notice)',
-  '13. Electrician & Certifier (Same day)',
-  '14. Termite Perimeter (Next day MHF)'
+ '2. Send Stamped Plans (Archi, BASIX, Struct, Stormwater)',
+ '3. Survey - Pegout',
+ '4. Site Ready (Fencing, Sediment Control, Banners)',
+ '5. Benching',
+ '6. Piering',
+ '7. Structural Inspections (Struct Eng, Certifier, FJA - BPA) - 2 working days notice',
+ '8. Internal Plumbing (1-week advance notice)',
+ '9. Steel reinforcement for Slab',
+ '10. MHF Termites Pipe Work - 2 working days notice',
+ '11. Pre-Pour Inspections (Certifier & Structural Eng)',
+ '12. Slab',
+ '13. External Plumbing (1-week advance notice)',
+ '14. Electrician & Certifier (Same day as Extrenal Plumbing) - 2 working days notice',
+ '15. Termite Perimeter (Next day MHF)'
 ];
 const COLS=[['todo','To do'],['prog','In progress'],['done','Done']];
 const $=s=>document.querySelector(s);
@@ -258,18 +259,40 @@ function openTaskForm(){const p=P[cur];openM(`<h2>Add task / step</h2><form onsu
   <label for="td">Date (Optional)</label><input class="in" type="date" id="td">
   <div class="dr">${cancel}<button class="btn p">Create</button></div></form>`,'#tn')}
 
+// MODIFIED: Date picker for tasks now has an explicit "Clear Date" button if a date already exists
 function openBookTask(tid){
   const t=P[cur].tasks.find(x=>x.id===tid);
   openM(`<h2>📅 Schedule Event</h2><form onsubmit="saveTaskDate(event,'${tid}')">
     <p class="meta" style="margin-bottom:12px;font-weight:600">${esc(t.text)}</p>
-    <label>Select Date</label><input class="in" type="date" id="t-date" value="${t.due}" required>
-    <div class="dr">${cancel}<button class="btn p">Save Date</button></div></form>`,'#t-date');
+    <label>Select Date</label><input class="in" type="date" id="t-date" value="${t.due}">
+    <div class="dr">
+      ${t.due ? `<button type="button" class="btn d" style="margin-right:auto" onclick="clearTaskDate('${tid}')">Clear Date</button>` : ''}
+      ${cancel}<button class="btn p">Save Date</button>
+    </div></form>`,'#t-date');
 }
+
+// MODIFIED: Clear the date manually and delete from Google calendar
+function clearTaskDate(tid){
+  const p=P[cur], t=p.tasks.find(x=>x.id===tid);
+  if(t.due) syncToGoogle('delete', t, p);
+  t.due = '';
+  touch(p); closeM(); render();
+}
+
+// MODIFIED: Handles case if user clears the text box manually
 function saveTaskDate(e,tid){
   e.preventDefault(); 
   const p=P[cur], t=p.tasks.find(x=>x.id===tid);
-  t.due=$('#t-date').value; 
-  syncToGoogle('save', t, p); // Ping webhook
+  const newDate = $('#t-date').value;
+  
+  if(!newDate && t.due) {
+    syncToGoogle('delete', t, p); // Wiped text manually
+  } else if(newDate) {
+    t.due = newDate;
+    syncToGoogle('save', t, p); // Ping webhook for new/changed date
+  }
+  
+  t.due = newDate;
   touch(p); closeM(); render();
 }
 
@@ -515,7 +538,16 @@ const cp=i=>{const c=tint(i.pn),tk=i.kind==='task';return `<button class="chp${t
 function mv(d){if(!d){const n=new Date();cy=n.getFullYear();cm=n.getMonth()}else{const x=new Date(cy,cm+d,1);cy=x.getFullYear();cm=x.getMonth()}render()}
 function goCal(){view='cal';render()}
 function goTask(pid){cur=pid;view='proj';tab='board';q='';render()}
-function openItem(pid,id,kind){kind==='task'?goTask(pid):openEvent(pid,id)}
+
+// MODIFIED: Fix for clicking tasks in the sidebar and calendar
+function openItem(pid,id,kind){
+  if(kind === 'task') {
+    goTask(pid); // Ensures we are viewing the project
+    openBookTask(id); // Opens the date picker modal automatically
+  } else {
+    openEvent(pid,id);
+  }
+}
 
 // UNIVERSAL CALENDAR DAY VIEW MODAL
 function openDayView(date){
